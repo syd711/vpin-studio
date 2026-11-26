@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.achievements.overview;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.achievements.AchievementInfo;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
@@ -15,7 +16,7 @@ import static de.mephisto.vpin.ui.achievements.AchievementsUI.*;
  */
 public class OverviewClosestTileController {
 
-  private static final String[] COLORS = {BLUE, ORANGE, "#C77DFF", GREEN, "#E3B930"};
+  private static final String[] COLORS = {BLUE, ORANGE, ThemeColors.RARITY_EPIC, GREEN, ThemeColors.MEDAL_GOLD};
 
   @FXML
   private VBox entriesBox;

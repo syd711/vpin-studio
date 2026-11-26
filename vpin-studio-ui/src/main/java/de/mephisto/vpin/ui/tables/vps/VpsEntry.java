@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.vps;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -21,7 +22,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -121,7 +121,7 @@ public class VpsEntry extends HBox {
       if (tableVersion.getTableFormat() != null) {
         typeLabel.setTextAlignment(TextAlignment.CENTER);
         typeLabel.setAlignment(Pos.CENTER);
-        typeLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 12px; -fx-text-fill: #FFFFFF;-fx-background-color: " + VpsUtil.getColor(tableVersion.getTableFormat()) + ";");
+        typeLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 12px; -fx-text-fill: " + ThemeColors.WHITE + ";-fx-background-color: " + VpsUtil.getColor(tableVersion.getTableFormat()) + ";");
         typeLabel.setText(tableVersion.getTableFormat());
       }
       authorBox.getChildren().add(typeLabel);
@@ -131,7 +131,7 @@ public class VpsEntry extends HBox {
       if (installed) {
         Hyperlink hyperlink = new Hyperlink(String.join(", ", authors));
         hyperlink.setTooltip(new Tooltip(String.join(", ", authors)));
-        hyperlink.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: #66FF66;");
+        hyperlink.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: " + ThemeColors.SUCCESS_LIGHT + ";");
         hyperlink.setOnAction(new EventHandler<ActionEvent>() {
           @Override
           public void handle(ActionEvent event) {
@@ -163,7 +163,7 @@ public class VpsEntry extends HBox {
 
       FontIcon fontIcon = new FontIcon();
       fontIcon.setIconSize(14);
-      fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+      ThemeColors.setIconColor(fontIcon, ThemeColors.WHITE);
       fontIcon.setIconLiteral(VpsUtil.getIconClass(abb));
       button.setGraphic(fontIcon);
 

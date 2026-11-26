@@ -53,7 +53,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                             <children>
-                                                <Label layoutX="253.0" layoutY="16.0" textFill="WHITE">
+                                                <Label layoutX="253.0" layoutY="16.0" styleClass="c-text-white">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
@@ -61,98 +61,98 @@
                                                         <Tooltip text="%backups.backups_sidebar.every_table_will_be_added_to_the_first" />
                                                     </tooltip>
                                                 </Label>
-                                                <Label text="%backups.backups_sidebar.game_display_name" textFill="WHITE" GridPane.rowIndex="1">
+                                                <Label text="%backups.backups_sidebar.game_display_name" styleClass="c-text-white" GridPane.rowIndex="1">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="137.0" text="%backups.backups_sidebar.game_file_name" textFill="WHITE" GridPane.rowIndex="2">
+                                                <Label layoutX="10.0" layoutY="137.0" text="%backups.backups_sidebar.game_file_name" styleClass="c-text-white" GridPane.rowIndex="2">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="106.0" text="%backups.backups_sidebar.rom_name" textFill="WHITE" GridPane.rowIndex="6">
+                                                <Label layoutX="10.0" layoutY="106.0" text="%backups.backups_sidebar.rom_name" styleClass="c-text-white" GridPane.rowIndex="6">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.game_name" textFill="WHITE">
+                                                <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.game_name" styleClass="c-text-white">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="76.0" text="%backups.backups_sidebar.game_year" textFill="WHITE" GridPane.rowIndex="7">
+                                                <Label layoutX="10.0" layoutY="76.0" text="%backups.backups_sidebar.game_year" styleClass="c-text-white" GridPane.rowIndex="7">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="106.0" text="%backups.backups_sidebar.manufacturer" textFill="WHITE" GridPane.rowIndex="8">
+                                                <Label layoutX="10.0" layoutY="106.0" text="%backups.backups_sidebar.manufacturer" styleClass="c-text-white" GridPane.rowIndex="8">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="289.0" text="%backglass.directb2s_sidebar.author" textFill="WHITE" GridPane.rowIndex="9">
+                                                <Label layoutX="10.0" layoutY="289.0" text="%backglass.directb2s_sidebar.author" styleClass="c-text-white" GridPane.rowIndex="9">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="137.0" text="%backglass.directb2s_sidebar.number_of_players" textFill="WHITE" GridPane.rowIndex="10">
+                                                <Label layoutX="10.0" layoutY="137.0" text="%backglass.directb2s_sidebar.number_of_players" styleClass="c-text-white" GridPane.rowIndex="10">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="168.0" text="%backups.backups_sidebar.tags" textFill="WHITE" GridPane.rowIndex="11">
+                                                <Label layoutX="10.0" layoutY="168.0" text="%backups.backups_sidebar.tags" styleClass="c-text-white" GridPane.rowIndex="11">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="198.0" text="%backups.backups_sidebar.category" textFill="WHITE" GridPane.rowIndex="12">
+                                                <Label layoutX="10.0" layoutY="198.0" text="%backups.backups_sidebar.category" styleClass="c-text-white" GridPane.rowIndex="12">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="259.0" text="%backups.backups_sidebar.launch_variables" textFill="WHITE" GridPane.rowIndex="13">
+                                                <Label layoutX="10.0" layoutY="259.0" text="%backups.backups_sidebar.launch_variables" styleClass="c-text-white" GridPane.rowIndex="13">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
 
-                                                <Label layoutX="10.0" layoutY="320.0" text="%backups.backups_sidebar.keep_displays" textFill="WHITE" GridPane.rowIndex="14">
+                                                <Label layoutX="10.0" layoutY="320.0" text="%backups.backups_sidebar.keep_displays" styleClass="c-text-white" GridPane.rowIndex="14">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="349.0" text="%backups.backups_sidebar.game_rating" textFill="WHITE" GridPane.rowIndex="15">
+                                                <Label layoutX="10.0" layoutY="349.0" text="%backups.backups_sidebar.game_rating" styleClass="c-text-white" GridPane.rowIndex="15">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="380.0" text="%backups.backups_sidebar.dof_parameters" textFill="WHITE" GridPane.rowIndex="16">
+                                                <Label layoutX="10.0" layoutY="380.0" text="%backups.backups_sidebar.dof_parameters" styleClass="c-text-white" GridPane.rowIndex="16">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.ipdb_number" textFill="WHITE" GridPane.rowIndex="17">
+                                                <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.ipdb_number" styleClass="c-text-white" GridPane.rowIndex="17">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.alternative_run_mode" textFill="WHITE" GridPane.rowIndex="18">
+                                                <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.alternative_run_mode" styleClass="c-text-white" GridPane.rowIndex="18">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.url" textFill="WHITE" GridPane.rowIndex="19">
+                                                <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.url" styleClass="c-text-white" GridPane.rowIndex="19">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="501.0" text="%backups.backups_sidebar.designed_by" textFill="WHITE" GridPane.rowIndex="20">
+                                                <Label layoutX="10.0" layoutY="501.0" text="%backups.backups_sidebar.designed_by" styleClass="c-text-white" GridPane.rowIndex="20">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="532.0" text="%backups.backups_sidebar.notes" textFill="WHITE" GridPane.rowIndex="21">
+                                                <Label layoutX="10.0" layoutY="532.0" text="%backups.backups_sidebar.notes" styleClass="c-text-white" GridPane.rowIndex="21">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
@@ -252,17 +252,17 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="83.0" text="%backups.backups_sidebar.game_type" textFill="WHITE" GridPane.rowIndex="4">
+                                                <Label layoutX="10.0" layoutY="83.0" text="%backups.backups_sidebar.game_type" styleClass="c-text-white" GridPane.rowIndex="4">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="116.0" text="%backups.backups_sidebar.game_theme" textFill="WHITE" GridPane.rowIndex="5">
+                                                <Label layoutX="10.0" layoutY="116.0" text="%backups.backups_sidebar.game_theme" styleClass="c-text-white" GridPane.rowIndex="5">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="83.0" text="%backups.backups_sidebar.game_version" textFill="WHITE" GridPane.rowIndex="3">
+                                                <Label layoutX="10.0" layoutY="83.0" text="%backups.backups_sidebar.game_version" styleClass="c-text-white" GridPane.rowIndex="3">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>

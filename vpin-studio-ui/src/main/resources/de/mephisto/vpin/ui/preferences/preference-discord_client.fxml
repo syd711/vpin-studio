@@ -18,17 +18,17 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.discord_bot.discord_integration" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-title, c-text-white" text="%pref.discord_bot.discord_integration" wrapText="true" />
             <Label styleClass="preference-subtitle" text="%pref.discord_client.client_settings" wrapText="true" />
-            <Label styleClass="preference-description" text="%pref.discord_client.description" textFill="WHITE" wrapText="true" />
-            <Label styleClass="preference-description" text="%pref.discord_client.discord_must_be_installed" textFill="WHITE" wrapText="true">
+            <Label styleClass="preference-description, c-text-white" text="%pref.discord_client.description" wrapText="true" />
+            <Label styleClass="preference-description, c-text-white" text="%pref.discord_client.discord_must_be_installed" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
             <HBox fx:id="installedInfo" alignment="CENTER_LEFT" spacing="6.0" styleClass="info-container">
                <children>
-                  <FontIcon iconColor="#66FF66" iconLiteral="mdi2c-check-circle-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-success-light" iconLiteral="mdi2c-check-circle-outline" iconSize="18" />
                   <Label fx:id="installedLabel" styleClass="default-text" text="-" wrapText="true" />
                </children>
                <padding>
@@ -40,7 +40,7 @@
             </HBox>
             <HBox fx:id="notInstalledInfo" alignment="CENTER_LEFT" spacing="6.0" styleClass="info-container">
                <children>
-                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2a-alert-circle-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2a-alert-circle-outline" iconSize="18" />
                   <Label styleClass="default-text" text="%pref.discord_client.discord_is_not_installed" wrapText="true" />
                </children>
                <padding>
@@ -50,7 +50,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </HBox>
-            <CheckBox fx:id="launchOnStartupCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.discord_client.launch_on_startup" textFill="WHITE">
+            <CheckBox fx:id="launchOnStartupCheckbox" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.discord_client.launch_on_startup">
                <font>
                   <Font size="14.0" />
                </font>
@@ -58,8 +58,8 @@
                   <Insets top="24.0" />
                </VBox.margin>
             </CheckBox>
-            <Label styleClass="checkbox-description" text="%pref.discord_client.launch_on_startup_description" textFill="WHITE" wrapText="true" />
-            <CheckBox fx:id="statusUpdateCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.discord_client.status_update" textFill="WHITE">
+            <Label styleClass="checkbox-description, c-text-white" text="%pref.discord_client.launch_on_startup_description" wrapText="true" />
+            <CheckBox fx:id="statusUpdateCheckbox" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.discord_client.status_update">
                <font>
                   <Font size="14.0" />
                </font>
@@ -67,15 +67,15 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </CheckBox>
-            <Label styleClass="checkbox-description" text="%pref.discord_client.status_update_description" textFill="WHITE" wrapText="true" />
+            <Label styleClass="checkbox-description, c-text-white" text="%pref.discord_client.status_update_description" wrapText="true" />
             <HBox spacing="6.0">
                <children>
-                  <Button fx:id="launchBtn" mnemonicParsing="false" onAction="#onLaunch" text="%pref.discord_client.launch_discord" textFill="WHITE">
+                  <Button fx:id="launchBtn" mnemonicParsing="false" onAction="#onLaunch" text="%pref.discord_client.launch_discord" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-play" iconSize="18" />
                      </graphic>
                   </Button>
                </children>

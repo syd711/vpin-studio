@@ -22,13 +22,13 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.update_manager.vpin_system_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-title, c-text-white" text="%pref.update_manager.vpin_system_preferences" wrapText="true" />
                   <Label styleClass="preference-subtitle" text="%pref.update_manager.system_manager" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.update_manager.the_system_manager_gives_you_an_overview_about" textFill="WHITE" wrapText="true">
+                  <Label styleClass="preference-description, c-text-white" text="%pref.update_manager.the_system_manager_gives_you_an_overview_about" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
@@ -57,18 +57,18 @@
                      <children>
                         <Label styleClass="default-text" text="%components.component_short_summary_panel.installed_version" wrapText="true" />
                         <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.update_manager.latest_version" GridPane.rowIndex="2" wrapText="true" />
-                        <Label fx:id="mameLatestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" wrapText="true">
+                        <Label fx:id="mameLatestVersionLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="mameInstalledVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" wrapText="true">
+                        <Label fx:id="mameInstalledVersionLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%backups.backups_sidebar.last_modified" GridPane.rowIndex="1" wrapText="true" />
-                        <Label fx:id="mameLastModifiedLabel" layoutX="200.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
+                        <Label fx:id="mameLastModifiedLabel" layoutX="200.0" layoutY="15.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -79,12 +79,12 @@
                      <children>
                         <Button fx:id="mameCheckBtn" mnemonicParsing="false" onAction="#onMameInstall" styleClass="sm-button" text="%pref.update_manager.install_latest_version">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-up-bold-hexagon-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-up-bold-hexagon-outline" iconSize="18" />
                            </graphic>
                         </Button>
                         <Button fx:id="mameSetVersionBtn" mnemonicParsing="false" onAction="#onMameVersionSet" styleClass="sm-button, sm-button-small" text="%components.component_summary_panel.set_as_installed_version">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-slice-6" iconSize="16" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-hexagon-slice-6" iconSize="16" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%components.component_summary_panel.this_will_set_the_latest_available_version_as" wrapText="true" />
@@ -92,18 +92,18 @@
                         </Button>
                         <Button fx:id="checkMameBtn" mnemonicParsing="false" onAction="#onMameCheck" styleClass="sm-button" text="%pref.update_manager.check_installation">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-check" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-playlist-check" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%pref.update_manager.checks_the_installation_files_for_possible_arrows_and" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="%components.mame.vpin_mame_setup" textFill="WHITE">
+                        <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component, c-text-white" text="%components.mame.vpin_mame_setup">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-laptop" />
                            </graphic>
                         </Button>
                      </children>

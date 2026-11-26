@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.jobs;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -134,7 +135,7 @@ public class JobsContainerController implements Initializable {
           setCancelled();
         }
         else {
-          statusLabel.setGraphic(WidgetFactory.createCheckboxIcon(WidgetFactory.OK_COLOR));
+          statusLabel.setGraphic(WidgetFactory.createCheckboxIcon(ThemeColors.SUCCESS_LIGHT));
           statusLabel.setText(Messages.get("jobs.jobs_container.job_successful"));
         }
 

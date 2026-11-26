@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" style="-fx-border-color: #111111; -fx-border-style: solid; -fx-background-color: #222222;" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.alx.AlxController">
+<BorderPane fx:id="root" style="-fx-border-color: -c-darkest; -fx-border-style: solid; -fx-background-color: -c-panel;" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.alx.AlxController">
    <center>
     <StackPane fx:id="loaderStack">
      <children>
@@ -119,12 +119,12 @@
    <top>
       <ToolBar BorderPane.alignment="CENTER">
         <items>
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
@@ -133,12 +133,12 @@
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
             <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="%recorder.recorder.all_vpx_tables" />
             <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="c-text-danger">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
+                  <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tables.alx.alx.delete_statistics" />

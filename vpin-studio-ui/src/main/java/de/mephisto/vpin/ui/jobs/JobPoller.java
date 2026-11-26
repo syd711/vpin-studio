@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.jobs;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
@@ -29,7 +30,7 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class JobPoller implements StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(JobPoller.class);
-  private final static String ACTIVE_STYLE = "-fx-border-style: solid;-fx-border-color: #6666FFAA;-fx-border-width: 1;";
+  private final static String ACTIVE_STYLE = "-fx-border-style: solid;-fx-border-color: " + ThemeColors.HIGHLIGHT_TRANSLUCENT + ";-fx-border-width: 1;";
   public static final int JOB_DELAY = 800;
 
   private static JobPoller instance;

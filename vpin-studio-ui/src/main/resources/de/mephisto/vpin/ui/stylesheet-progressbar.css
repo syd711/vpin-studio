@@ -1,15 +1,15 @@
 /* progress bars: dark inset track like the text inputs, flat selection-blue bar */
 .progress-bar > .track {
-    -fx-background-color: #161616;
+    -fx-background-color: -c-inset;
     -fx-background-insets: 0;
     -fx-background-radius: 4;
-    -fx-border-color: #444444;
+    -fx-border-color: -c-border;
     -fx-border-radius: 4;
     -fx-padding: 0;
 }
 
 .progress-bar > .bar {
-    -fx-background-color: #8C8CE0;
+    -fx-background-color: -c-info;
     -fx-background-insets: 2;
     -fx-background-radius: 3;
     -fx-padding: 0.4em;

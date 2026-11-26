@@ -35,7 +35,7 @@
                      <children>
                         <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                            <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                            </children>
                         </StackPane>
                         <VBox spacing="2.0" HBox.hgrow="ALWAYS">
@@ -48,7 +48,7 @@
                            <children>
                               <Button mnemonicParsing="false" onAction="#onDismiss" styleClass="sm-alert-close">
                                  <graphic>
-                                    <FontIcon iconColor="#E6C3C5" iconLiteral="mdi2c-close" iconSize="16" />
+                                    <FontIcon styleClass="c-icon-error-text" iconLiteral="mdi2c-close" iconSize="16" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%backglass.directb2s_admin.dismiss" />
@@ -100,7 +100,7 @@
                <content>
                     <VBox fx:id="dataBox" spacing="6.0">
                         <children>
-                        <Label text="%tables.tables_sidebar_mame.table_settings" textFill="WHITE">
+                        <Label text="%tables.tables_sidebar_mame.table_settings" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -108,7 +108,7 @@
                               <Insets />
                            </VBox.margin>
                         </Label>
-                        <CheckBox fx:id="skipPinballStartupTest" mnemonicParsing="false" text="%pref.mame.skip_pinball_startup_test" textFill="WHITE">
+                        <CheckBox fx:id="skipPinballStartupTest" mnemonicParsing="false" text="%pref.mame.skip_pinball_startup_test" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -116,59 +116,59 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                         </CheckBox>
-                        <CheckBox fx:id="useSound" mnemonicParsing="false" text="%pref.mame.use_sound" textFill="WHITE">
+                        <CheckBox fx:id="useSound" mnemonicParsing="false" text="%pref.mame.use_sound" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="useSamples" mnemonicParsing="false" text="%pref.mame.use_samples" textFill="WHITE">
+                        <CheckBox fx:id="useSamples" mnemonicParsing="false" text="%pref.mame.use_samples" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="ignoreRomCrcError" mnemonicParsing="false" text="%pref.mame.ignore_rom_crc_errors" textFill="WHITE">
+                        <CheckBox fx:id="ignoreRomCrcError" mnemonicParsing="false" text="%pref.mame.ignore_rom_crc_errors" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="cabinetMode" mnemonicParsing="false" text="%pref.mame.cabinet_mode" textFill="WHITE">
+                        <CheckBox fx:id="cabinetMode" mnemonicParsing="false" text="%pref.mame.cabinet_mode" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="showDmd" mnemonicParsing="false" text="%pref.mame.show_dmd_display_window" textFill="WHITE">
+                        <CheckBox fx:id="showDmd" mnemonicParsing="false" text="%pref.mame.show_dmd_display_window" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="useExternalDmd" mnemonicParsing="false" text="%pref.mame.use_external_dmd_dll" textFill="WHITE">
+                        <CheckBox fx:id="useExternalDmd" mnemonicParsing="false" text="%pref.mame.use_external_dmd_dll" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="colorizeDmd" mnemonicParsing="false" text="%pref.mame.colorize_dmd_4_colors" textFill="WHITE">
+                        <CheckBox fx:id="colorizeDmd" mnemonicParsing="false" text="%pref.mame.colorize_dmd_4_colors" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="compactDisplay" mnemonicParsing="false" text="%pref.mame.compact_display" textFill="WHITE">
+                        <CheckBox fx:id="compactDisplay" mnemonicParsing="false" text="%pref.mame.compact_display" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="doubleDisplaySize" mnemonicParsing="false" text="%pref.mame.double_display_size" textFill="WHITE">
+                        <CheckBox fx:id="doubleDisplaySize" mnemonicParsing="false" text="%pref.mame.double_display_size" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="forceStereo" layoutX="10.0" layoutY="319.0" mnemonicParsing="false" text="%pref.mame.force_stereo" textFill="WHITE">
+                        <CheckBox fx:id="forceStereo" layoutX="10.0" layoutY="319.0" mnemonicParsing="false" text="%pref.mame.force_stereo" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
                         <VBox fx:id="romValueBox" spacing="3.0">
                            <children>
-                              <Label styleClass="default-text" text="%tables.tables_sidebar_mame.volume" textFill="WHITE">
+                              <Label styleClass="default-text, c-text-white" text="%tables.tables_sidebar_mame.volume">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -181,7 +181,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_mame.the_number_is_a_scaled_integer_representing_the" wrapText="true" />
@@ -191,7 +191,7 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <Label styleClass="default-text" text="%pref.mame.sound_mode" textFill="WHITE">
+                        <Label styleClass="default-text, c-text-white" text="%pref.mame.sound_mode">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -200,7 +200,7 @@
                            </VBox.margin>
                         </Label>
                         <ComboBox fx:id="soundModeCombo" prefWidth="320.0" />
-                        <Label layoutX="10.0" layoutY="10.0" text="%tables.tables_sidebar_mame.table_rom_settings" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="10.0" text="%tables.tables_sidebar_mame.table_rom_settings" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -224,7 +224,7 @@
                                  <children>
                                     <Button fx:id="copyRomAliasBtn" mnemonicParsing="false" onAction="#onRomAliasCopy">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
                                        </graphic>
                                        <font>
                                           <Font size="14.0" />
@@ -238,7 +238,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_mame.in_visual_pinmame_vpinmame_the_vpmalias_mapping_feature" wrapText="true" />
@@ -246,22 +246,22 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label styleClass="default-text" text="%tables.tables_sidebar_mame.rom_alias" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label styleClass="default-text, c-text-white" text="%tables.tables_sidebar_mame.rom_alias" GridPane.rowIndex="1">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%backups.backups_sidebar.rom" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="45.0" styleClass="default-text, c-text-white" text="%backups.backups_sidebar.rom">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="labelRom" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                              <Label fx:id="labelRom" layoutX="10.0" layoutY="15.0" styleClass="default-text, c-text-white" text="-" GridPane.columnIndex="1">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="labelRomAlias" layoutX="126.0" layoutY="15.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <Label fx:id="labelRomAlias" layoutX="126.0" layoutY="15.0" styleClass="default-text, c-text-white" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -270,7 +270,7 @@
                                  <children>
                                     <Button fx:id="copyRomBtn" mnemonicParsing="false" onAction="#onRomCopy">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
                                        </graphic>
                                        <font>
                                           <Font size="14.0" />
@@ -284,7 +284,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_mame.the_effective_rom_calculated_for_this_table" wrapText="true" />
@@ -292,12 +292,12 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%tables.tables_sidebar_mame.nvoffset" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="45.0" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_mame.nvoffset" GridPane.rowIndex="2">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="nvOffsetLabel" layoutX="130.0" layoutY="45.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <Label fx:id="nvOffsetLabel" layoutX="130.0" layoutY="45.0" styleClass="default-text, c-text-white" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -306,7 +306,7 @@
                                  <children>
                                     <Button fx:id="scriptBtn" layoutX="163.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScriptEdit">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
                                        </graphic>
                                        <font>
                                           <Font size="14.0" />
@@ -317,7 +317,7 @@
                                     </Button>
                                     <Button fx:id="nvOffsetBtn" mnemonicParsing="false" onAction="#onNvOffset">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2s-script-text" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-script-text" iconSize="18" />
                                        </graphic>
                                        <font>
                                           <Font size="14.0" />
@@ -331,7 +331,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_mame.you_can_set_an_nvoffset_inside_the_table" wrapText="true" />
@@ -346,7 +346,7 @@
                         </GridPane>
                         <VBox fx:id="tablesBox">
                            <children>
-                              <Label text="%tables.tables_sidebar_mame.related_tables" textFill="WHITE">
+                              <Label text="%tables.tables_sidebar_mame.related_tables" styleClass="c-text-white">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -382,12 +382,12 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="applyDefaultsBtn" mnemonicParsing="false" onAction="#onApplyDefaults" text="%tables.pinvol_settings.apply_defaults" textFill="WHITE">
+            <Button fx:id="applyDefaultsBtn" mnemonicParsing="false" onAction="#onApplyDefaults" text="%tables.pinvol_settings.apply_defaults" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save-move-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-save-move-outline" iconSize="18" />
                </graphic>
             </Button>
             <Separator layoutX="234.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -396,27 +396,27 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="aliasBtn" mnemonicParsing="false" onAction="#onVPMAlias" styleClass="text-button" text="%tables.tables_sidebar_mame.vpmalias_txt" textFill="WHITE">
+            <Button fx:id="aliasBtn" mnemonicParsing="false" onAction="#onVPMAlias" styleClass="text-button, c-text-white" text="%tables.tables_sidebar_mame.vpmalias_txt">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="%components.doflinx.open_vpmalias_txt_file" />
                </tooltip>
             </Button>
-            <Button fx:id="mameBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="%components.components.vpin_mame" textFill="WHITE">
+            <Button fx:id="mameBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component, c-text-white" text="%components.components.vpin_mame">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                </graphic>
             </Button>
          </items>

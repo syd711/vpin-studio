@@ -2,6 +2,7 @@
  * Entry stylesheet referenced by the FXML files. The rules live in one file per widget type,
  * imported in cascade order: later imports win over earlier ones at equal specificity.
  */
+@import "stylesheet-colors.css";
 @import "stylesheet-base.css";
 @import "stylesheet-navigation.css";
 @import "stylesheet-preferences.css";

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -569,7 +570,7 @@ public class PreferencesController extends SettingsSceneController implements In
 
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLink.setText(Messages.get("studio.vpin_studio_version", Studio.getVersion()));
-    versionLink.setStyle("-fx-font-size : 12px;-fx-font-color: #B0ABAB;");
+    versionLink.setStyle("-fx-font-size : 12px;-fx-font-color: " + ThemeColors.WARM_GRAY + ";");
     hostLabel.setText(System.getProperty("os.name"));
 
     Image image6 = new Image(Studio.class.getResourceAsStream("ko-fi.png"));

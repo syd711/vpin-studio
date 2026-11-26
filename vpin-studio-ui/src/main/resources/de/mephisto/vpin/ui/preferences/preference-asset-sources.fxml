@@ -20,43 +20,43 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-title, c-text-white" text="%pref.asset_sources.vpin_studio_preferences" wrapText="true" />
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.asset_sources.media_sources" wrapText="true" />
-            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.asset_sources.you_can_configure_additional_media_sources_here" textFill="WHITE" wrapText="true" />
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.asset_sources.they_will_be_automatically_added_to_the_asset" textFill="WHITE" wrapText="true">
+            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description, c-text-white" text="%pref.asset_sources.you_can_configure_additional_media_sources_here" wrapText="true" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description, c-text-white" text="%pref.asset_sources.they_will_be_automatically_added_to_the_asset" wrapText="true">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin></Label>
             <ToolBar>
               <items>
-                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSourceAdd" text="%competitions.competitions_discord.add" textFill="WHITE">
+                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSourceAdd" text="%competitions.competitions_discord.add" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
+                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />
-                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                      </graphic>
                   </Button>
               </items>
             </ToolBar>
-            <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+            <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: -c-tile;" styleClass="base-component">
               <columns>
                   <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%pref.webhook_set.enabled" />
                   <TableColumn fx:id="providedColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%pref.asset_sources.provided" />

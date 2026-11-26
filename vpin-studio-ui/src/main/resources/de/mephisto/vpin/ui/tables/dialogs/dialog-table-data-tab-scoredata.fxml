@@ -22,16 +22,16 @@
    <children>
       <BorderPane>
          <left>
-            <Label styleClass="default-title" text="%tables.table_data_tab_scoredata.score_data" textFill="WHITE" BorderPane.alignment="CENTER">
+            <Label styleClass="default-title, c-text-white" text="%tables.table_data_tab_scoredata.score_data" BorderPane.alignment="CENTER">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
          </left>
          <right>
-            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onScoreReset" text="%tables.table_data_tab_scoredata.reset_highscore" textFill="#ff3333" BorderPane.alignment="CENTER">
+            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onScoreReset" text="%tables.table_data_tab_scoredata.reset_highscore" styleClass="c-text-danger" BorderPane.alignment="CENTER">
                <graphic>
-                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-reload-alert" iconSize="18" text="󱄋" />
+                  <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2r-reload-alert" iconSize="18" text="󱄋" />
                </graphic>
                <font>
                   <Font size="14.0" />
@@ -108,7 +108,7 @@
       </GridPane>
       <VBox maxWidth="1.7976931348623157E308" styleClass="navigation-panel">
          <children>
-            <Label styleClass="default-title" text="%tables.table_data_tab_scoredata.scanned_values" textFill="WHITE">
+            <Label styleClass="default-title, c-text-white" text="%tables.table_data_tab_scoredata.scanned_values">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -224,7 +224,7 @@
                               </Button>
                               <Button fx:id="openHsFileBtn" mnemonicParsing="false" onAction="#onEMHighscore" styleClass="folder-component">
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%tables.table_data_tab_scoredata.open_the_tables_folder_of_vpx" />
@@ -237,9 +237,9 @@
                         </HBox>
                      </top>
                      <bottom>
-                        <Button mnemonicParsing="false" onAction="#onTableScan" text="%tables.table_data_tab_scoredata.scan_table" textFill="WHITE" BorderPane.alignment="CENTER">
+                        <Button mnemonicParsing="false" onAction="#onTableScan" text="%tables.table_data_tab_scoredata.scan_table" styleClass="c-text-white" BorderPane.alignment="CENTER">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
                            </graphic>
                            <font>
                               <Font size="14.0" />

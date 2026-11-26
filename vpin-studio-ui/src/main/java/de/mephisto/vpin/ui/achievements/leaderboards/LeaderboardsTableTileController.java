@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.achievements.leaderboards;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.mania.model.AchievementBoard;
@@ -258,7 +259,7 @@ public class LeaderboardsTableTileController implements Initializable {
     HBox progress = new HBox(8);
     progress.setAlignment(Pos.CENTER_LEFT);
     HBox.setHgrow(progress, Priority.ALWAYS);
-    Label text = colored(e.unlocked + " / " + e.total + " (" + pct(e.percentage) + ")", "white", 12, false);
+    Label text = colored(e.unlocked + " / " + e.total + " (" + pct(e.percentage) + ")", ThemeColors.WHITE, 12, false);
     text.setMinWidth(130);
     progress.getChildren().addAll(progress(e.percentage, ORANGE, 6), text);
     Label date = muted(date(e.updatedAt));

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import org.jspecify.annotations.NonNull;
@@ -29,15 +30,15 @@ public class VpsTableContainer extends VBox {
     }
 
     Label title = new Label(name);
-    title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + customStyle);
+    title.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 14px;-fx-font-weight : bold;" + customStyle);
     this.getChildren().add(title);
 
     HBox row = new HBox(6);
     Label titleLabel = new Label(Messages.get("vps.vps_table_container.year_label"));
     titleLabel.setPrefWidth(TITLE_WIDTH);
-    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
+    titleLabel.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
     Label valueLabel = new Label(String.valueOf(item.getYear()));
-    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
+    valueLabel.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 12px;" + customStyle);
     row.getChildren().addAll(titleLabel, valueLabel);
 
     this.getChildren().add(row);
@@ -45,18 +46,18 @@ public class VpsTableContainer extends VBox {
     row = new HBox(6);
     titleLabel = new Label(Messages.get("vps.vps_table_container.manufacturer_label"));
     titleLabel.setPrefWidth(TITLE_WIDTH);
-    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
+    titleLabel.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
     valueLabel = new Label(item.getManufacturer());
-    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
+    valueLabel.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 12px;" + customStyle);
     row.getChildren().addAll(titleLabel, valueLabel);
     this.getChildren().add(row);
 
     row = new HBox(6);
     titleLabel = new Label(Messages.get("vps.vps_table_container.type_label"));
     titleLabel.setPrefWidth(TITLE_WIDTH);
-    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
+    titleLabel.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
     valueLabel = new Label(item.getType());
-    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
+    valueLabel.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 12px;" + customStyle);
     row.getChildren().addAll(titleLabel, valueLabel);
     this.getChildren().add(row);
 

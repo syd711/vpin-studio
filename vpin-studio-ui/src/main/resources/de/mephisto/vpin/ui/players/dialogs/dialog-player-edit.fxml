@@ -53,7 +53,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE">
+                  <Label text="%backglass.directb2s_sidebar.name" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -62,7 +62,7 @@
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
-                  <Label layoutX="10.0" layoutY="33.0" text="%players.player_edit.initials" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="33.0" text="%players.player_edit.initials" styleClass="c-text-white" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -85,14 +85,14 @@
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label text="%competitions.discord_competition_edit.competition_name" textFill="WHITE">
+                        <Label text="%competitions.discord_competition_edit.competition_name" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <Label>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="400.0" text="%players.player_edit.you_can_input_a_different_name_here_that" wrapText="true" />
@@ -119,27 +119,27 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label layoutX="10.0" layoutY="33.0" text="%players.player_edit.vpin_default_player" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="33.0" text="%players.player_edit.vpin_default_player" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
-                        <CheckBox fx:id="adminRoleCheckbox" mnemonicParsing="false" textFill="WHITE">
+                        <CheckBox fx:id="adminRoleCheckbox" mnemonicParsing="false" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
                         <Label>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="400.0" text="%players.player_edit.this_user_is_the_default_owner_of_competitions" wrapText="true" />
                            </tooltip>
                         </Label>
-                        <CheckBox fx:id="achievementsCheckbox" mnemonicParsing="false" text="%players.player_edit.track_achievements" textFill="WHITE">
+                        <CheckBox fx:id="achievementsCheckbox" mnemonicParsing="false" text="%players.player_edit.track_achievements" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -170,21 +170,21 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label layoutX="10.0" layoutY="49.0" text="%players.player_edit.vpin_mania_player" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="49.0" text="%players.player_edit.vpin_mania_player" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
-                              <CheckBox fx:id="vpinManiaPlayerCheckbox" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="vpinManiaPlayerCheckbox" mnemonicParsing="false" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
                               <Label>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="400.0" text="%players.player_edit.if_checked_a_copy_of_this_player_will" wrapText="true" />
@@ -192,7 +192,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" text="%players.player_edit.vpin_mania_name" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text="%players.player_edit.vpin_mania_name" styleClass="c-text-white" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -206,7 +206,7 @@
                               </TextField>
                               <Label>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="400.0" text="%players.player_edit.this_is_the_public_name_that_will_be" wrapText="true" />
@@ -214,21 +214,21 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" text="%players.player_edit.visibility" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="15.0" text="%players.player_edit.visibility" styleClass="c-text-white" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <HBox alignment="CENTER_LEFT" layoutX="160.0" layoutY="10.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="%mania.account_row_panel.public_player" textFill="WHITE">
+                              <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="%mania.account_row_panel.public_player" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
                               <Label>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="400.0" text="%players.player_edit.if_checked_the_highscores_of_the_player_are" wrapText="true" />
@@ -253,32 +253,32 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label layoutX="10.0" layoutY="189.0" text="%players.player_edit.avatar" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="189.0" text="%players.player_edit.avatar" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button mnemonicParsing="false" onAction="#onFileSelect" text="%players.player_edit.select_image" textFill="WHITE" GridPane.columnIndex="1">
+                  <Button mnemonicParsing="false" onAction="#onFileSelect" text="%players.player_edit.select_image" styleClass="c-text-white" GridPane.columnIndex="1">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                      </graphic>
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Label text="%players.player_edit.avatar_preview" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label text="%players.player_edit.avatar_preview" styleClass="c-text-white" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                   <HBox alignment="BASELINE_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <Button layoutX="360.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%cards.template_editor_background.reset" textFill="WHITE">
+                        <Button layoutX="360.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%cards.template_editor_background.reset" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-undo" iconSize="18" />
                            </graphic>
                         </Button>
                      </children>
@@ -301,7 +301,7 @@
                               </BorderPane>
                               <BorderPane>
                                  <center>
-                                    <Label fx:id="initialsOverlayLabel" style="-fx-text-fill: #000000;" text="???" BorderPane.alignment="CENTER">
+                                    <Label fx:id="initialsOverlayLabel" style="-fx-text-fill: -c-black;" text="???" BorderPane.alignment="CENTER">
                                        <font>
                                           <Font size="48.0" />
                                        </font>

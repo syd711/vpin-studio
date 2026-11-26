@@ -19,9 +19,9 @@
    <center>
       <StackPane fx:id="loaderStack" styleClass="subpanel" stylesheets="@../stylesheet.css">
           <children>
-            <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+            <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                <children>
-                      <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;">
+                      <TableView fx:id="tableView" style="-fx-background-color: -c-tile;">
                           <columns>
                               <TableColumn fx:id="iconColumn" minWidth="0.0" prefWidth="90.39989471435547" sortable="false" style="-fx-alignment: CENTER;" />
                               <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />
@@ -51,12 +51,12 @@
    <top>
           <ToolBar fx:id="toolbar" BorderPane.alignment="CENTER">
               <items>
-                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                       <font>
                           <Font size="14.0" />
                       </font>
                       <graphic>
-                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                       </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
@@ -67,12 +67,12 @@
                                   <Font size="14.0" />
                               </font>
                           </TextField>
-                          <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                          <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white">
                               <font>
                                   <Font size="14.0" />
                               </font>
                               <graphic>
-                                  <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                                  <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                               </graphic>
                           </Button>
                       </children>
@@ -80,56 +80,56 @@
                   <Separator layoutX="571.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="220.0" />
                   <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="restoreBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" textFill="WHITE">
+                  <Button fx:id="restoreBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" styleClass="c-text-white">
                       <font>
                           <Font size="14.0" />
                       </font>
                       <graphic>
-                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-restore-outline" iconSize="18" />
+                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-file-restore-outline" iconSize="18" />
                       </graphic>
                       <tooltip>
                           <Tooltip text="%backups.backups.restores_the_tables_from_the_selected_archives" />
                       </tooltip>
                   </Button>
                   <Separator layoutX="637.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="addArchiveBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onArchiveAdd" text="%backups.backup_upload.upload" textFill="WHITE">
+                  <Button fx:id="addArchiveBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onArchiveAdd" text="%backups.backup_upload.upload" styleClass="c-text-white">
                       <font>
                           <Font size="14.0" />
                       </font>
                       <graphic>
-                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                       </graphic>
                       <tooltip>
                           <Tooltip text="%backups.backups.uploads_an_archive_bundle_so_it_can_be" />
                       </tooltip>
                   </Button>
-                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="%backups.backup_download.download" textFill="WHITE">
+                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="%backups.backup_download.download" styleClass="c-text-white">
                       <font>
                           <Font size="14.0" />
                       </font>
                       <graphic>
-                          <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-download" iconSize="18" />
                       </graphic>
                       <tooltip>
                           <Tooltip text="%backups.backups.creates_a_zip_bundle_from_the_selected_archives" />
                       </tooltip>
                   </Button>
                   <Separator layoutX="1022.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackupDelete" text="%backups.backups.delete" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackupDelete" text="%backups.backups.delete" styleClass="c-text-danger">
                       <font>
                           <Font size="14.0" />
                       </font>
                       <graphic>
-                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                          <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                       </graphic>
                   </Button>
                   <Separator fx:id="endSeparator" layoutX="806.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%backups.backups.open" textFill="WHITE">
+                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component, c-text-white" text="%backups.backups.open">
                       <font>
                           <Font size="14.0" />
                       </font>
                       <graphic>
-                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="18" />
                       </graphic>
                       <tooltip>
                           <Tooltip text="%backups.backups.open_backups_folder" />
@@ -141,7 +141,7 @@
    <bottom>
       <BorderPane BorderPane.alignment="CENTER">
          <right>
-            <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="CENTER">
+            <Label fx:id="labelCount" styleClass="c-text-white" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets top="3.0" />
                </BorderPane.margin>

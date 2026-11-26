@@ -31,7 +31,7 @@
                      <children>
                         <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                            <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                            </children>
                         </StackPane>
                         <VBox spacing="2.0" HBox.hgrow="ALWAYS">
@@ -44,7 +44,7 @@
                            <children>
                               <Button mnemonicParsing="false" onAction="#onDismiss" styleClass="sm-alert-close">
                                  <graphic>
-                                    <FontIcon iconColor="#E6C3C5" iconLiteral="mdi2c-close" iconSize="16" />
+                                    <FontIcon styleClass="c-icon-error-text" iconLiteral="mdi2c-close" iconSize="16" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%backglass.directb2s_admin.dismiss" />
@@ -64,7 +64,7 @@
             </VBox>
               <VBox fx:id="dataBox">
                   <children>
-                  <Label text="%tables.tables_sidebar_altsound.alt_sound_data" textFill="WHITE">
+                  <Label text="%tables.tables_sidebar_altsound.alt_sound_data" styleClass="c-text-white">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -86,62 +86,62 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label fx:id="lastModifiedLabel" layoutX="175.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <Label fx:id="lastModifiedLabel" layoutX="175.0" layoutY="76.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="%tables.tables_sidebar_altsound.csv_entries" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label text="%tables.tables_sidebar_altsound.csv_entries" styleClass="c-text-white" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="%tables.tables_sidebar_altsound.audio_files" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="15.0" text="%tables.tables_sidebar_altsound.audio_files" styleClass="c-text-white" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_altsound.bundle_size_unpacked" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_altsound.bundle_size_unpacked" styleClass="c-text-white" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="entriesLabel" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label fx:id="entriesLabel" layoutX="10.0" layoutY="15.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="filesLabel" layoutX="175.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <Label fx:id="filesLabel" layoutX="175.0" layoutY="15.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="bundleSizeLabel" layoutX="175.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <Label fx:id="bundleSizeLabel" layoutX="175.0" layoutY="45.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="%backups.backups_sidebar.last_modified" textFill="WHITE" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="45.0" text="%backups.backups_sidebar.last_modified" styleClass="c-text-white" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_altsound.format" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_altsound.format" styleClass="c-text-white" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="formatLabel" layoutX="175.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="formatLabel" layoutX="175.0" layoutY="45.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="%backglass.directb2s_sidebar.name" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="45.0" text="%backglass.directb2s_sidebar.name" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="nameLabel" layoutX="175.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label fx:id="nameLabel" layoutX="175.0" layoutY="45.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -158,7 +158,7 @@
               </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label text="%tables.tables_sidebar_altsound.no_alt_sounds_found" textFill="WHITE">
+                  <Label text="%tables.tables_sidebar_altsound.no_alt_sounds_found" styleClass="c-text-white">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -181,20 +181,20 @@
          <children>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                  <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" textFill="WHITE">
+                  <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button fx:id="rom2AltSoundBtn" mnemonicParsing="false" onAction="#onRom2AltSound" text="%tables.tables_sidebar_altsound.create_from_rom" textFill="WHITE">
+                  <Button fx:id="rom2AltSoundBtn" mnemonicParsing="false" onAction="#onRom2AltSound" text="%tables.tables_sidebar_altsound.create_from_rom" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-music-box-multiple-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-music-box-multiple-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%tables.tables_sidebar_altsound.create_from_rom_tooltip" />
@@ -206,35 +206,35 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                      </graphic>
                   </Button>
               </items>
             </ToolBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
                <items>
-                <Button fx:id="altSoundBtn" mnemonicParsing="false" onAction="#onAltSoundEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
+                <Button fx:id="altSoundBtn" mnemonicParsing="false" onAction="#onAltSoundEdit" text="%competitions.competitions_discord.edit" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button fx:id="restoreBtn" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" textFill="WHITE">
+                  <Button fx:id="restoreBtn" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-undo" iconSize="18" />
                      </graphic>
                   </Button>
                </items>

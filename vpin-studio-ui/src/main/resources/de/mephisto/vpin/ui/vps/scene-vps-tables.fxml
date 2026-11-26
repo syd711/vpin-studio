@@ -23,10 +23,10 @@
             <Insets bottom="6.0" />
          </BorderPane.margin>
          <children>
-            <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+            <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                <children>
 
-                  <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
+                  <TableView fx:id="tableView" style="-fx-background-color: -c-tile;" BorderPane.alignment="CENTER">
                      <columns>
                         <TableColumn fx:id="installedColumn" style="-fx-alignment: BASELINE_CENTER;" text="%vps.vps_tables.installed" />
                         <TableColumn fx:id="commentColumn" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.tables_overview.comment" />
@@ -54,7 +54,7 @@
    <top>
       <ToolBar BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+            <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -62,15 +62,15 @@
                   <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
                </tooltip>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="%vps.vps_tables.reload_all_vps_data" />
@@ -84,12 +84,12 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                        <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                      </graphic>
                   </Button>
                </children>
@@ -97,20 +97,20 @@
             <Separator layoutX="229.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
 
             <ComboBox fx:id="emulatorCombo" prefWidth="150.0" />
-            <Button fx:id="tableDataBtn" layoutX="245.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
+            <Button fx:id="tableDataBtn" layoutX="245.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableEdit" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
                </tooltip>
             </Button>
-            <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+            <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="c-text-white">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-edit" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />
@@ -120,9 +120,9 @@
                </tooltip>
             </Button>
             <Separator layoutX="333.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component" text="%vps.vps_tables.open_table" textFill="WHITE">
+            <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component, c-text-white" text="%vps.vps_tables.open_table">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />
                </graphic>
                <font>
                   <Font size="14.0" />

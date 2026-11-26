@@ -1,16 +1,16 @@
 /* spinners: same dark box, transparent editor, muted arrows */
 .spinner {
     -fx-font-size: 14px;
-    -fx-background-color: #161616;
+    -fx-background-color: -c-inset;
     -fx-background-insets: 0;
     -fx-background-radius: 4;
-    -fx-border-color: #444444;
+    -fx-border-color: -c-border;
     -fx-border-radius: 4;
 }
 
 .spinner:focused,
 .spinner:contains-focus {
-    -fx-border-color: #7A7A7A;
+    -fx-border-color: -c-disabled;
 }
 
 .spinner:disabled {
@@ -32,15 +32,15 @@
 
 .spinner > .increment-arrow-button:hover,
 .spinner > .decrement-arrow-button:hover {
-    -fx-background-color: #333333;
+    -fx-background-color: -c-control;
 }
 
 .spinner > .increment-arrow-button > .increment-arrow,
 .spinner > .decrement-arrow-button > .decrement-arrow {
-    -fx-background-color: #BDBDBD;
+    -fx-background-color: -c-muted;
 }
 
 .spinner > .increment-arrow-button:hover > .increment-arrow,
 .spinner > .decrement-arrow-button:hover > .decrement-arrow {
-    -fx-background-color: white;
+    -fx-background-color: -c-white;
 }

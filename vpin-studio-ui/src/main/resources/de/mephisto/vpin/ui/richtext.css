@@ -1,43 +1,43 @@
 .keyword {
-    -fx-fill: purple;
+    -fx-fill: -c-syntax-keyword;
     -fx-font-weight: bold;
 }
 .semicolon {
     -fx-font-weight: bold;
 }
 .paren {
-    -fx-fill: firebrick;
+    -fx-fill: -c-syntax-paren;
     -fx-font-weight: bold;
 }
 .bracket {
-    -fx-fill: darkgreen;
+    -fx-fill: -c-syntax-bracket;
     -fx-font-weight: bold;
 }
 .brace {
-    -fx-fill: teal;
+    -fx-fill: -c-teal;
     -fx-font-weight: bold;
 }
 .string {
-    -fx-fill: blue;
+    -fx-fill: -c-syntax-string;
 }
 
 .comment {
-	-fx-fill: darkgreen;
+	-fx-fill: -c-syntax-bracket;
 }
 
 .paragraph-box:has-caret {
-    -fx-background-color: #e2e9ec;
+    -fx-background-color: -c-editor-caret-line;
 }
 
 .styled-text-area {
     /* set the entire area's font size to the given size */
     -fx-font-size: 14;
-    -fx-font-color: #C7C3C3;
-    -fx-fill: #C7C3C3;
+    -fx-font-color: -c-warm-gray-light;
+    -fx-fill: -c-warm-gray-light;
 }
 
 .styled-text-area .text {
-    -rtfx-background-color: #FFF8F8;
+    -rtfx-background-color: -c-warm-white;
 }
 
 ParagraphText {

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
@@ -109,7 +110,7 @@ public class AchievementsPreferencesController implements Initializable {
           if (status != null && status.detail != null
               && (VpxPluginStatus.BUSY.equals(status.state) || VpxPluginStatus.FAILED.equals(status.state))) {
             liveStatusLabel.setText(status.detail);
-            liveStatusLabel.setStyle("-fx-text-fill: #FF9800;");
+            liveStatusLabel.setStyle("-fx-text-fill: " + ThemeColors.AMBER + ";");
           }
         })
         .onErrorLater(e -> {
@@ -199,8 +200,8 @@ public class AchievementsPreferencesController implements Initializable {
       text += System.lineSeparator() + status.detail;
     }
     liveStatusLabel.setText(text);
-    liveStatusLabel.setStyle("-fx-text-fill: " + (VpxPluginStatus.READY.equals(state) ? "#5CC46A"
-        : VpxPluginStatus.DISABLED.equals(state) ? "#BDBDBD" : "#FF9800") + ";");
+    liveStatusLabel.setStyle("-fx-text-fill: " + (VpxPluginStatus.READY.equals(state) ? ThemeColors.OK
+        : VpxPluginStatus.DISABLED.equals(state) ? ThemeColors.MUTED : ThemeColors.AMBER) + ";");
   }
 
   /**
@@ -234,7 +235,7 @@ public class AchievementsPreferencesController implements Initializable {
             HBox row = new HBox(12);
             row.setAlignment(Pos.CENTER_LEFT);
             CheckBox tracked = new CheckBox(p.getName() + (p.getInitials() != null ? " (" + p.getInitials() + ")" : ""));
-            tracked.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+            tracked.setStyle("-fx-text-fill: " + ThemeColors.WHITE + "; -fx-font-size: 14px;");
             tracked.setMinWidth(260);
             tracked.setSelected(p.isAchievementsEnabled());
             tracked.selectedProperty().addListener((obs, o, n) -> {
@@ -248,7 +249,7 @@ public class AchievementsPreferencesController implements Initializable {
             });
             boolean linked = data.linkedPlayerIds().contains(p.getId());
             Label mania = new Label(linked ? Messages.get("pref.achievements.linked") : Messages.get("pref.achievements.not_linked"));
-            mania.setStyle("-fx-text-fill: " + (linked ? "#5CC46A" : "#BDBDBD") + "; -fx-font-size: 13px;");
+            mania.setStyle("-fx-text-fill: " + (linked ? ThemeColors.OK : ThemeColors.MUTED) + "; -fx-font-size: 13px;");
             row.getChildren().addAll(tracked, mania);
             playersBox.getChildren().add(row);
           }

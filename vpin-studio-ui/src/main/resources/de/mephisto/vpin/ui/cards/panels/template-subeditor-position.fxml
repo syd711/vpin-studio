@@ -16,7 +16,7 @@
          <children>
             <VBox>
                <children>
-                  <Label text="%cards.template_editor_wheel.position_x" textFill="WHITE">
+                  <Label text="%cards.template_editor_wheel.position_x" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -26,7 +26,7 @@
             </VBox>
             <VBox>
                <children>
-                  <Label text="%cards.template_editor_wheel.position_y" textFill="WHITE">
+                  <Label text="%cards.template_editor_wheel.position_y" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -40,7 +40,7 @@
          <children>
             <VBox>
                <children>
-                  <Label text="%cards.template_subeditor_position.width" textFill="WHITE">
+                  <Label text="%cards.template_subeditor_position.width" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -50,7 +50,7 @@
             </VBox>
             <VBox layoutX="10.0" layoutY="10.0">
                <children>
-                  <Label text="%cards.template_subeditor_position.height" textFill="WHITE">
+                  <Label text="%cards.template_subeditor_position.height" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -65,7 +65,7 @@
       </HBox>
       <HBox fx:id="alignBox" spacing="3.0">
          <children>
-            <ToggleButton fx:id="alignLeftButton" mnemonicParsing="false"  textFill="WHITE">
+            <ToggleButton fx:id="alignLeftButton" mnemonicParsing="false"  styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -73,10 +73,10 @@
                   <Tooltip text="%cards.template_subeditor_position.align_content_on_left" />
                </tooltip>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-left" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi-format-horizontal-align-left" iconSize="18" />
                </graphic>
             </ToggleButton>
-            <ToggleButton fx:id="alignCenterButton" mnemonicParsing="false"  textFill="WHITE">
+            <ToggleButton fx:id="alignCenterButton" mnemonicParsing="false"  styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -84,10 +84,10 @@
                   <Tooltip text="%cards.template_subeditor_position.center_content_horizontally" />
                </tooltip>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-center" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi-format-horizontal-align-center" iconSize="18" />
                </graphic>
             </ToggleButton>
-            <ToggleButton fx:id="alignRightButton" mnemonicParsing="false"  textFill="WHITE">
+            <ToggleButton fx:id="alignRightButton" mnemonicParsing="false"  styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -95,11 +95,11 @@
                   <Tooltip text="%cards.template_subeditor_position.align_content_on_right" />
                </tooltip>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-right" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi-format-horizontal-align-right" iconSize="18" />
                </graphic>
             </ToggleButton>
 
-            <ToggleButton fx:id="alignTopButton" mnemonicParsing="false"  textFill="WHITE">
+            <ToggleButton fx:id="alignTopButton" mnemonicParsing="false"  styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -107,13 +107,13 @@
                   <Tooltip text="%cards.template_subeditor_position.align_content_on_top" />
                </tooltip>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-top" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi-format-vertical-align-top" iconSize="18" />
                </graphic>
                <HBox.margin>
                   <Insets left="6.0" />
                </HBox.margin>
             </ToggleButton>
-            <ToggleButton fx:id="alignMiddleButton" mnemonicParsing="false"  textFill="WHITE">
+            <ToggleButton fx:id="alignMiddleButton" mnemonicParsing="false"  styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -121,10 +121,10 @@
                   <Tooltip text="%cards.template_subeditor_position.center_content_vertically" />
                </tooltip>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-center" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi-format-vertical-align-center" iconSize="18" />
                </graphic>
             </ToggleButton>
-            <ToggleButton fx:id="alignBottomButton" mnemonicParsing="false"  textFill="WHITE">
+            <ToggleButton fx:id="alignBottomButton" mnemonicParsing="false"  styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -132,7 +132,7 @@
                   <Tooltip text="%cards.template_subeditor_position.align_content_on_bottom" />
                </tooltip>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-bottom" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi-format-vertical-align-bottom" iconSize="18" />
                </graphic>
             </ToggleButton>
          </children>

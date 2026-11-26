@@ -1,16 +1,16 @@
 /* radio buttons: dark round box with border, white dot */
 .radio-button > .radio {
-    -fx-background-color: #161616;
+    -fx-background-color: -c-inset;
     -fx-background-insets: 0;
     -fx-background-radius: 1em;
-    -fx-border-color: #444444;
+    -fx-border-color: -c-border;
     -fx-border-radius: 1em;
     -fx-padding: 5;
 }
 
 .radio-button:hover > .radio,
 .radio-button:focused > .radio {
-    -fx-border-color: #7A7A7A;
+    -fx-border-color: -c-disabled;
 }
 
 .radio-button > .radio > .dot {
@@ -21,7 +21,7 @@
 }
 
 .radio-button:selected > .radio > .dot {
-    -fx-background-color: white;
+    -fx-background-color: -c-white;
 }
 
 .radio-button:disabled {

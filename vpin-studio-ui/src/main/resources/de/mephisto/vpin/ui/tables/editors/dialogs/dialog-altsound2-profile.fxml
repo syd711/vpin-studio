@@ -61,12 +61,12 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <CheckBox fx:id="musicCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="musicCheckbox" disable="true" mnemonicParsing="false" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="%tables.editors.altsound2_profile.music" textFill="WHITE">
+                              <Label text="%tables.editors.altsound2_profile.music" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -74,12 +74,12 @@
                                     <Insets right="6.0" />
                                  </padding>
                               </Label>
-                              <Label textFill="WHITE">
+                              <Label styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="400.0" text="%tables.editors.altsound2_profile.the_background_music_only_one_can_play_at" />
@@ -87,7 +87,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label fx:id="musicLabel" disable="true" layoutX="85.0" layoutY="15.0" text="-" textFill="WHITE">
+                        <Label fx:id="musicLabel" disable="true" layoutX="85.0" layoutY="15.0" text="-" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="36.0" />
                            </font>
@@ -117,12 +117,12 @@
                               <Insets right="12.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <CheckBox fx:id="calloutCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="calloutCheckbox" disable="true" mnemonicParsing="false" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="%tables.editors.altsound2_profile.callout" textFill="WHITE">
+                              <Label text="%tables.editors.altsound2_profile.callout" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -130,12 +130,12 @@
                                     <Insets right="6.0" />
                                  </padding>
                               </Label>
-                              <Label textFill="WHITE">
+                              <Label styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="400.0" text="%tables.editors.altsound2_profile.voice_interludes_and_callouts_only_one_can_play" />
@@ -143,7 +143,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label fx:id="calloutLabel" disable="true" layoutX="85.0" layoutY="15.0" text="-" textFill="WHITE">
+                        <Label fx:id="calloutLabel" disable="true" layoutX="85.0" layoutY="15.0" text="-" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="36.0" />
                            </font>
@@ -173,12 +173,12 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <CheckBox fx:id="sfxCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="sfxCheckbox" disable="true" mnemonicParsing="false" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="%tables.editors.altsound2_profile.sfx" textFill="WHITE">
+                              <Label text="%tables.editors.altsound2_profile.sfx" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -186,12 +186,12 @@
                                     <Insets right="6.0" />
                                  </padding>
                               </Label>
-                              <Label textFill="WHITE">
+                              <Label styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="400.0" text="%tables.editors.altsound2_profile.short_sounds_to_supplement_table_sounds_multiple_can" />
@@ -199,7 +199,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label fx:id="sfxLabel" disable="true" layoutX="85.0" layoutY="15.0" text="-" textFill="WHITE">
+                        <Label fx:id="sfxLabel" disable="true" layoutX="85.0" layoutY="15.0" text="-" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="36.0" />
                            </font>
@@ -229,12 +229,12 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <CheckBox fx:id="soloCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="soloCheckbox" disable="true" mnemonicParsing="false" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="%tables.editors.altsound2_profile.solo" textFill="WHITE">
+                              <Label text="%tables.editors.altsound2_profile.solo" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -242,12 +242,12 @@
                                     <Insets right="6.0" />
                                  </padding>
                               </Label>
-                              <Label textFill="WHITE">
+                              <Label styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%tables.editors.altsound2_profile.sound_played_at_end_of_ball_game_or" />
@@ -255,7 +255,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label fx:id="soloLabel" disable="true" layoutX="85.0" layoutY="15.0" text="-" textFill="WHITE">
+                        <Label fx:id="soloLabel" disable="true" layoutX="85.0" layoutY="15.0" text="-" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="36.0" />
                            </font>
@@ -285,12 +285,12 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <CheckBox fx:id="overlayCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="overlayCheckbox" disable="true" mnemonicParsing="false" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="%tables.editors.altsound2_profile.overlay" textFill="WHITE">
+                              <Label text="%tables.editors.altsound2_profile.overlay" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -298,12 +298,12 @@
                                     <Insets right="6.0" />
                                  </padding>
                               </Label>
-                              <Label textFill="WHITE">
+                              <Label styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="400.0" text="%tables.editors.altsound2_profile.sounds_played_over_music_sfx_only_one_can" />
@@ -311,7 +311,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label fx:id="overlayLabel" disable="true" layoutX="85.0" layoutY="15.0" text="-" textFill="WHITE">
+                        <Label fx:id="overlayLabel" disable="true" layoutX="85.0" layoutY="15.0" text="-" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="36.0" />
                            </font>
@@ -346,16 +346,16 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%tables.editors.altsound2_profile.profile_s_sample_type" textFill="WHITE" />
+                        <Label styleClass="default-text, c-text-white" text="%tables.editors.altsound2_profile.profile_s_sample_type" />
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                            <children>
                               <ComboBox fx:id="sampleCombo" prefWidth="150.0" />
-                              <Label textFill="WHITE">
+                              <Label styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%tables.editors.altsound2_profile.solo_and_music_types_cannot_duck_other_types" />

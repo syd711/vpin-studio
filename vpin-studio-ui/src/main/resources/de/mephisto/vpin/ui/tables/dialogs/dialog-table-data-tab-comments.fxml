@@ -14,7 +14,7 @@
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label styleClass="default-title" text="%tables.table_data_tab_comments.comments" textFill="WHITE">
+            <Label styleClass="default-title, c-text-white" text="%tables.table_data_tab_comments.comments">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -33,32 +33,32 @@
                         <Insets />
                      </HBox.margin>
                      <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                      </graphic>
                   </Button>
                </children>
             </HBox>
-            <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%tables.table_data_tab_comments.tipp" textFill="WHITE">
+            <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description, c-text-white" text="%tables.table_data_tab_comments.tipp">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label fx:id="useTodoLabel" layoutX="10.0" layoutY="243.0" styleClass="preference-description" text="%tables.table_data_tab_comments.use_todo_to_mark_a_note_as_a" textFill="WHITE">
+            <Label fx:id="useTodoLabel" layoutX="10.0" layoutY="243.0" styleClass="preference-description, c-text-white" text="%tables.table_data_tab_comments.use_todo_to_mark_a_note_as_a">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label fx:id="useErrorLabel" layoutX="10.0" layoutY="264.0" styleClass="preference-description" text="%tables.table_data_tab_comments.use_error_to_mark_a_note_as_an" textFill="WHITE">
+            <Label fx:id="useErrorLabel" layoutX="10.0" layoutY="264.0" styleClass="preference-description, c-text-white" text="%tables.table_data_tab_comments.use_error_to_mark_a_note_as_an">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label fx:id="useOutdatedLabel" layoutX="10.0" layoutY="264.0" styleClass="preference-description" text="%tables.table_data_tab_comments.use_outdated_to_mark_table_as_outdated" textFill="WHITE">
+            <Label fx:id="useOutdatedLabel" layoutX="10.0" layoutY="264.0" styleClass="preference-description, c-text-white" text="%tables.table_data_tab_comments.use_outdated_to_mark_table_as_outdated">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label layoutX="22.0" layoutY="22.0" styleClass="default-title" text="%tables.autofill_settings.tags" textFill="WHITE">
+            <Label layoutX="22.0" layoutY="22.0" styleClass="default-title, c-text-white" text="%tables.autofill_settings.tags">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -81,7 +81,7 @@
                               <Insets top="6.0" />
                            </HBox.margin>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                            </graphic>
                         </Button>
                      </children>

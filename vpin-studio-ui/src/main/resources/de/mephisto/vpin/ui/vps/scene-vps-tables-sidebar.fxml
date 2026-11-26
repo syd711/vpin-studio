@@ -30,7 +30,7 @@
                            <content>
                               <VBox fx:id="detailsBox">
                                  <children>
-                                    <Label fx:id="nameLabel" styleClass="default-title" text="%backups.backups.name" textFill="WHITE">
+                                    <Label fx:id="nameLabel" styleClass="default-title, c-text-white" text="%backups.backups.name">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -60,63 +60,63 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="70.0" valignment="TOP" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                                <Label layoutX="10.0" layoutY="15.0" text="%tables.tables_sidebar_vps.ipdb_url" textFill="WHITE">
+                                                <Label layoutX="10.0" layoutY="15.0" text="%tables.tables_sidebar_vps.ipdb_url" styleClass="c-text-white">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="49.0" text="%backups.backups_sidebar.manufacturer" textFill="WHITE" GridPane.rowIndex="1">
+                                                <Label layoutX="10.0" layoutY="49.0" text="%backups.backups_sidebar.manufacturer" styleClass="c-text-white" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="116.0" text="%tables.tables_sidebar_vps.players" textFill="WHITE" GridPane.rowIndex="5">
+                                                <Label layoutX="10.0" layoutY="116.0" text="%tables.tables_sidebar_vps.players" styleClass="c-text-white" GridPane.rowIndex="5">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="150.0" text="%tables.tables_sidebar_vps.updated" textFill="WHITE" GridPane.rowIndex="6">
+                                                <Label layoutX="10.0" layoutY="150.0" text="%tables.tables_sidebar_vps.updated" styleClass="c-text-white" GridPane.rowIndex="6">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="116.0" text="%tables.tables_sidebar_vps.year" textFill="WHITE" GridPane.rowIndex="3">
+                                                <Label layoutX="10.0" layoutY="116.0" text="%tables.tables_sidebar_vps.year" styleClass="c-text-white" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="manufacturer" layoutX="139.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                <Label fx:id="manufacturer" layoutX="139.0" layoutY="15.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="year" layoutX="139.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                <Label fx:id="year" layoutX="139.0" layoutY="116.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="players" layoutX="139.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                                <Label fx:id="players" layoutX="139.0" layoutY="150.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="updated" layoutX="139.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                                <Label fx:id="updated" layoutX="139.0" layoutY="184.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
                                                 <Hyperlink fx:id="ipdbLink" onAction="#onIpdbLink" text="-" GridPane.columnIndex="1" />
-                                                <Label layoutX="10.0" layoutY="49.0" text="%tables.tables_sidebar_altcolor.type" textFill="WHITE" GridPane.rowIndex="2">
+                                                <Label layoutX="10.0" layoutY="49.0" text="%tables.tables_sidebar_altcolor.type" styleClass="c-text-white" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="116.0" text="%vps.vps_tables_sidebar.theme" textFill="WHITE" GridPane.rowIndex="4">
+                                                <Label layoutX="10.0" layoutY="116.0" text="%vps.vps_tables_sidebar.theme" styleClass="c-text-white" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="184.0" text="%vps.vps_tables_sidebar.features" textFill="WHITE" GridPane.rowIndex="7">
+                                                <Label layoutX="10.0" layoutY="184.0" text="%vps.vps_tables_sidebar.features" styleClass="c-text-white" GridPane.rowIndex="7">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -124,12 +124,12 @@
                                                       <Insets top="3.0" />
                                                    </GridPane.margin>
                                                 </Label>
-                                                <Label fx:id="typeLabel" layoutX="110.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                <Label fx:id="typeLabel" layoutX="110.0" layoutY="116.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="theme" layoutX="110.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                <Label fx:id="theme" layoutX="110.0" layoutY="83.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -143,8 +143,8 @@
                                           </GridPane>
                                           <VBox>
                                              <children>
-                                                <Label fx:id="nameLabel1" styleClass="default-headline"
-                                                       text="%vps.vps_tables_sidebar.personal_comment" textFill="WHITE">
+                                                <Label fx:id="nameLabel1" styleClass="default-headline, c-text-white"
+                                                       text="%vps.vps_tables_sidebar.personal_comment">
                                                    <font>
                                                       <Font size="14.0"/>
                                                    </font>
@@ -187,7 +187,7 @@
                               <Font size="10.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%vps.vps_tables_sidebar.open_table_on_https_virtual_pinball_spreadsheet_web" />

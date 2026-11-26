@@ -24,14 +24,14 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-title, c-text-white" text="%pref.backglass.3rd_party_preferences" wrapText="true" />
                   <Label styleClass="preference-subtitle" text="%pref.dof.direct_output_framework" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.dof.settings_for_the_direct_output_framework_dof_and" textFill="WHITE" wrapText="true" />
-                  <Label styleClass="preference-description" text="%pref.dof.for_more_information_visit" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description, c-text-white" text="%pref.dof.settings_for_the_direct_output_framework_dof_and" wrapText="true" />
+                  <Label styleClass="preference-description, c-text-white" text="%pref.dof.for_more_information_visit" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -40,12 +40,12 @@
                      <VBox.margin>
                         <Insets left="-5.0" />
                      </VBox.margin></Hyperlink>
-                  <Label layoutX="34.0" layoutY="198.0" styleClass="preference-subtitle" text="%pref.dof.dof_installation" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="198.0" styleClass="preference-subtitle, c-text-white" text="%pref.dof.dof_installation" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="381.0" styleClass="preference-description" text="%pref.dof.select_the_folder_of_your_dof_installation" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="381.0" styleClass="preference-description, c-text-white" text="%pref.dof.select_the_folder_of_your_dof_installation" wrapText="true" />
                   <GridPane hgap="6.0" layoutX="34.0" layoutY="339.0" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" />
@@ -73,7 +73,7 @@
                         <Label styleClass="default-text" text="%backups.backup_source_folder.folder" wrapText="true" />
                         <Label styleClass="sm-field-error" fx:id="dofFolderErrorLabel" text="%pref.dof.invalid_folder_no_directoutput_dll_or_directoutputcomobject_" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <graphic>
-                              <FontIcon iconColor="#FF6B70" iconLiteral="mdi2a-alert-circle-outline" iconSize="16" />
+                              <FontIcon styleClass="c-icon-error" iconLiteral="mdi2a-alert-circle-outline" iconSize="16" />
                            </graphic>
                            <font>
                               <Font size="14.0" />
@@ -87,12 +87,12 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="126.0" styleClass="preference-subtitle" text="%pref.dof.account_settings" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="126.0" styleClass="preference-subtitle, c-text-white" text="%pref.dof.account_settings" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.dof.you_find_the_api_key_under_the_my" textFill="WHITE" wrapText="true">
+                  <Label styleClass="preference-description, c-text-white" text="%pref.dof.you_find_the_api_key_under_the_my" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -112,12 +112,12 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="%competitions.competitions_discord.synchronize" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="%competitions.competitions_discord.synchronize" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-download" iconSize="18" />
                            </graphic>
                         </Button>
                         <Label styleClass="default-text" text="%pref.dof.api_key" wrapText="true" />
@@ -126,12 +126,12 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="506.0" styleClass="preference-subtitle" text="%pref.dof.synchronization_settings" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="506.0" styleClass="preference-subtitle, c-text-white" text="%pref.dof.synchronization_settings" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="544.0" styleClass="preference-description" text="%pref.dof.let_the_vpin_server_synchronize_the_latest_dof" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="544.0" styleClass="preference-description, c-text-white" text="%pref.dof.let_the_vpin_server_synchronize_the_latest_dof" wrapText="true" />
                   <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" />
@@ -144,7 +144,7 @@
                     </rowConstraints>
                      <children>
                         <Label styleClass="default-text" text="%pref.dof.synchronization" wrapText="true" />
-                        <CheckBox fx:id="syncCheckbox" mnemonicParsing="false" text="%pref.dof.enable_dof_synchronization" textFill="WHITE" GridPane.columnIndex="1">
+                        <CheckBox fx:id="syncCheckbox" mnemonicParsing="false" text="%pref.dof.enable_dof_synchronization" styleClass="c-text-white" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

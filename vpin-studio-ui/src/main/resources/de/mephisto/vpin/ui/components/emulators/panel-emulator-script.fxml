@@ -22,7 +22,7 @@
             <ListView fx:id="keywordList" styleClass="sm-keyword-list" VBox.vgrow="ALWAYS" />
             <Button fx:id="insertBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onInsert" styleClass="sm-button" text="%components.emulators.emulator_script.insert">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-paste" iconSize="16" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-paste" iconSize="16" />
                </graphic>
                <tooltip>
                   <Tooltip text="%components.emulators.insert_placeholder" />

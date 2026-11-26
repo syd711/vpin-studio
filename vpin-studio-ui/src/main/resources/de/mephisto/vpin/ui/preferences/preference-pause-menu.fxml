@@ -27,7 +27,7 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.inputs.vpin_studio_frontend_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-title, c-text-white" text="%pref.inputs.vpin_studio_frontend_preferences" wrapText="true" />
                   <HBox alignment="BASELINE_LEFT" spacing="6.0">
                      <VBox.margin>
                         <Insets />
@@ -39,7 +39,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="400.0" text="%pref.pause_menu.attention_if_you_are_using_the_gl_version" wrapText="true" />
@@ -47,7 +47,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="%pref.overlay.this_section_lets_you_configure_the_ui_components" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description, c-text-white" text="%pref.overlay.this_section_lets_you_configure_the_ui_components" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -70,7 +70,7 @@
                      <children>
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <children>
-                              <CheckBox fx:id="pauseMenuCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.show_pause_menu_instead_of_overlay" textFill="WHITE">
+                              <CheckBox fx:id="pauseMenuCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.show_pause_menu_instead_of_overlay">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -78,16 +78,16 @@
                                     <Insets top="3.0" />
                                  </VBox.margin>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="%pref.pause_menu.when_the_overlay_key_is_pressed_for_a" textFill="WHITE" wrapText="true" />
-                              <Label styleClass="checkbox-description" text="%pref.pause_menu.the_pause_menu_will_be_shown_instead_this" textFill="WHITE" wrapText="true" />
+                              <Label styleClass="checkbox-description, c-text-white" text="%pref.pause_menu.when_the_overlay_key_is_pressed_for_a" wrapText="true" />
+                              <Label styleClass="checkbox-description, c-text-white" text="%pref.pause_menu.the_pause_menu_will_be_shown_instead_this" wrapText="true" />
                            </children>
                         </VBox>
-                        <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="%pref.pause_menu.pause_menu_visibility" textFill="WHITE" wrapText="true" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label, c-text-white" text="%pref.pause_menu.pause_menu_visibility" wrapText="true" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="47.0" styleClass="preference-label" text="%pref.pause_menu.pause_menu_screen" textFill="WHITE" wrapText="true">
+                        <Label layoutX="10.0" layoutY="47.0" styleClass="preference-label, c-text-white" text="%pref.pause_menu.pause_menu_screen" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -97,17 +97,17 @@
                               <ComboBox fx:id="screenInfoComboBox" prefWidth="250.0" />
                            </children>
                         </HBox>
-                        <CheckBox fx:id="pauseMenuMuteCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.mute_system_on_pause" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <CheckBox fx:id="pauseMenuMuteCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.mute_system_on_pause" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="9.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.system_volume" textFill="WHITE" wrapText="true" GridPane.rowIndex="3">
+                        <Label layoutX="9.0" layoutY="15.0" styleClass="preference-label, c-text-white" text="%pref.pause_menu.system_volume" wrapText="true" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label" text="%pref.pause_menu.resume_delay" textFill="WHITE" wrapText="true" GridPane.rowIndex="6">
+                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label, c-text-white" text="%pref.pause_menu.resume_delay" wrapText="true" GridPane.rowIndex="6">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -115,17 +115,17 @@
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                            <children>
                               <Spinner fx:id="delaySpinner" />
-                              <Label styleClass="preference-label" text="%components.doftester.dof_toys.ms" textFill="WHITE" wrapText="true">
+                              <Label styleClass="preference-label, c-text-white" text="%components.doftester.dof_toys.ms" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="publicReadAPIHint11" textFill="WHITE" wrapText="true">
+                              <Label fx:id="publicReadAPIHint11" styleClass="c-text-white" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="300.0" text="%pref.pause_menu.the_amount_of_milliseconds_to_wait_after_exiting" wrapText="true" />
@@ -137,17 +137,17 @@
                            <children>
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
-                                    <CheckBox fx:id="apronCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.show_pause_menu_in_apron_mode" textFill="WHITE">
+                                    <CheckBox fx:id="apronCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.show_pause_menu_in_apron_mode">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <Label fx:id="publicReadAPIHint1112" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="publicReadAPIHint1112" styleClass="c-text-white" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%pref.pause_menu.the_navigation_bar_is_not_shown_but_you" wrapText="true" />
@@ -157,24 +157,24 @@
                               </HBox>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="220.0" styleClass="preference-label" text="%pref.pause_menu.pause_trigger" textFill="WHITE" wrapText="true" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="220.0" styleClass="preference-label, c-text-white" text="%pref.pause_menu.pause_trigger" wrapText="true" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <children>
-                              <CheckBox fx:id="triggerCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.let_vpin_studio_server_press_p_on_pause" textFill="WHITE">
+                              <CheckBox fx:id="triggerCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.let_vpin_studio_server_press_p_on_pause">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label fx:id="publicReadAPIHint112" textFill="WHITE" wrapText="true">
+                              <Label fx:id="publicReadAPIHint112" styleClass="c-text-white" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="300.0" text="%pref.pause_menu.this_will_give_the_option_to_resume_the" wrapText="true" />
@@ -182,16 +182,16 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label styleClass="preference-label" text="%pref.pause_menu.apron_mode" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
+                        <Label styleClass="preference-label, c-text-white" text="%pref.pause_menu.apron_mode" wrapText="true" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label styleClass="default-text" text="%pref.pause_menu.rotation" textFill="WHITE" wrapText="true" GridPane.rowIndex="1" />
+                        <Label styleClass="default-text, c-text-white" text="%pref.pause_menu.rotation" wrapText="true" GridPane.rowIndex="1" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <ComboBox fx:id="menuRotationComboBox" prefWidth="90.0" />
-                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.pause_menu.degrees" textFill="WHITE" wrapText="true" />
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text, c-text-white" text="%pref.pause_menu.degrees" wrapText="true" />
                            </children>
                         </HBox>
                      </children>
@@ -213,12 +213,12 @@
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin></Label>
-                        <Label styleClass="preference-description" text="%pref.pause_menu.this_section_allows_you_to_adjust_some_visual" textFill="WHITE" wrapText="true">
+                        <Label styleClass="preference-description, c-text-white" text="%pref.pause_menu.this_section_allows_you_to_adjust_some_visual" wrapText="true">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%pref.pause_menu.for_default_16_9_monitors_backglass_or_playfields" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description, c-text-white" text="%pref.pause_menu.for_default_16_9_monitors_backglass_or_playfields" wrapText="true" />
                         <GridPane hgap="6.0" vgap="3.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="130.0" prefWidth="180.0" />
@@ -236,8 +236,8 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label styleClass="default-text" text="%pref.pause_menu.margin_top" textFill="WHITE" wrapText="true" GridPane.rowIndex="2" />
-                              <Label layoutX="10.0" layoutY="48.0" styleClass="default-text" text="%pref.pause_menu.margin_left" textFill="WHITE" wrapText="true" GridPane.rowIndex="3" />
+                              <Label styleClass="default-text, c-text-white" text="%pref.pause_menu.margin_top" wrapText="true" GridPane.rowIndex="2" />
+                              <Label layoutX="10.0" layoutY="48.0" styleClass="default-text, c-text-white" text="%pref.pause_menu.margin_left" wrapText="true" GridPane.rowIndex="3" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <children>
                                     <Spinner fx:id="stageMarginTopSpinner" editable="true" prefWidth="90.0">
@@ -245,7 +245,7 @@
                                           <Insets />
                                        </HBox.margin>
                                     </Spinner>
-                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.pause_menu.pixel" textFill="WHITE" wrapText="true" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text, c-text-white" text="%pref.pause_menu.pixel" wrapText="true" />
                                  </children>
                               </HBox>
                               <HBox alignment="CENTER_LEFT" layoutX="173.0" layoutY="43.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
@@ -255,10 +255,10 @@
                                           <Insets />
                                        </HBox.margin>
                                     </Spinner>
-                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.pause_menu.pixel" textFill="WHITE" wrapText="true" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text, c-text-white" text="%pref.pause_menu.pixel" wrapText="true" />
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.ui_scaling" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label, c-text-white" text="%pref.pause_menu.ui_scaling" wrapText="true" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -266,17 +266,17 @@
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
                                     <Spinner fx:id="scalingSpinner" editable="true" prefWidth="90.0" />
-                                    <Label styleClass="preference-label" text="%pref.pause_menu.0_will_use_the_system_defaults" textFill="WHITE" wrapText="true">
+                                    <Label styleClass="preference-label, c-text-white" text="%pref.pause_menu.0_will_use_the_system_defaults" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="publicReadAPIHint11121" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="publicReadAPIHint11121" styleClass="c-text-white" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%pref.pause_menu.this_settings_allows_to_scale_the_size_of" wrapText="true" />
@@ -284,7 +284,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%pref.pause_menu.visible_item_count" textFill="WHITE" wrapText="true" GridPane.rowIndex="4" />
+                              <Label layoutX="10.0" layoutY="83.0" styleClass="default-text, c-text-white" text="%pref.pause_menu.visible_item_count" wrapText="true" GridPane.rowIndex="4" />
                               <HBox alignment="CENTER_LEFT" layoutX="173.0" layoutY="77.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <children>
                                     <Spinner fx:id="visibleItemsSpinner" editable="true" prefWidth="90.0">
@@ -292,13 +292,13 @@
                                           <Insets />
                                        </HBox.margin>
                                     </Spinner>
-                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.pause_menu.menu_items" textFill="WHITE" wrapText="true" />
-                                    <Label fx:id="publicReadAPIHint111211" textFill="WHITE" wrapText="true">
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text, c-text-white" text="%pref.pause_menu.menu_items" wrapText="true" />
+                                    <Label fx:id="publicReadAPIHint111211" styleClass="c-text-white" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%pref.pause_menu.the_number_of_menu_items_to_show_before" wrapText="true" />
@@ -306,13 +306,13 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label styleClass="default-text" text="%pref.pause_menu.test_table" textFill="WHITE" wrapText="true" GridPane.rowIndex="6" />
+                              <Label styleClass="default-text, c-text-white" text="%pref.pause_menu.test_table" wrapText="true" GridPane.rowIndex="6" />
                               <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="380.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <Label styleClass="default-text" text="%pref.pause_menu.display_for" textFill="WHITE" wrapText="true" GridPane.rowIndex="7" />
+                              <Label styleClass="default-text, c-text-white" text="%pref.pause_menu.display_for" wrapText="true" GridPane.rowIndex="7" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                  <children>
                                     <Spinner fx:id="timeSpinner" prefWidth="80.0" />
-                                    <Label styleClass="default-text" text="%monitor.cab_monitor.seconds" textFill="WHITE" wrapText="true">
+                                    <Label styleClass="default-text, c-text-white" text="%monitor.cab_monitor.seconds" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -320,29 +320,29 @@
                                  </children>
                               </HBox>
                               <Label styleClass="default-headline" text="%pref.pause_menu.testing" wrapText="true" GridPane.rowIndex="5" />
-                              <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTestClick" text="%pref.pause_menu.test_pause_menu" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                              <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTestClick" text="%pref.pause_menu.test_pause_menu" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Button>
-                              <Label layoutX="10.0" layoutY="48.0" styleClass="preference-label" text="%pref.pause_menu.auto_scaling" textFill="WHITE" wrapText="true">
+                              <Label layoutX="10.0" layoutY="48.0" styleClass="preference-label, c-text-white" text="%pref.pause_menu.auto_scaling" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <HBox alignment="CENTER_LEFT" layoutX="173.0" layoutY="43.0" spacing="6.0" GridPane.columnIndex="1">
                                  <children>
-                                    <CheckBox fx:id="autoScaleCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.auto_adjust_scaling" textFill="WHITE">
+                                    <CheckBox fx:id="autoScaleCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.auto_adjust_scaling">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <Label fx:id="publicReadAPIHint111212" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="publicReadAPIHint111212" styleClass="c-text-white" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%pref.pause_menu.the_studio_will_try_to_scale_the_pause" wrapText="true" />
@@ -375,7 +375,7 @@
                             <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label styleClass="preference-label" text="%pref.pause_menu.screenshot_screens" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
+                              <Label styleClass="preference-label, c-text-white" text="%pref.pause_menu.screenshot_screens" wrapText="true" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -383,7 +383,7 @@
                                     <Insets top="3.0" />
                                  </GridPane.margin>
                               </Label>
-                              <Label styleClass="preference-label" text="%pref.pause_menu.real_dmd_support" textFill="WHITE" wrapText="true">
+                              <Label styleClass="preference-label, c-text-white" text="%pref.pause_menu.real_dmd_support" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -393,7 +393,7 @@
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label styleClass="preference-description" text="%pref.pause_menu.the_following_monitors_are_included_for_pause_menu" textFill="WHITE" wrapText="true" />
+                                    <Label styleClass="preference-description, c-text-white" text="%pref.pause_menu.the_following_monitors_are_included_for_pause_menu" wrapText="true" />
                                     <VBox fx:id="monitorsPane" spacing="3.0">
                                        <VBox.margin>
                                           <Insets bottom="6.0" top="6.0" />
@@ -406,7 +406,7 @@
                               </VBox>
                               <VBox GridPane.columnIndex="1">
                                  <children>
-                                    <CheckBox fx:id="includeDmdCheckbox" mnemonicParsing="false" text="%pref.pause_menu.include_a_dmd_frame_capture_for_cabinets_with" textFill="WHITE">
+                                    <CheckBox fx:id="includeDmdCheckbox" mnemonicParsing="false" text="%pref.pause_menu.include_a_dmd_frame_capture_for_cabinets_with" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -414,7 +414,7 @@
                                           <Insets />
                                        </VBox.margin>
                                     </CheckBox>
-                                    <Label styleClass="checkbox-description" text="%pref.pause_menu.the_dmd_frame_capture_needs_network_stream_enabled" textFill="WHITE" wrapText="true" />
+                                    <Label styleClass="checkbox-description, c-text-white" text="%pref.pause_menu.the_dmd_frame_capture_needs_network_stream_enabled" wrapText="true" />
                                     <Hyperlink onAction="#onDMDDeviceLink" text="%pref.pause_menu.open_dmd_device_settings">
                                        <VBox.margin>
                                           <Insets bottom="12.0" left="21" />
@@ -425,7 +425,7 @@
                                     <Insets top="3.0" />
                                  </GridPane.margin>
                               </VBox>
-                              <Label styleClass="preference-label" text="%pref.pause_menu.miscellaneous" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
+                              <Label styleClass="preference-label, c-text-white" text="%pref.pause_menu.miscellaneous" wrapText="true" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -436,13 +436,13 @@
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <children>
                                     <CheckBox fx:id="pauseMenuScreenshotCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.always_take_a_screenshot_before_opening_the_pause" />
-                                    <Label styleClass="checkbox-description" text="%pref.pause_menu.the_screenshot_can_be_read_from_the_url" textFill="WHITE" wrapText="true" />
+                                    <Label styleClass="checkbox-description, c-text-white" text="%pref.pause_menu.the_screenshot_can_be_read_from_the_url" wrapText="true" />
                                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                                        <children>
-                                          <Label styleClass="checkbox-description" text="%pref.pause_menu.http_host_8089_api_v1_recorder_screenshot_latest" textFill="WHITE" wrapText="true" />
+                                          <Label styleClass="checkbox-description, c-text-white" text="%pref.pause_menu.http_host_8089_api_v1_recorder_screenshot_latest" wrapText="true" />
                                           <Button mnemonicParsing="false" onAction="#onCopy">
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="12" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="12" />
                                              </graphic>
                                              <font>
                                                 <Font size="14.0" />
@@ -453,7 +453,7 @@
                                           </Button>
                                           <Button mnemonicParsing="false" onAction="#onScreenshotOpen" styleClass="external-component">
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="14" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="14" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip text="%pref.pause_menu.open_script_in_visual_pinball_x" />
@@ -478,7 +478,7 @@
                         <Insets bottom="12.0" top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.pause_menu.select_the_menu_items_you_want_to_see" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-description, c-text-white" text="%pref.pause_menu.select_the_menu_items_you_want_to_see" wrapText="true" />
                   <GridPane fx:id="iScoredScoresBox" hgap="6.0" vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
@@ -488,24 +488,24 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="preference-label" text="%pref.pause_menu.iscored_scores" textFill="WHITE" wrapText="true">
+                        <Label styleClass="preference-label, c-text-white" text="%pref.pause_menu.iscored_scores" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
-                              <CheckBox fx:id="iScoredScoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.show_iscored_scores" textFill="WHITE">
+                              <CheckBox fx:id="iScoredScoresCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.show_iscored_scores">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label fx:id="publicReadAPIHint111" textFill="WHITE" wrapText="true">
+                              <Label fx:id="publicReadAPIHint111" styleClass="c-text-white" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="300.0" text="%pref.pause_menu.the_menu_entry_is_only_shown_when_the_2" wrapText="true" />
@@ -529,24 +529,24 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="preference-label" text="%pref.pause_menu.vpin_mania_scores" textFill="WHITE" wrapText="true">
+                        <Label styleClass="preference-label, c-text-white" text="%pref.pause_menu.vpin_mania_scores" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
-                              <CheckBox fx:id="maniaScoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.show_vpin_mania_highscores" textFill="WHITE">
+                              <CheckBox fx:id="maniaScoresCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.show_vpin_mania_highscores">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label fx:id="publicReadAPIHint1111" textFill="WHITE" wrapText="true">
+                              <Label fx:id="publicReadAPIHint1111" styleClass="c-text-white" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="300.0" text="%pref.pause_menu.the_menu_entry_is_only_shown_when_the" wrapText="true" />
@@ -554,22 +554,22 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.info_cards" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label, c-text-white" text="%pref.pause_menu.info_cards" wrapText="true" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="infoCardCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.show_info_cards" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <CheckBox fx:id="infoCardCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.show_info_cards" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-label" text="%pref.pause_menu.rule_cards" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-label, c-text-white" text="%pref.pause_menu.rule_cards" wrapText="true" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="rulesCheckbox" layoutX="173.0" layoutY="49.0" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.show_rule_cards" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <CheckBox fx:id="rulesCheckbox" layoutX="173.0" layoutY="49.0" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.show_rule_cards" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -592,12 +592,12 @@
                         <Insets top="3.0" />
                      </VBox.margin>
                      <children>
-                        <Label styleClass="preference-label" text="%pref.pause_menu.tutorial_videos" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
+                        <Label styleClass="preference-label, c-text-white" text="%pref.pause_menu.tutorial_videos" wrapText="true" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="tutorialsCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.show_tutorial_videos" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <CheckBox fx:id="tutorialsCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.show_tutorial_videos" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -612,12 +612,12 @@
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
                                     <RadioButton fx:id="tutorialScreenRadio" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.display_tutorial_videos_on_vpin_screen" toggleGroup="$tutorialScreenGroup" />
-                                    <Label fx:id="publicReadAPIHint11111" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="publicReadAPIHint11111" styleClass="c-text-white" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%pref.pause_menu.if_you_use_pinup_popper_as_frontend_for" wrapText="true" />
@@ -632,17 +632,17 @@
                               </ComboBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
-                                    <CheckBox fx:id="tutorialFullscreenCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.use_fullscreen_mode" textFill="WHITE">
+                                    <CheckBox fx:id="tutorialFullscreenCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.use_fullscreen_mode">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <Label fx:id="publicReadAPIHint111111" textFill="WHITE" wrapText="true">
+                                    <Label fx:id="publicReadAPIHint111111" styleClass="c-text-white" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%pref.pause_menu.this_will_take_the_screen_from_the_vpin" wrapText="true" />
@@ -655,9 +655,9 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
-                                    <Label styleClass="default-text" text="%pref.pause_menu.rotate_screen" textFill="WHITE" wrapText="true" />
+                                    <Label styleClass="default-text, c-text-white" text="%pref.pause_menu.rotate_screen" wrapText="true" />
                                     <ComboBox fx:id="rotationComboBox" prefWidth="90.0" />
-                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.pause_menu.degrees" textFill="WHITE" wrapText="true" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text, c-text-white" text="%pref.pause_menu.degrees" wrapText="true" />
                                  </children>
                                  <VBox.margin>
                                     <Insets left="26.0" />
@@ -667,13 +667,13 @@
                                  <children>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                                        <children>
-                                          <Label styleClass="default-text" text="%pref.pause_menu.margin_top" textFill="WHITE" wrapText="true" />
+                                          <Label styleClass="default-text, c-text-white" text="%pref.pause_menu.margin_top" wrapText="true" />
                                           <Spinner fx:id="tutorialMarginTopSpinner" editable="true" prefWidth="90.0">
                                              <HBox.margin>
                                                 <Insets left="14.0" />
                                              </HBox.margin>
                                           </Spinner>
-                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.pause_menu.pixel" textFill="WHITE" wrapText="true" />
+                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text, c-text-white" text="%pref.pause_menu.pixel" wrapText="true" />
                                        </children>
                                     </HBox>
                                  </children>
@@ -683,13 +683,13 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
-                                    <Label styleClass="default-text" text="%pref.pause_menu.margin_left" textFill="WHITE" wrapText="true" />
+                                    <Label styleClass="default-text, c-text-white" text="%pref.pause_menu.margin_left" wrapText="true" />
                                     <Spinner fx:id="tutorialMarginLeftSpinner" editable="true" prefWidth="90.0">
                                        <HBox.margin>
                                           <Insets left="14.0" />
                                        </HBox.margin>
                                     </Spinner>
-                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.pause_menu.pixel" textFill="WHITE" wrapText="true" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text, c-text-white" text="%pref.pause_menu.pixel" wrapText="true" />
                                  </children>
                                  <VBox.margin>
                                     <Insets left="26.0" />
@@ -700,35 +700,35 @@
                               <Insets top="3.0" />
                            </GridPane.margin>
                         </VBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.todo_list" textFill="WHITE" wrapText="true" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label, c-text-white" text="%pref.pause_menu.todo_list" wrapText="true" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="todoCheckbox" layoutX="173.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.show_todo_list_limited_to_16_items" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <CheckBox fx:id="todoCheckbox" layoutX="173.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.show_todo_list_limited_to_16_items" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
                         <VBox fx:id="tagPane" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label styleClass="preference-label" text="%pref.pause_menu.achievements" textFill="WHITE" wrapText="true">
+                        <Label styleClass="preference-label, c-text-white" text="%pref.pause_menu.achievements" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
-                              <CheckBox fx:id="achievementsCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.pause_menu.show_achievements" textFill="WHITE">
+                              <CheckBox fx:id="achievementsCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.pause_menu.show_achievements">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label textFill="WHITE" wrapText="true">
+                              <Label styleClass="c-text-white" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="300.0" text="%pref.pause_menu.achievements_tooltip" wrapText="true" />

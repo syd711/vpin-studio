@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vpxz;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -300,7 +301,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("vpxz", "vpxz", new VPXZColumnSorter(this));
 
-    infoContainer.setStyle("-fx-background-color: " + WidgetFactory.ERROR_COLOR);
+    infoContainer.setStyle("-fx-background-color: " + ThemeColors.DANGER);
     labelCount.managedProperty().bindBidirectional(labelCount.visibleProperty());
 
     openFolderButton.setDisable(true);
@@ -373,7 +374,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       if (value.getPackageInfo() != null) {
         VPXZFileInfo pov = value.getPackageInfo().getPov();
         if (pov != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", pov.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, pov.toString());
         }
       }
       return new Label("");
@@ -384,7 +385,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       if (value.getPackageInfo() != null) {
         VPXZFileInfo ini = value.getPackageInfo().getIni();
         if (ini != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", ini.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, ini.toString());
         }
       }
       return new Label("");
@@ -394,7 +395,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       if (value.getPackageInfo() != null) {
         VPXZFileInfo vbs = value.getPackageInfo().getVbs();
         if (vbs != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", vbs.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, vbs.toString());
         }
       }
       return new Label("");
@@ -404,7 +405,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       if (value.getPackageInfo() != null) {
         VPXZFileInfo res = value.getPackageInfo().getRes();
         if (res != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", res.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, res.toString());
         }
       }
       return new Label("");
@@ -414,7 +415,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       if (value.getPackageInfo() != null) {
         VPXZFileInfo rom = value.getPackageInfo().getRom();
         if (rom != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", rom.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, rom.toString());
         }
       }
       return new Label("");
@@ -506,12 +507,12 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       if (version == null) {
         connectionVersionLabel.setText("-");
         connectionStatusLabel.setText("-");
-        infoContainer.setStyle("-fx-background-color: " + WidgetFactory.ERROR_COLOR);
+        infoContainer.setStyle("-fx-background-color: " + ThemeColors.DANGER);
       }
       else {
         connectionVersionLabel.setText(version.getVersion());
         connectionStatusLabel.setText(Messages.get("vpxz.vpxz.connected"));
-        infoContainer.setStyle("-fx-background-color: " + WidgetFactory.OK_DARK_COLOR);
+        infoContainer.setStyle("-fx-background-color: " + ThemeColors.SUCCESS_DARKER);
       }
 
       if (version != null) {

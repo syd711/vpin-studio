@@ -70,7 +70,7 @@
                         </VBox>
                         <VBox fx:id="frontendSelectionField">
                            <children>
-                              <Label fx:id="titleLabel1" styleClass="default-title" text="%tables.table_delete.frontend" textFill="WHITE">
+                              <Label fx:id="titleLabel1" styleClass="default-title, c-text-white" text="%tables.table_delete.frontend">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -109,7 +109,7 @@
                                  <children>
                                     <VBox spacing="6.0">
                                        <children>
-                                          <Label fx:id="" styleClass="default-title" text="%tables.table_delete.files" textFill="WHITE">
+                                          <Label fx:id="" styleClass="default-title, c-text-white" text="%tables.table_delete.files">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -164,7 +164,7 @@
                                     </VBox>
                                     <VBox fx:id="mediaColumn" spacing="6.0">
                                        <children>
-                                          <Label fx:id="titleLabel112" styleClass="default-title" text="%tables.table_delete.media" textFill="WHITE">
+                                          <Label fx:id="titleLabel112" styleClass="default-title, c-text-white" text="%tables.table_delete.media">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -209,7 +209,7 @@
                                                 </CheckBox>
                                                 <Label>
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip prefWidth="300.0" text="%tables.table_delete.only_subfolders_of_visual_pinball_s_music_folder" wrapText="true" />
@@ -224,7 +224,7 @@
                                     </VBox>
                                     <VBox fx:id="settingsColumn" spacing="6.0">
                                        <children>
-                                          <Label fx:id="titleLabel111" styleClass="default-title" text="%backups.backup_restore.settings" textFill="WHITE">
+                                          <Label fx:id="titleLabel111" styleClass="default-title, c-text-white" text="%backups.backup_restore.settings">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -266,7 +266,7 @@
                                                 </CheckBox>
                                                 <Label>
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip prefWidth="300.0" text="%tables.table_delete.this_will_delete_the_highscore_history_of_the" wrapText="true" />
@@ -303,7 +303,7 @@
                   </VBox>
                </center>
                <top>
-                  <Label fx:id="titleLabel" text="%backups.tables_backup.title" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                  <Label fx:id="titleLabel" text="%backups.tables_backup.title" styleClass="c-text-white" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -322,7 +322,7 @@
                      <children>
                         <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                            <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                            </children>
                         </StackPane>
                         <VBox spacing="2.0" HBox.hgrow="ALWAYS">

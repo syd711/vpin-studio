@@ -8,12 +8,12 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="Infinity" spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewBadgesTileController">
+<VBox maxHeight="Infinity" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewBadgesTileController">
    <children>
       <HBox alignment="CENTER_LEFT" spacing="8.0">
          <children>
-            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.badges" />
-            <Label fx:id="countLabel" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" />
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%achievements.badges" />
+            <Label fx:id="countLabel" style="-fx-font-size: 14px; -fx-text-fill: -c-muted;" />
             <Region HBox.hgrow="ALWAYS" />
             <Hyperlink mnemonicParsing="false" onAction="#onAllBadges" text="%achievements.all_badges" />
          </children>

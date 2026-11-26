@@ -15,7 +15,7 @@
     <children>
         <BorderPane>
             <center>
-                <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
+                <TableView fx:id="tableView" style="-fx-background-color: -c-tile;" BorderPane.alignment="CENTER">
                     <columns>
                         <TableColumn fx:id="avatarColumn" minWidth="0.0" prefWidth="110.0" style="-fx-alignment: CENTER;" text="%players.builtin_users.avatar" />
                         <TableColumn fx:id="nameColumn" prefWidth="280" style="-fx-alignment: BASELINE_LEFT;" text="%cards.highscore_cards.display_name" />
@@ -29,12 +29,12 @@
             <top>
                 <ToolBar BorderPane.alignment="CENTER">
                     <items>
-                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                         </Button>
                   <Separator layoutX="240.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -45,40 +45,40 @@
                                       <Font size="14.0" />
                                   </font>
                               </TextField>
-                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                              <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                            </graphic>
                         </Button>
                      </children>
                   </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button mnemonicParsing="false" onAction="#onAdd" text="%competitions.competitions_discord.add" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onAdd" text="%competitions.competitions_discord.add" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                             </graphic>
                         </Button>
-                        <Button fx:id="editBtn" layoutX="298.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
+                        <Button fx:id="editBtn" layoutX="298.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                             </graphic>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
+                        <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                             </graphic>
                         </Button>
                     </items>

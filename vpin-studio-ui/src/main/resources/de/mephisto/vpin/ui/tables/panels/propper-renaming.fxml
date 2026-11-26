@@ -61,28 +61,28 @@
                   <Insets right="12.0" top="12.0" />
                </VBox.margin>
                <children>
-                  <CheckBox fx:id="displayNameCheckBox" mnemonicParsing="false" text="%backglass.directb2s_sidebar.display_name" textFill="WHITE">
+                  <CheckBox fx:id="displayNameCheckBox" mnemonicParsing="false" text="%backglass.directb2s_sidebar.display_name" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="fileNameCheckBox" layoutX="10.0" layoutY="15.0" mnemonicParsing="false" text="%backglass.directb2s_sidebar.file_name" textFill="WHITE" GridPane.rowIndex="1">
+                  <CheckBox fx:id="fileNameCheckBox" layoutX="10.0" layoutY="15.0" mnemonicParsing="false" text="%backglass.directb2s_sidebar.file_name" styleClass="c-text-white" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="gameNameCheckBox" layoutX="10.0" layoutY="49.0" mnemonicParsing="false" text="%tables.table_data.asset_name" textFill="WHITE" GridPane.rowIndex="2">
+                  <CheckBox fx:id="gameNameCheckBox" layoutX="10.0" layoutY="49.0" mnemonicParsing="false" text="%tables.table_data.asset_name" styleClass="c-text-white" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label fx:id="displayName" maxWidth="480.0" styleClass="default-headline" text="-" textFill="WHITE" GridPane.columnIndex="1" />
-                  <Label fx:id="fileName" layoutX="158.0" layoutY="15.0" maxWidth="480.0" styleClass="default-headline" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label fx:id="gameName" layoutX="158.0" layoutY="49.0" styleClass="default-headline" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label fx:id="displayName" maxWidth="480.0" styleClass="default-headline, c-text-white" text="-" GridPane.columnIndex="1" />
+                  <Label fx:id="fileName" layoutX="158.0" layoutY="15.0" maxWidth="480.0" styleClass="default-headline, c-text-white" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label fx:id="gameName" layoutX="158.0" layoutY="49.0" styleClass="default-headline, c-text-white" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label text="%tables.propper_renaming.determines_the_base_name_of_all_media_assets" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
             </GridPane>
-            <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onApply" text="%tables.table_data_tab_scoredata.apply" textFill="WHITE">
+            <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onApply" text="%tables.table_data_tab_scoredata.apply" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>

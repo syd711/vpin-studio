@@ -25,9 +25,9 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-title, c-text-white" text="%pref.asset_sources.vpin_studio_preferences" wrapText="true" />
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.backups.authentication_provider" wrapText="true" />
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.backups.to_avoid_that_personal_backups_are_being_shared" textFill="WHITE" wrapText="true">
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description, c-text-white" text="%pref.backups.to_avoid_that_personal_backups_are_being_shared" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
@@ -42,11 +42,11 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label styleClass="default-text" text="%pref.backups.authentication_provider_2" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="default-text, c-text-white" text="%pref.backups.authentication_provider_2" wrapText="true" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
                         <ComboBox fx:id="providerCombo" prefHeight="30.0" prefWidth="294.0" />
-                        <Button fx:id="providerBtn" mnemonicParsing="false" onAction="#onProvider" text="%pref.backups.configure" textFill="WHITE">
+                        <Button fx:id="providerBtn" mnemonicParsing="false" onAction="#onProvider" text="%pref.backups.configure" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -59,41 +59,41 @@
                </VBox.margin>
             </GridPane>
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.backups.backup_folders" wrapText="true" />
-            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.backups.you_can_configure_additional_folder_here_to_read" textFill="WHITE" wrapText="true" />
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.backups.the_devices_will_be_refreshed_on_reload_in" textFill="WHITE" wrapText="true">
+            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description, c-text-white" text="%pref.backups.you_can_configure_additional_folder_here_to_read" wrapText="true" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description, c-text-white" text="%pref.backups.the_devices_will_be_refreshed_on_reload_in" wrapText="true">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin></Label>
             <ToolBar>
               <items>
-                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFolderAdd" text="%competitions.competitions_discord.add" textFill="WHITE">
+                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFolderAdd" text="%competitions.competitions_discord.add" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
+                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />
-                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                      </graphic>
                   </Button>
               </items>
             </ToolBar>
-            <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+            <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: -c-tile;" styleClass="base-component">
               <columns>
                   <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%pref.webhook_set.enabled" />
                 <TableColumn fx:id="nameColumn" prefWidth="324.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />

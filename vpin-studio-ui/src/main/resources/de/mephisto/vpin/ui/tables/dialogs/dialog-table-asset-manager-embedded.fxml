@@ -68,12 +68,12 @@
                                                 <Insets right="3.0" />
                                              </padding>
                                           </HBox>
-                                        <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#onSearch" text="" textFill="WHITE">
+                                        <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#onSearch" text="" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-search-web" iconSize="18" />
                                              </graphic>
                                           </Button>
                                          <MenuButton fx:id="assetSourceMenuButton" mnemonicParsing="false" prefWidth="200">
@@ -85,18 +85,18 @@
                                                <Font size="14.0" />
                                             </font>
                                             <graphic>
-                                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
                                             </graphic>
                                             <tooltip>
                                                <Tooltip text="%tables.table_asset_manager_embedded.configure_asset_source" />
                                             </tooltip>
                                          </Button>
-                                         <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="" textFill="WHITE">
+                                         <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="" styleClass="c-text-white">
                                             <font>
                                                <Font size="14.0" />
                                             </font>
                                             <graphic>
-                                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cached" iconSize="18" />
+                                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cached" iconSize="18" />
                                             </graphic>
                                             <tooltip>
                                                <Tooltip text="%tables.table_asset_manager_embedded.rebuilds_the_search_index_to_fetch_the_latest" />
@@ -113,12 +113,12 @@
                                        <bottom>
                                           <HBox alignment="CENTER" spacing="6.0" BorderPane.alignment="CENTER">
                                              <children>
-                                                <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="%backups.backup_download.download" textFill="WHITE">
+                                                <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="%backups.backup_download.download" styleClass="c-text-white">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" iconSize="18" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cloud-download-outline" iconSize="18" />
                                                    </graphic>
                                                    <HBox.margin>
                                                       <Insets bottom="3.0" />
@@ -129,7 +129,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%tables.table_asset_manager_embedded.https_virtual_pinball_spreadsheet_web_app" />
@@ -189,63 +189,63 @@
                   </BorderPane>
                   <ToolBar>
                      <items>
-                        <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" textFill="WHITE">
+                        <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.table_asset_manager_embedded.open_system_folder_for_this_asset_type" />
                            </tooltip>
                         </Button>
                         <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" textFill="WHITE">
+                        <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.table_asset_manager_embedded.upload_a_new_asset" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" textFill="WHITE">
+                        <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-download" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.table_asset_manager_embedded.download_the_selected_asset" />
                            </tooltip>
                         </Button>
                         <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                        <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                        <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Button fx:id="setDefaultBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSetDefault" textFill="WHITE">
+                        <Button fx:id="setDefaultBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSetDefault" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-check-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2i-image-check-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.table_asset_manager_embedded.use_this_file_as_default_asset_file" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
+                        <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" styleClass="c-text-white">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.table_asset_manager_embedded.rename_the_asset_file" />
@@ -256,7 +256,7 @@
                         </Button>
                         <Button fx:id="viewBtn" mnemonicParsing="false" onAction="#onView">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.table_asset_manager_embedded.open_preview_dialog" />
@@ -264,7 +264,7 @@
                         </Button>
                         <SplitMenuButton fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete">
                            <graphic>
-                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                            </graphic>
                            <font>
                               <Font size="14.0" />
@@ -272,22 +272,22 @@
                            <items>
                               <MenuItem fx:id="screenDeleteBtn" mnemonicParsing="false" onAction="#onScreenDelete" text="%tables.table_asset_manager_embedded.delete_screen_assets">
                                  <graphic>
-                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                                  </graphic>
                               </MenuItem>
                               <MenuItem fx:id="gameDeleteBtn" mnemonicParsing="false" onAction="#onGameDelete" text="%tables.table_asset_manager_embedded.delete_game_assets">
                                  <graphic>
-                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                                  </graphic>
                               </MenuItem>
                            </items>
                         </SplitMenuButton>
-                        <MenuButton fx:id="addToPlaylistBtn" mnemonicParsing="false" text=" " textFill="WHITE">
+                        <MenuButton fx:id="addToPlaylistBtn" mnemonicParsing="false" text=" " styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-fullscreen" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="350.0" text="%tables.table_asset_manager_embedded.adds_a_blank_media_so_that_the_selected" wrapText="true" />
@@ -298,35 +298,35 @@
                            </items>
                         </MenuButton>
                         <Separator layoutX="267.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                        <MenuButton fx:id="conversionMenu" mnemonicParsing="false" text=" " textFill="WHITE">
+                        <MenuButton fx:id="conversionMenu" mnemonicParsing="false" text=" " styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.table_asset_manager_embedded.converts_the_selected_media_item_depending_on_its" />
                            </tooltip>
                         </MenuButton>
-                        <Button fx:id="infoBtn" layoutX="407.0" layoutY="11.0" mnemonicParsing="false" onAction="#onInfo" textFill="WHITE">
+                        <Button fx:id="infoBtn" layoutX="407.0" layoutY="11.0" mnemonicParsing="false" onAction="#onInfo" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2i-information-variant" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2i-information-variant" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="350.0" text="%tables.table_asset_manager_embedded.shows_all_metadata_extracted_from_the_selected_asset" wrapText="true" />
                            </tooltip>
                         </Button>
                         <Separator layoutX="328.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                        <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" textFill="WHITE">
+                        <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-music-note-plus" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-music-note-plus" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="350.0" text="%tables.table_asset_manager_embedded.adds_a_blank_media_so_that_the_default" wrapText="true" />

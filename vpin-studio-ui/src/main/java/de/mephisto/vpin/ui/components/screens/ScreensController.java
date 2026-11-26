@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components.screens;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -27,7 +28,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -63,14 +63,14 @@ public class ScreensController implements Initializable {
   /** space below the monitors for their captions */
   private static final double CAPTION = 40;
 
-  private static final String COLOR_MONITOR_BORDER = "#4A4A4A";
-  private static final String COLOR_MONITOR_WARN = "#B04A50";
-  private static final String COLOR_MAP_BACKGROUND = "#161616";
+  private static final String COLOR_MONITOR_BORDER = ThemeColors.MONITOR_BORDER;
+  private static final String COLOR_MONITOR_WARN = ThemeColors.ERROR_DIM;
+  private static final String COLOR_MAP_BACKGROUND = ThemeColors.INSET;
 
   enum Source {
-    FRONTEND("#8C8CE0", "components.screens.managed_screen.frontend_displays", "components.screens.source_frontend"),
-    SCREENRES("#5CC46A", "components.screens.managed_screen.screenres_txt_displays", "components.screens.source_screenres"),
-    VPX("#DD9646", "components.screens.managed_screen.vpx_display", "components.screens.source_vpx");
+    FRONTEND(ThemeColors.INFO, "components.screens.managed_screen.frontend_displays", "components.screens.source_frontend"),
+    SCREENRES(ThemeColors.OK, "components.screens.managed_screen.screenres_txt_displays", "components.screens.source_screenres"),
+    VPX(ThemeColors.WARN, "components.screens.managed_screen.vpx_display", "components.screens.source_vpx");
 
     final String color;
     final String labelKey;
@@ -313,7 +313,7 @@ public class ScreensController implements Initializable {
       header.setPadding(new Insets(6, 14, 6, 14));
       VBox titles = new VBox(1);
       Label title = new Label(Messages.get(source.labelKey));
-      title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;");
+      title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: " + ThemeColors.WHITE + ";");
       Label sub = new Label(getSourceDescription(source));
       sub.getStyleClass().add("sm-small");
       titles.getChildren().addAll(title, sub);
@@ -376,7 +376,7 @@ public class ScreensController implements Initializable {
 
     Label name = new Label(entry.name());
     name.setMaxWidth(Double.MAX_VALUE);
-    name.setStyle("-fx-font-size: 14px; -fx-text-fill: " + (!visible ? "#7A7A7A" : "white") + ";" + (selected ? " -fx-font-weight: bold;" : ""));
+    name.setStyle("-fx-font-size: 14px; -fx-text-fill: " + (!visible ? ThemeColors.DISABLED : ThemeColors.WHITE) + ";" + (selected ? " -fx-font-weight: bold;" : ""));
     HBox.setHgrow(name, Priority.ALWAYS);
 
     Label resolution = new Label(entry.display().getWidth() + " × " + entry.display().getHeight());
@@ -410,7 +410,7 @@ public class ScreensController implements Initializable {
 
   private void renderLegend() {
     legendBox.getChildren().clear();
-    legendBox.getChildren().add(createLegendItem(Messages.get("components.screens.monitor"), "-fx-border-color: #7A7A7A;"));
+    legendBox.getChildren().add(createLegendItem(Messages.get("components.screens.monitor"), "-fx-border-color: " + ThemeColors.DISABLED + ";"));
     for (Source source : Source.values()) {
       if (entries.stream().anyMatch(e -> e.source() == source)) {
         legendBox.getChildren().add(createLegendItem(Messages.get(source.chipKey),
@@ -418,7 +418,7 @@ public class ScreensController implements Initializable {
       }
     }
     legendBox.getChildren().add(createLegendItem(Messages.get("components.screens.stacked"),
-        "-fx-border-color: #8C8CE0; -fx-effect: dropshadow(one-pass-box, #8C8CE0, 0, 0, 2, 2);"));
+        "-fx-border-color: " + ThemeColors.INFO + "; -fx-effect: dropshadow(one-pass-box, " + ThemeColors.INFO + ", 0, 0, 2, 2);"));
   }
 
   private HBox createLegendItem(String text, String swatchStyle) {
@@ -478,19 +478,19 @@ public class ScreensController implements Initializable {
       rect.setPrefSize(w, h);
       rect.resize(w, h);
       String border = warn ? COLOR_MONITOR_WARN : COLOR_MONITOR_BORDER;
-      rect.setStyle("-fx-background-color: #1E1E1E; -fx-background-radius: 4; -fx-border-radius: 4; -fx-border-width: 1.5; -fx-border-color: "
-          + (selected ? "white" : border) + ";");
+      rect.setStyle("-fx-background-color: " + ThemeColors.INSET_HOVER + "; -fx-background-radius: 4; -fx-border-radius: 4; -fx-border-width: 1.5; -fx-border-color: "
+          + (selected ? ThemeColors.WHITE : border) + ";");
       rect.setOnMouseClicked(e -> select(monitorId(monitor)));
       rect.setCursor(Cursor.HAND);
       canvas.getChildren().add(rect);
 
       // two lines limited to the monitor width, so captions of narrow monitors do not overlap their neighbours
       Label name = new Label(monitor.getFormattedName());
-      name.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: white;");
+      name.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: " + ThemeColors.WHITE + ";");
       if (warn) {
         FontIcon icon = new FontIcon("mdi2a-alert-outline");
         icon.setIconSize(14);
-        icon.setIconColor(Paint.valueOf("#FF6B70"));
+        ThemeColors.setIconColor(icon, ThemeColors.ERROR);
         name.setGraphic(icon);
       }
       Label meta = new Label(getMonitorMeta(monitor));
@@ -712,7 +712,7 @@ public class ScreensController implements Initializable {
     else {
       Label name = new Label(selectedMonitor.getFormattedName());
       name.getStyleClass().add("sm-title");
-      head.getChildren().addAll(name, createSourceChip(Messages.get("components.screens.monitor"), "#BDBDBD"));
+      head.getChildren().addAll(name, createSourceChip(Messages.get("components.screens.monitor"), ThemeColors.MUTED));
 
       int row = 0;
       addDetail(details, row++, Messages.get("components.screens.id"), String.valueOf(selectedMonitor.getId()));

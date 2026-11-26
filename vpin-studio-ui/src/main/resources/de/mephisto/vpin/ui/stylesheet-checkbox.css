@@ -1,13 +1,13 @@
 .check-box:disabled .box {
   -fx-opacity: 0.8 ;
-  -fx-background-color: #B0ABAB;
+  -fx-background-color: -c-warm-gray;
   -fx-background-insets: 2, 2, 2;
   -fx-background-radius: 2px;
 }
 
 .preference-checkbox {
     -fx-padding: 18 0 0 0;
-    -fx-font-color: white;
+    -fx-font-color: -c-white;
     -fx-font-size : 14px;
 }
 
@@ -21,17 +21,17 @@
 
 /* check boxes: dark box with border, white check mark */
 .check-box > .box {
-    -fx-background-color: #161616;
+    -fx-background-color: -c-inset;
     -fx-background-insets: 0;
     -fx-background-radius: 3;
-    -fx-border-color: #444444;
+    -fx-border-color: -c-border;
     -fx-border-radius: 3;
     -fx-padding: 3;
 }
 
 .check-box:hover > .box,
 .check-box:focused > .box {
-    -fx-border-color: #7A7A7A;
+    -fx-border-color: -c-disabled;
 }
 
 .check-box > .box > .mark {
@@ -40,7 +40,7 @@
 
 .check-box:selected > .box > .mark,
 .check-box:indeterminate > .box > .mark {
-    -fx-background-color: white;
+    -fx-background-color: -c-white;
 }
 
 .check-box:disabled {
@@ -49,7 +49,7 @@
 
 .check-box:disabled > .box {
     -fx-opacity: 1;
-    -fx-background-color: #161616;
+    -fx-background-color: -c-inset;
     -fx-background-insets: 0;
     -fx-background-radius: 3;
 }

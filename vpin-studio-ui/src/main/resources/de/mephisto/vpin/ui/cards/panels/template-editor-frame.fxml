@@ -31,7 +31,7 @@
                              <Font size="10.0" />
                          </font>
                          <graphic>
-                             <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                             <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye-outline" />
                          </graphic>
                          <tooltip>
                              <Tooltip text="%cards.template_editor_frame.toggle_frame_visibility" />
@@ -42,7 +42,7 @@
                              <Font size="10.0" />
                          </font>
                          <graphic>
-                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
+                             <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                          </graphic>
                          <tooltip>
                              <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
@@ -60,14 +60,14 @@
               <children>
                 <Label prefWidth="200" text="%cards.template_editor_frame.change_how_the_background_is_displayed_by_adding" wrapText="true">
                     <graphic>
-                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
                     </graphic>
                     <VBox.margin>
                       <Insets top="6.0" />
                     </VBox.margin>
                 </Label>
 
-                <Label text="%cards.template_editor_frame.border" textFill="WHITE">
+                <Label text="%cards.template_editor_frame.border" styleClass="c-text-white">
                     <font>
                       <Font name="System Bold" size="14.0" />
                     </font>
@@ -79,7 +79,7 @@
                   <children>
                       <VBox spacing="3.0">
                         <children>
-                            <Label text="%cards.template_editor_frame.border_size" textFill="WHITE">
+                            <Label text="%cards.template_editor_frame.border_size" styleClass="c-text-white">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -89,7 +89,7 @@
                       </VBox>
                       <VBox spacing="3.0">
                         <children>
-                            <Label text="%cards.template_editor_frame.border_radius" textFill="WHITE">
+                            <Label text="%cards.template_editor_frame.border_radius" styleClass="c-text-white">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -104,7 +104,7 @@
                 </HBox>
                 <VBox fx:id="borderColorPane" spacing="3.0">
                   <children>
-                    <Label text="%cards.template_editor_frame.border_color" textFill="WHITE">
+                    <Label text="%cards.template_editor_frame.border_color" styleClass="c-text-white">
                         <font>
                           <Font size="14.0" />
                         </font>
@@ -119,14 +119,14 @@
 
                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                     <children>
-                      <Label text="%cards.template_editor_frame.margins" textFill="WHITE">
+                      <Label text="%cards.template_editor_frame.margins" styleClass="c-text-white">
                           <font>
                             <Font name="System Bold" size="14.0" />
                           </font>
                       </Label>
                       <Label>
                           <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
                           </graphic>
                           <tooltip>
                             <Tooltip text="%cards.template_editor_frame.determines_the_margins_from_the_card_s_border" />
@@ -142,7 +142,7 @@
                   <children>
                       <VBox>
                         <children>
-                          <Label text="%cards.template_editor_frame.top" textFill="WHITE">
+                          <Label text="%cards.template_editor_frame.top" styleClass="c-text-white">
                               <font>
                                 <Font size="14.0" />
                               </font>
@@ -152,7 +152,7 @@
                       </VBox>
                       <VBox>
                         <children>
-                          <Label text="%cards.template_editor_frame.bottom" textFill="WHITE">
+                          <Label text="%cards.template_editor_frame.bottom" styleClass="c-text-white">
                               <font>
                                 <Font size="14.0" />
                               </font>
@@ -170,7 +170,7 @@
                   <children>
                       <VBox>
                         <children>
-                          <Label text="%cards.template_editor_frame.left" textFill="WHITE">
+                          <Label text="%cards.template_editor_frame.left" styleClass="c-text-white">
                               <font>
                                 <Font size="14.0" />
                               </font>
@@ -180,7 +180,7 @@
                       </VBox>
                       <VBox>
                         <children>
-                          <Label text="%cards.template_editor_frame.right" textFill="WHITE">
+                          <Label text="%cards.template_editor_frame.right" styleClass="c-text-white">
                               <font>
                                 <Font size="14.0" />
                               </font>
@@ -196,14 +196,14 @@
 
                 <HBox alignment="CENTER_LEFT" spacing="3.0">
                     <children>
-                      <Label text="%cards.template_editor_frame.background_zoom" textFill="WHITE">
+                      <Label text="%cards.template_editor_frame.background_zoom" styleClass="c-text-white">
                           <font>
                             <Font size="14.0" />
                           </font>
                       </Label>
                       <Label>
                           <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
                             <Tooltip text="%cards.template_editor_frame.zoom_in_the_background_then_click_on_it" />
@@ -224,14 +224,14 @@
                   <children>
                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                         <children>
-                          <Label text="%cards.template_editor_frame.background_position" textFill="WHITE">
+                          <Label text="%cards.template_editor_frame.background_position" styleClass="c-text-white">
                               <font>
                                 <Font size="14.0" />
                               </font>
                           </Label>
                           <Label>
                               <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
                               </graphic>
                               <tooltip>
                                 <Tooltip text="%cards.template_editor_frame.the_position_of_the_background_within_the_card" />
@@ -256,7 +256,7 @@
 
                 <VBox fx:id="frameImagePane" spacing="3.0">
                     <children>
-                      <Label text="%cards.template_editor_frame.frame_image" textFill="WHITE">
+                      <Label text="%cards.template_editor_frame.frame_image" styleClass="c-text-white">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -270,7 +270,7 @@
                             </ComboBox>
                             <Button fx:id="frameUploadBtn" mnemonicParsing="false" onAction="#onUploadButton">
                                 <graphic>
-                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                                 </graphic>
                             </Button>
                           </children>

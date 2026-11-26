@@ -39,7 +39,7 @@
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="10.0" layoutY="135.0" styleClass="default-headline" text="%pref.asset_source_folder.media_source_configuration" textFill="WHITE" wrapText="true">
+            <Label layoutX="10.0" layoutY="135.0" styleClass="default-headline, c-text-white" text="%pref.asset_source_folder.media_source_configuration" wrapText="true">
                <font>
                   <Font size="14.0" />
                </font>
@@ -58,7 +58,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE" wrapText="true">
+                  <Label text="%backglass.directb2s_sidebar.name" styleClass="c-text-white" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -67,12 +67,12 @@
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
-                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_folder.enabled" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
+                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_folder.enabled" styleClass="c-text-white" GridPane.rowIndex="1" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" selected="true" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" selected="true" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -84,7 +84,7 @@
             </GridPane>
             <HBox>
                <children>
-                  <Label minWidth="120.0" prefWidth="120.0" styleClass="default-text" text="%pref.asset_source_web_asset.selected_screens" textFill="WHITE" wrapText="true">
+                  <Label minWidth="120.0" prefWidth="120.0" styleClass="default-text, c-text-white" text="%pref.asset_source_web_asset.selected_screens" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>

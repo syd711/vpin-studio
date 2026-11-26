@@ -40,12 +40,12 @@
                <right>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onRestore" textFill="WHITE">
+                        <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onRestore" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2b-backup-restore" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2b-backup-restore" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%recorder.ffmpeg_options.restore_default_command" />

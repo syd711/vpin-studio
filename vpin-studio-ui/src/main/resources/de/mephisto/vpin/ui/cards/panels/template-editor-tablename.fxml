@@ -29,7 +29,7 @@
                              <Font size="10.0" />
                          </font>
                          <graphic>
-                             <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                             <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye-outline" />
                          </graphic>
                          <tooltip>
                              <Tooltip text="%cards.template_editor_tablename.toggle_table_name_visibility" />
@@ -40,7 +40,7 @@
                              <Font size="10.0" />
                          </font>
                          <graphic>
-                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
+                             <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                          </graphic>
                          <tooltip>
                              <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
@@ -56,7 +56,7 @@
          <content>
             <VBox styleClass="accordion-container">
                <children>
-                  <Label text="%cards.template_editor_tablename.table_font" textFill="WHITE">
+                  <Label text="%cards.template_editor_tablename.table_font" styleClass="c-text-white">
                     <font>
                       <Font name="System Bold" size="14.0" />
                     </font>
@@ -66,7 +66,7 @@
                   </Label>
                   <BorderPane>
                     <left>
-                      <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="170.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                      <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="170.0" styleClass="c-text-white" BorderPane.alignment="CENTER">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -80,7 +80,7 @@
                                   <Font size="14.0" />
                                 </font>
                                 <graphic>
-                                  <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" onDragDetected="#onFontTableSelect" />
+                                  <FontIcon styleClass="c-icon-white" iconLiteral="bi-fonts" onDragDetected="#onFontTableSelect" />
                                 </graphic>
                             </Button>
                             <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontTableApplyAll">
@@ -88,7 +88,7 @@
                                   <Font size="14.0" />
                                 </font>
                                 <graphic>
-                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" onDragDetected="#onFontTableSelect" />
+                                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-check-all" onDragDetected="#onFontTableSelect" />
                                 </graphic>
                                 <tooltip>
                                   <Tooltip text="%cards.template_editor_scores.apply_selected_font_settings_to_all_templates" />
@@ -101,14 +101,14 @@
 
                   <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="tableUseDefaultColor" mnemonicParsing="false" text="%cards.template_editor_tablename.use_default_color" textFill="WHITE">
+                      <CheckBox fx:id="tableUseDefaultColor" mnemonicParsing="false" text="%cards.template_editor_tablename.use_default_color" styleClass="c-text-white">
                           <font>
                             <Font size="14.0" />
                           </font>
                       </CheckBox>
                       <Label>
                           <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
                             <Tooltip text="%cards.template_editor_tablename.when_checked_the_table_name_is_rendered_with" />
@@ -122,7 +122,7 @@
 
                   <VBox fx:id="tableColorBox" spacing="3.0">
                      <children>
-                        <Label text="%cards.template_editor_tablename.table_name_color" textFill="WHITE">
+                        <Label text="%cards.template_editor_tablename.table_name_color" styleClass="c-text-white">
                         <font>
                            <Font size="14.0" />
                         </font>
@@ -137,14 +137,14 @@
 
                   <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="tableUseVpsNameCheckbox" mnemonicParsing="false" text="%cards.template_editor_tablename.use_vps_name" textFill="WHITE">
+                      <CheckBox fx:id="tableUseVpsNameCheckbox" mnemonicParsing="false" text="%cards.template_editor_tablename.use_vps_name" styleClass="c-text-white">
                           <font>
                             <Font size="14.0" />
                           </font>
                       </CheckBox>
                       <Label>
                           <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
                             <Tooltip text="%cards.template_editor_tablename.use_vps_name_instead_of_display_name_allowing" />
@@ -158,14 +158,14 @@
 
                   <HBox fx:id="tableRenderManufacturerBox" alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="tableRenderManufacturerCheckbox" mnemonicParsing="false" text="%cards.template_editor_tablename.render_manufacturer" textFill="WHITE">
+                      <CheckBox fx:id="tableRenderManufacturerCheckbox" mnemonicParsing="false" text="%cards.template_editor_tablename.render_manufacturer" styleClass="c-text-white">
                           <font>
                             <Font size="14.0" />
                           </font>
                       </CheckBox>
                       <Label>
                           <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
                             <Tooltip text="%cards.template_editor_tablename.when_checked_the_manufacturer_is_included_in_the" />
@@ -179,14 +179,14 @@
 
                   <HBox fx:id="tableRenderYearBox" alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="tableRenderYearCheckbox" mnemonicParsing="false" text="%cards.template_editor_tablename.render_year" textFill="WHITE">
+                      <CheckBox fx:id="tableRenderYearCheckbox" mnemonicParsing="false" text="%cards.template_editor_tablename.render_year" styleClass="c-text-white">
                           <font>
                             <Font size="14.0" />
                           </font>
                       </CheckBox>
                       <Label>
                           <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
                             <Tooltip text="%cards.template_editor_tablename.when_checked_the_year_is_included_in_the" />

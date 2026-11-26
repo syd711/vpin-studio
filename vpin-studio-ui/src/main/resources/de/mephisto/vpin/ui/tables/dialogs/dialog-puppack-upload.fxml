@@ -39,7 +39,7 @@
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
-                                <Label fx:id="titleLabel" text="%tables.puppack_upload.pup_pack_file" textFill="WHITE">
+                                <Label fx:id="titleLabel" text="%tables.puppack_upload.pup_pack_file" styleClass="c-text-white">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
@@ -59,7 +59,7 @@
                                 </Button>
                                 <HBox fx:id="tableBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="2">
                                     <children>
-                                    <Label text="%competitions.discord_competition_join.matching_table" textFill="WHITE">
+                                    <Label text="%competitions.discord_competition_join.matching_table" styleClass="c-text-white">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -72,13 +72,13 @@
                                             <Tooltip prefWidth="300.0" text="%tables.puppack_upload.the_match_might_remain_empty_here_and_is" wrapText="true" />
                                         </tooltip>
                                         <graphic>
-                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                         </graphic>
                                     </Label>
                                     </children>
                                 </HBox>
                                 <Label fx:id="tableLabel" prefWidth="400.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                <Label fx:id="titleLabel11" layoutX="10.0" layoutY="83.0" text="%tables.puppack_upload.resolved_pup_pack_name" textFill="WHITE" GridPane.rowIndex="1">
+                                <Label fx:id="titleLabel11" layoutX="10.0" layoutY="83.0" text="%tables.puppack_upload.resolved_pup_pack_name" styleClass="c-text-white" GridPane.rowIndex="1">
                                     <font>
                                         <Font size="14.0" />
                                     </font>

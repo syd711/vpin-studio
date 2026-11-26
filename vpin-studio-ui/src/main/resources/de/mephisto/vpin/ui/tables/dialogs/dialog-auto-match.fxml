@@ -21,7 +21,7 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <children>
-            <Label fx:id="titleLabel" text="Title" textFill="WHITE" wrapText="true">
+            <Label fx:id="titleLabel" text="Title" styleClass="c-text-white" wrapText="true">
                <font>
                   <Font size="18.0" />
                </font>
@@ -52,7 +52,7 @@
                         </CheckBox>
                         <Label>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%dialog.overwrite_metadata_tooltip" wrapText="true" />

@@ -24,7 +24,7 @@
             <center>
                 <StackPane fx:id="tableStack">
                     <children>
-                        <TableView fx:id="tableView" onMouseClicked="#onMouseClick" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                        <TableView fx:id="tableView" onMouseClicked="#onMouseClick" style="-fx-background-color: -c-tile;" styleClass="base-component">
                             <columns>
                                 <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="%competitions.competitions_iscored.your_table" />
                                 <TableColumn fx:id="statusColumn" prefWidth="110.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_mania.status" />
@@ -43,12 +43,12 @@
                     <children>
                 <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <items>
-                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                             <tooltip>
                                 <Tooltip text="%competitions.competitions_weekly.reload_and_invalidate_caches" />
@@ -62,58 +62,58 @@
                                         <Font size="14.0" />
                                     </font>
                                 </TextField>
-                                <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                                <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                                        <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                                     </graphic>
                                 </Button>
                             </children>
                         </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" textFill="WHITE">
+                        <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                             </graphic>
                             <tooltip>
                                 <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
                             </tooltip>
                         </Button>
-                        <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+                        <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-edit" iconSize="18" />
                             </graphic>
                             <tooltip>
                                 <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
                             </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="eventLogBtn" mnemonicParsing="false" onAction="#onEventLog" textFill="WHITE">
+                        <Button fx:id="eventLogBtn" mnemonicParsing="false" onAction="#onEventLog" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
                             </graphic>
                             <tooltip>
                                 <Tooltip text="%competitions.competitions_iscored.open_event_log" />
                             </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <MenuButton fx:id="participationBtn" mnemonicParsing="false" text="%competitions.competitions_mania.participation" textFill="WHITE">
+                        <MenuButton fx:id="participationBtn" mnemonicParsing="false" text="%competitions.competitions_mania.participation" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-cancel-outline" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-account-cancel-outline" iconSize="18" />
                             </graphic>
                             <tooltip>
                                 <Tooltip text="%competitions.competitions_mania.participation_tooltip" />
@@ -126,12 +126,12 @@
                             </items>
                         </MenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="c-text-danger">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+                                <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2s-stop" iconSize="18" />
                             </graphic>
                             <tooltip>
                                 <Tooltip text="%competitions.competitions_iscored.kill_all_emulator_and_frontend_processes_ctrl_k" />
@@ -143,7 +143,7 @@
                            <children>
                               <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                                  <children>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                                  </children>
                               </StackPane>
                               <VBox spacing="2.0" HBox.hgrow="ALWAYS">
@@ -156,7 +156,7 @@
                                  <children>
                                     <Button mnemonicParsing="false" onAction="#onOpenSettings" styleClass="sm-alert-button">
                                        <graphic>
-                                          <FontIcon iconColor="#F3D6D7" iconLiteral="mdi2c-cog" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-error-text-light" iconLiteral="mdi2c-cog" iconSize="16" />
                                        </graphic>
                                     </Button>
                                  </children>

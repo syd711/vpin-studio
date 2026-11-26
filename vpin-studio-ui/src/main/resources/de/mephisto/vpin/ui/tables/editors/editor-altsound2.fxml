@@ -33,14 +33,14 @@
          <left>
             <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                <children>
-                  <CheckBox fx:id="romVolCtrlCheckbox" mnemonicParsing="false" text="%tables.editors.editor_altsound2.rom_volume_control" textFill="WHITE">
+                  <CheckBox fx:id="romVolCtrlCheckbox" mnemonicParsing="false" text="%tables.editors.editor_altsound2.rom_volume_control" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
                   <Label>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip prefWidth="400.0" text="%tables.editors.editor_altsound2.the_altsound_processor_attempts_to_recreate_original_playbac" wrapText="true" />
@@ -49,7 +49,7 @@
                         <Insets left="12.0" />
                      </HBox.margin>
                   </Label>
-                  <CheckBox fx:id="recordSoundCmdsCheckbox" layoutX="10.0" layoutY="16.0" mnemonicParsing="false" text="%tables.editors.editor_altsound2.record_sound_commands" textFill="WHITE">
+                  <CheckBox fx:id="recordSoundCmdsCheckbox" layoutX="10.0" layoutY="16.0" mnemonicParsing="false" text="%tables.editors.editor_altsound2.record_sound_commands" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -59,7 +59,7 @@
                   </CheckBox>
                   <Label>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip prefWidth="400.0" text="%tables.editors.editor_altsound2.records_all_received_sound_commands_and_relative_playback" wrapText="true" />
@@ -80,7 +80,7 @@
                   </Label>
                   <Label>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip prefWidth="400.0" text="%tables.editors.editor_altsound2.allows_authors_to_specify_n_initial_sound_commands" wrapText="true" />
@@ -97,7 +97,7 @@
                <children>
                   <Button fx:id="exportNamesBtn" mnemonicParsing="false" onAction="#onExportNames" styleClass="default-button" text="%tables.editors.editor_altsound2.export_names">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export-variant" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-export-variant" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%tables.editors.editor_altsound2.export_names_tooltip" />
@@ -122,7 +122,7 @@
          <center>
             <StackPane styleClass="media-parent" BorderPane.alignment="CENTER">
                <children>
-                  <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                  <TableView fx:id="tableView" style="-fx-background-color: -c-tile;" styleClass="base-component">
                     <columns>
                       <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.editors.editor_altsound.id" />
                       <TableColumn fx:id="columnType" prefWidth="140.0" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound2.type" />
@@ -159,7 +159,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label layoutX="10.0" layoutY="45.0" prefHeight="20.0" prefWidth="122.0" text="%tables.editors.editor_altsound.selected_entries" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="45.0" prefHeight="20.0" prefWidth="122.0" text="%tables.editors.editor_altsound.selected_entries" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -167,7 +167,7 @@
                                     <Insets right="6.0" />
                                  </padding>
                               </Label>
-                              <Label layoutX="10.0" layoutY="49.0" text="%tables.editors.altsound2_sample_type.sample_type" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label layoutX="10.0" layoutY="49.0" text="%tables.editors.altsound2_sample_type.sample_type" styleClass="c-text-white" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -175,7 +175,7 @@
                                     <Insets right="6.0" />
                                  </padding>
                               </Label>
-                              <Label fx:id="entriesLabel" layoutX="10.0" layoutY="15.0" prefHeight="20.0" prefWidth="132.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                              <Label fx:id="entriesLabel" layoutX="10.0" layoutY="15.0" prefHeight="20.0" prefWidth="132.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -184,7 +184,7 @@
                                  </padding>
                               </Label>
                               <ComboBox fx:id="channelCombo" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label layoutX="10.0" layoutY="49.0" text="%tables.editors.editor_altsound2.ducking_profile_2" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="49.0" text="%tables.editors.editor_altsound2.ducking_profile_2" styleClass="c-text-white" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -214,7 +214,7 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <Label text="%tables.editors.editor_altsound.gain" textFill="WHITE">
+                              <Label text="%tables.editors.editor_altsound.gain" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -224,7 +224,7 @@
                               </Label>
                               <Label>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="300.0" text="%tables.editors.editor_altsound.the_gain_value_determines_the_absolute_volume_of" wrapText="true" />
@@ -232,7 +232,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label fx:id="gainLabel" layoutX="85.0" layoutY="15.0" text="-" textFill="WHITE">
+                        <Label fx:id="gainLabel" layoutX="85.0" layoutY="15.0" text="-" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="36.0" />
                            </font>
@@ -265,7 +265,7 @@
                </font>
             </TextField>
             <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Label layoutX="244.0" layoutY="16.0" text="%backups.backups_sidebar.filename" textFill="WHITE">
+            <Label layoutX="244.0" layoutY="16.0" text="%backups.backups_sidebar.filename" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -274,19 +274,19 @@
                </padding>
             </Label>
             <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="200.0" />
-            <Button fx:id="editFileBtn" layoutX="1059.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFileEdit" textFill="WHITE">
+            <Button fx:id="editFileBtn" layoutX="1059.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFileEdit" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tables.editors.editor_altsound2.change_filename" />
                </tooltip>
             </Button>
             <Separator layoutX="316.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Label layoutX="10.0" layoutY="16.0" text="%tables.editors.altsound2_sample_type.sample_type" textFill="WHITE">
+            <Label layoutX="10.0" layoutY="16.0" text="%tables.editors.altsound2_sample_type.sample_type" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -295,19 +295,19 @@
                </padding>
             </Label>
             <ComboBox fx:id="typeFilterCombo" layoutX="74.0" layoutY="11.0" prefWidth="120.0" />
-            <Button fx:id="editGroupBtn" layoutX="1232.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSampleTypes" textFill="WHITE">
+            <Button fx:id="editGroupBtn" layoutX="1232.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSampleTypes" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tables.editors.editor_altsound2.edit_sample_type" />
                </tooltip>
             </Button>
             <Separator layoutX="450.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Label layoutX="466.0" layoutY="16.0" text="%tables.editors.editor_altsound2.ducking_profile_2" textFill="WHITE">
+            <Label layoutX="466.0" layoutY="16.0" text="%tables.editors.editor_altsound2.ducking_profile_2" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -316,34 +316,34 @@
                </padding>
             </Label>
             <ComboBox fx:id="profilesCombo" layoutX="535.0" layoutY="11.0" prefHeight="30.0" prefWidth="140.0" />
-            <Button fx:id="addBtn" mnemonicParsing="false" onAction="#onProfileAdd" textFill="WHITE">
+            <Button fx:id="addBtn" mnemonicParsing="false" onAction="#onProfileAdd" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-plus-circle-outline" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tables.editors.editor_altsound2.add_new_ducking_profile" />
                </tooltip>
             </Button>
-            <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onProfileEdit" textFill="WHITE">
+            <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onProfileEdit" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tables.editors.editor_altsound2.edit_ducking_profile" />
                </tooltip>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onProfileDelete" textFill="#ff3333">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onProfileDelete" styleClass="c-text-danger">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                  <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tables.editors.editor_altsound2.delete_ducking_profile" />

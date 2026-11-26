@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -39,7 +40,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
@@ -264,7 +264,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       label.setTooltip(new Tooltip(value.getGameDisplayName()));
       label.getStyleClass().add("default-text");
       if (value.isCardDisabled()) {
-        label.setStyle("-fx-text-fill: " + DISABLED_COLOR);
+        label.setStyle("-fx-text-fill: " + ThemeColors.ICON_DISABLED);
         label.setTooltip(new Tooltip(Messages.get("dialog.card_generation_disabled_for_game")));
       }
       return label;
@@ -274,7 +274,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       CardTemplate template = getCardTemplateForGame(value);
       Label label = new Label("");
       if (template != null && !template.isTemplate()) {
-        label.setGraphic(WidgetFactory.createCheckboxIcon(WidgetFactory.OK_COLOR, Messages.get("dialog.customized_highscore_card")));
+        label.setGraphic(WidgetFactory.createCheckboxIcon(ThemeColors.SUCCESS_LIGHT, Messages.get("dialog.customized_highscore_card")));
       }
       label.getStyleClass().add("default-text");
       return label;

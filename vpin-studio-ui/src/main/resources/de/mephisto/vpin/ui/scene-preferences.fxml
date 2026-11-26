@@ -267,7 +267,7 @@
                         </Hyperlink>
                         <Hyperlink onAction="#onDiscordLink" text="%mania.mania_preferences.join_discord">
                         </Hyperlink>
-                        <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label" text="%competitions.discord_competition_edit.hyperlink" textFill="#b0abab" />
+                        <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label, c-text-warm-gray" text="%competitions.discord_competition_edit.hyperlink" />
                         <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="%competitions.discord_competition_edit.label">
                            <VBox.margin>
                               <Insets right="5.0" />
@@ -296,7 +296,7 @@
                      <children>
                         <Button mnemonicParsing="false" onAction="#onClose" styleClass="ghost-button-default">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-close-circle-outline" iconSize="48" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-close-circle-outline" iconSize="48" />
                            </graphic>
                            <HBox.margin>
                               <Insets />

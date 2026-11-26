@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util.binding;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.util.FontSelectorDialog;
 import javafx.application.Platform;
@@ -276,7 +277,7 @@ public class BeanBinder<T> {
   }
 
   public static void setColorPickerValue(ColorPicker colorPicker, Object beanObject, String property) {
-    String value = getProperty(beanObject, property, "#FFFFFF");
+    String value = getProperty(beanObject, property, ThemeColors.WHITE);
     Color colorValue = Color.web(value);
     colorPicker.setValue(colorValue);
   }

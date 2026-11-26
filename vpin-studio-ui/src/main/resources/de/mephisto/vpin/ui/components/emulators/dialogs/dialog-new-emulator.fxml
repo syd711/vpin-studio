@@ -89,7 +89,7 @@
                                  <children>
                                     <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                                        <children>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                                        </children>
                                     </StackPane>
                                     <VBox spacing="2.0" HBox.hgrow="ALWAYS">

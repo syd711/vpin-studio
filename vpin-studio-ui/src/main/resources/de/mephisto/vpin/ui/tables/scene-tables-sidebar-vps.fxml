@@ -36,7 +36,7 @@
                      <children>
                         <VBox fx:id="detailsBox">
                            <children>
-                              <Label text="%tables.tables_sidebar_vps.sheet_data" textFill="WHITE">
+                              <Label text="%tables.tables_sidebar_vps.sheet_data" styleClass="c-text-white">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -51,22 +51,22 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="%tables.tables_sidebar_vps.last_updated" textFill="WHITE">
+                                    <Label text="%tables.tables_sidebar_vps.last_updated" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="%tables.tables_sidebar_vps.entries" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label layoutX="10.0" layoutY="15.0" text="%tables.tables_sidebar_vps.entries" styleClass="c-text-white" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="updateDateLabel" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                                    <Label fx:id="updateDateLabel" layoutX="10.0" layoutY="15.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="entriesLabel" layoutX="143.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <Label fx:id="entriesLabel" layoutX="143.0" layoutY="15.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -76,7 +76,7 @@
                                     <Insets bottom="12.0" />
                                  </VBox.margin>
                               </GridPane>
-                              <Label layoutX="10.0" layoutY="10.0" text="%pref.restore_backup.table_data" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="10.0" text="%pref.restore_backup.table_data" styleClass="c-text-white">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -102,52 +102,52 @@
                                     <Insets top="6.0" />
                                  </VBox.margin>
                                  <children>
-                                    <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label text="%backglass.directb2s_sidebar.name" styleClass="c-text-white" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="%tables.tables_sidebar_vps.ipdb_url" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label layoutX="10.0" layoutY="15.0" text="%tables.tables_sidebar_vps.ipdb_url" styleClass="c-text-white" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="49.0" text="%backups.backups_sidebar.manufacturer" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label layoutX="10.0" layoutY="49.0" text="%backups.backups_sidebar.manufacturer" styleClass="c-text-white" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="116.0" text="%tables.tables_sidebar_vps.players" textFill="WHITE" GridPane.rowIndex="5">
+                                    <Label layoutX="10.0" layoutY="116.0" text="%tables.tables_sidebar_vps.players" styleClass="c-text-white" GridPane.rowIndex="5">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="150.0" text="%tables.tables_sidebar_vps.updated" textFill="WHITE" GridPane.rowIndex="6">
+                                    <Label layoutX="10.0" layoutY="150.0" text="%tables.tables_sidebar_vps.updated" styleClass="c-text-white" GridPane.rowIndex="6">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="116.0" text="%tables.tables_sidebar_vps.year" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label layoutX="10.0" layoutY="116.0" text="%tables.tables_sidebar_vps.year" styleClass="c-text-white" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="manufacturerLabel" layoutX="139.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    <Label fx:id="manufacturerLabel" layoutX="139.0" layoutY="15.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="yearLabel" layoutX="139.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                    <Label fx:id="yearLabel" layoutX="139.0" layoutY="116.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="playersLabel" layoutX="139.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                    <Label fx:id="playersLabel" layoutX="139.0" layoutY="150.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="updatedLabel" layoutX="139.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                    <Label fx:id="updatedLabel" layoutX="139.0" layoutY="184.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -162,7 +162,7 @@
                                           </TextField>
                                           <Button fx:id="openTableLinkBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component">
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" />
                                              </graphic>
                                              <font>
                                                 <Font size="14.0" />
@@ -173,7 +173,7 @@
                                           </Button>
                                        </children>
                                     </HBox>
-                                    <Label layoutX="10.0" layoutY="168.0" text="%tables.table_data.table_version" textFill="WHITE" GridPane.rowIndex="7">
+                                    <Label layoutX="10.0" layoutY="168.0" text="%tables.table_data.table_version" styleClass="c-text-white" GridPane.rowIndex="7">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -191,7 +191,7 @@
                                              <children>
                                                 <Button fx:id="openTableVersionBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="link-component">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" />
                                                    </graphic>
                                                    <font>
                                                       <Font size="14.0" />
@@ -202,7 +202,7 @@
                                                 </Button>
                                                 <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
                                                    </graphic>
                                                    <font>
                                                       <Font size="14.0" />
@@ -215,7 +215,7 @@
                                           </VBox>
                                        </children>
                                     </HBox>
-                                    <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                                    <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                                        <graphic>
                                           <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
                                        </graphic>
@@ -223,28 +223,28 @@
                                           <Insets right="60.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="168.0" text="%tables.tables_sidebar_vps.authors" textFill="WHITE" GridPane.rowIndex="8">
+                                    <Label layoutX="10.0" layoutY="168.0" text="%tables.tables_sidebar_vps.authors" styleClass="c-text-white" GridPane.rowIndex="8">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
                                     <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                        <children>
-                                          <Label fx:id="versionAuthorsLabel" text="-" textFill="WHITE">
+                                          <Label fx:id="versionAuthorsLabel" text="-" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_vps.updates" textFill="WHITE">
+                                    <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_vps.updates" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                                        <children>
-                                          <CheckBox fx:id="updatesCheckbox" mnemonicParsing="false" text="%tables.tables_sidebar_vps.ignore_vps_updates" textFill="WHITE">
+                                          <CheckBox fx:id="updatesCheckbox" mnemonicParsing="false" text="%tables.tables_sidebar_vps.ignore_vps_updates" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -254,7 +254,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_vps.if_checked_no_updates_indicators_will_be_shown" wrapText="true" />
@@ -295,7 +295,7 @@
                      <children>
                         <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                            <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                            </children>
                         </StackPane>
                         <VBox spacing="2.0" HBox.hgrow="ALWAYS">
@@ -308,7 +308,7 @@
                            <children>
                               <Button mnemonicParsing="false" onAction="#onDismiss" styleClass="sm-alert-close">
                                  <graphic>
-                                    <FontIcon iconColor="#E6C3C5" iconLiteral="mdi2c-close" iconSize="16" />
+                                    <FontIcon styleClass="c-icon-error-text" iconLiteral="mdi2c-close" iconSize="16" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%backglass.directb2s_admin.dismiss" />
@@ -342,25 +342,25 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-update" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%tables.tables_sidebar_vps.download_the_latest_vps_database_the_database_is" />
                      </tooltip>
                   </Button>
                   <Separator orientation="VERTICAL" />
-                  <Button fx:id="vpsLinkResetBtn" mnemonicParsing="false" onAction="#onVpsLinkReset" textFill="WHITE">
+                  <Button fx:id="vpsLinkResetBtn" mnemonicParsing="false" onAction="#onVpsLinkReset" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%tables.table_data.resets_the_assigned_vps_table_mapping" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="vpsResetUpdatesBtn" mnemonicParsing="false" onAction="#onVpsReset" textFill="WHITE">
+                  <Button fx:id="vpsResetUpdatesBtn" mnemonicParsing="false" onAction="#onVpsReset" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -368,11 +368,11 @@
                         <Tooltip text="%tables.tables_sidebar_vps.reset_vps_updates_indicators_in_the_overview_for" />
                      </tooltip>
                   </Button>
-                  <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoMatch" text="%tables.table_data.auto_match" textFill="WHITE">
+                  <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoMatch" text="%tables.table_data.auto_match" styleClass="c-text-white">
                      <items>
                         <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="%tables.table_data.auto_match_all">
                            <graphic>
-                              <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
+                              <FontIcon styleClass="c-fill-white, c-icon-white" iconLiteral="mdi2a-auto-fix">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -384,7 +384,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%tables.table_data.tries_to_resolve_the_matching_vps_table_and" />
@@ -394,12 +394,12 @@
             </ToolBar>
             <ToolBar>
                <items>
-                  <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%tables.tables_sidebar_vps.filter_existing_assets" textFill="WHITE">
+                  <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%tables.tables_sidebar_vps.filter_existing_assets" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="autoApplyCheckbox" mnemonicParsing="false" text="%tables.table_data.auto_apply_data" textFill="WHITE">
+                  <CheckBox fx:id="autoApplyCheckbox" mnemonicParsing="false" text="%tables.table_data.auto_apply_data" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -17,7 +18,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Paint;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,25 +137,25 @@ public class TabOverviewController implements Initializable, PreferenceChangeLis
       statusLabel.setText(Messages.get("components.components.loading_component_information"));
       statusLabel.getStyleClass().add("sm-pill-unknown");
       statusIcon.setIconLiteral("mdi2h-help-circle-outline");
-      statusIcon.setIconColor(Paint.valueOf("#BDBDBD"));
+      ThemeColors.setIconColor(statusIcon, ThemeColors.MUTED);
     }
     else if (updates > 0) {
       statusLabel.setText(updates == 1 ? Messages.get("components.overview.update_available") : Messages.get("components.overview.updates_available", updates));
       statusLabel.getStyleClass().add("sm-pill-warn");
       statusIcon.setIconLiteral("mdi2a-arrow-up-bold-circle-outline");
-      statusIcon.setIconColor(Paint.valueOf("#DD9646"));
+      ThemeColors.setIconColor(statusIcon, ThemeColors.WARN);
     }
     else if (unknown > 0) {
       statusLabel.setText(Messages.get("components.overview.versions_unknown", unknown));
       statusLabel.getStyleClass().add("sm-pill-unknown");
       statusIcon.setIconLiteral("mdi2h-help-circle-outline");
-      statusIcon.setIconColor(Paint.valueOf("#BDBDBD"));
+      ThemeColors.setIconColor(statusIcon, ThemeColors.MUTED);
     }
     else {
       statusLabel.setText(Messages.get("components.overview.all_up_to_date", visible.size()));
       statusLabel.getStyleClass().add("sm-pill-ok");
       statusIcon.setIconLiteral("mdi2c-check-bold");
-      statusIcon.setIconColor(Paint.valueOf("#5CC46A"));
+      ThemeColors.setIconColor(statusIcon, ThemeColors.OK);
     }
 
     OffsetDateTime lastCheck = visible.stream()

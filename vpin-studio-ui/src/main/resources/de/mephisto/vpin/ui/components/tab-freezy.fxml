@@ -18,32 +18,32 @@
         <top>
             <ToolBar BorderPane.alignment="CENTER" styleClass="sm-actionbar">
             <items>
-               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%components.b2s.open_folder" textFill="WHITE">
+               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component, c-text-white" text="%components.b2s.open_folder">
                   <font>
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="18" />
                   </graphic>
                   <tooltip>
                      <Tooltip text="%components.freezy.open_freezy_installation_folder" />
                   </tooltip>
                </Button>
                <Separator fx:id="folderSeparator" layoutX="259.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="flexDMDBtn" mnemonicParsing="false" onAction="#onFlexDMD" styleClass="external-component" text="%components.flexdmd.flexdmd_ui" textFill="WHITE">
+               <Button fx:id="flexDMDBtn" mnemonicParsing="false" onAction="#onFlexDMD" styleClass="external-component, c-text-white" text="%components.flexdmd.flexdmd_ui">
                   <font>
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                </Button>
-               <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="external-component" text="%components.freezy.dmddevice_ini" textFill="WHITE">
+               <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="external-component, c-text-white" text="%components.freezy.dmddevice_ini">
                   <font>
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                   <tooltip>
                      <Tooltip text="%components.freezy.open_dmddevice_ini" />
@@ -55,7 +55,7 @@
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                   </graphic>
                </Button>
             </items>

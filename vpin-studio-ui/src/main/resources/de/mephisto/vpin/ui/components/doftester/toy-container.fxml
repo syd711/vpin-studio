@@ -20,7 +20,7 @@
          <center>
             <VBox fx:id="dataPanel" prefWidth="450.0">
                <children>
-                  <Label fx:id="filenameLabel" text="%components.doftester.toy_container.file_name" textFill="WHITE">
+                  <Label fx:id="filenameLabel" text="%components.doftester.toy_container.file_name" styleClass="c-text-white">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -28,7 +28,7 @@
                         <Insets top="3.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="sizeLabel" layoutX="10.0" layoutY="10.0" text="%components.doftester.toy_container.size_label" textFill="WHITE">
+                  <Label fx:id="sizeLabel" layoutX="10.0" layoutY="10.0" text="%components.doftester.toy_container.size_label" styleClass="c-text-white">
                      <VBox.margin>
                         <Insets bottom="3.0" />
                      </VBox.margin></Label>
@@ -58,7 +58,7 @@
    <left>
       <VBox fx:id="dragHandler" alignment="CENTER" styleClass="subpanel" BorderPane.alignment="CENTER">
          <children>
-            <FontIcon iconColor="WHITE" iconLiteral="mdi2d-drag" iconSize="18" />
+            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-drag" iconSize="18" />
          </children>
       </VBox>
    </left>

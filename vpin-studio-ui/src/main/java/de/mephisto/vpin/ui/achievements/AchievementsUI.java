@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.achievements;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.achievements.BadgeMedal;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.achievements.BadgeInfo;
@@ -40,21 +41,21 @@ import java.util.Set;
  */
 public final class AchievementsUI {
 
-  public static final String CARD = "#2A2A2A";
-  public static final String ROW_EVEN = "#283335";
-  public static final String ROW_ODD = "#303733";
-  public static final String ROW_SELECTED = "#333344";
-  public static final String ACCENT = "#8C8CE0";
-  public static final String ORANGE = "#DD9646";
-  public static final String BLUE = "#7FB2FF";
-  public static final String GREEN = "#5CC46A";
-  public static final String RED = "#FF6B70";
-  public static final String MUTED = "#BDBDBD";
-  public static final String DISABLED = "#7A7A7A";
-  public static final String TRACK = "#161616";
+  public static final String CARD = ThemeColors.TILE;
+  public static final String ROW_EVEN = ThemeColors.ROW_EVEN;
+  public static final String ROW_ODD = ThemeColors.ROW_ODD;
+  public static final String ROW_SELECTED = ThemeColors.ROW_SELECTED;
+  public static final String ACCENT = ThemeColors.INFO;
+  public static final String ORANGE = ThemeColors.WARN;
+  public static final String BLUE = ThemeColors.LINK;
+  public static final String GREEN = ThemeColors.OK;
+  public static final String RED = ThemeColors.ERROR;
+  public static final String MUTED = ThemeColors.MUTED;
+  public static final String DISABLED = ThemeColors.DISABLED;
+  public static final String TRACK = ThemeColors.INSET;
 
   public static final Map<String, String> RARITY_COLORS = Map.of(
-      "Common", "#EDEDED", "Uncommon", "#5CC46A", "Rare", "#5AA9FF", "Epic", "#C77DFF", "Legendary", "#DD9646");
+      "Common", ThemeColors.RARITY_COMMON, "Uncommon", ThemeColors.RARITY_UNCOMMON, "Rare", ThemeColors.RARITY_RARE, "Epic", ThemeColors.RARITY_EPIC, "Legendary", ThemeColors.RARITY_LEGENDARY);
 
   public static final Map<String, String> CATEGORY_COLORS = BadgeMedal.CATEGORY_COLORS;
 
@@ -72,19 +73,19 @@ public final class AchievementsUI {
 
   public static Label headline(String text) {
     Label l = new Label(text);
-    l.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;");
+    l.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: " + ThemeColors.WHITE + ";");
     return l;
   }
 
   public static Label text(String text) {
     Label l = new Label(text);
-    l.setStyle("-fx-font-size: 14px; -fx-text-fill: white;");
+    l.setStyle("-fx-font-size: 14px; -fx-text-fill: " + ThemeColors.WHITE + ";");
     return l;
   }
 
   public static Label bold(String text) {
     Label l = new Label(text);
-    l.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;");
+    l.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: " + ThemeColors.WHITE + ";");
     return l;
   }
 
@@ -102,7 +103,7 @@ public final class AchievementsUI {
 
   public static Label big(String text) {
     Label l = new Label(text);
-    l.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Monospaced';");
+    l.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: " + ThemeColors.WHITE + "; -fx-font-family: 'Monospaced';");
     return l;
   }
 
@@ -183,7 +184,7 @@ public final class AchievementsUI {
     catch (Exception e) {
       icon.setIconLiteral("mdi2s-star");
     }
-    icon.setIconColor(Color.web(color));
+    ThemeColors.setIconColor(icon, color);
     icon.setIconSize(size);
     return icon;
   }
@@ -203,11 +204,11 @@ public final class AchievementsUI {
     circle.setMinSize(size, size);
     circle.setPrefSize(size, size);
     circle.setMaxSize(size, size);
-    circle.setStyle("-fx-background-color: #3A3A3A; -fx-background-radius: " + size + "; -fx-border-radius: " + size
+    circle.setStyle("-fx-background-color: " + ThemeColors.SELECTED + "; -fx-background-radius: " + size + "; -fx-border-radius: " + size
         + "; -fx-border-color: " + ORANGE + "; -fx-border-width: 3;");
     VBox content = new VBox(-2);
     content.setAlignment(Pos.CENTER);
-    content.getChildren().addAll(colored(String.valueOf(level), "white", (int) (size * 0.36), true), colored("LEVEL", MUTED, 9, false));
+    content.getChildren().addAll(colored(String.valueOf(level), ThemeColors.WHITE, (int) (size * 0.36), true), colored("LEVEL", MUTED, 9, false));
     circle.getChildren().add(content);
     return circle;
   }
@@ -216,14 +217,14 @@ public final class AchievementsUI {
    * Rank number, medal colors for the first three places.
    */
   public static Node rank(int rank) {
-    String[][] medals = {{"#E3B930", "#8A6E12"}, {"#C9C9C9", "#7A7A7A"}, {"#D9925A", "#8A5326"}};
+    String[][] medals = {{ThemeColors.MEDAL_GOLD, ThemeColors.MEDAL_GOLD_DARK}, {ThemeColors.MEDAL_SILVER, ThemeColors.MEDAL_SILVER_DARK}, {ThemeColors.MEDAL_BRONZE, ThemeColors.MEDAL_BRONZE_DARK}};
     if (rank >= 1 && rank <= 3) {
       StackPane p = new StackPane();
       p.setMinSize(24, 24);
       p.setMaxSize(24, 24);
       p.setStyle("-fx-background-color: " + medals[rank - 1][0] + "; -fx-background-radius: 24; -fx-border-radius: 24; -fx-border-color: "
           + medals[rank - 1][1] + "; -fx-border-width: 2;");
-      p.getChildren().add(colored(String.valueOf(rank), "#111111", 14, true));
+      p.getChildren().add(colored(String.valueOf(rank), ThemeColors.DARKEST, 14, true));
       return p;
     }
     return bold(rank > 0 ? "#" + rank : "-");
@@ -233,8 +234,8 @@ public final class AchievementsUI {
     StackPane p = new StackPane();
     p.setMinSize(size, size);
     p.setMaxSize(size, size);
-    p.setStyle("-fx-background-color: #9A9A9A; -fx-background-radius: " + size + "; -fx-border-radius: " + size + "; -fx-border-color: #5A5A5A; -fx-border-width: 2;");
-    p.getChildren().add(colored(initials != null ? initials : "?", "#111111", 10, true));
+    p.setStyle("-fx-background-color: " + ThemeColors.SUBTLE + "; -fx-background-radius: " + size + "; -fx-border-radius: " + size + "; -fx-border-color: " + ThemeColors.BORDER_STRONG + "; -fx-border-width: 2;");
+    p.getChildren().add(colored(initials != null ? initials : "?", ThemeColors.DARKEST, 10, true));
     return p;
   }
 
@@ -328,7 +329,7 @@ public final class AchievementsUI {
     btn.setStyle("-fx-font-size: 14px;");
     FontIcon icon = new FontIcon("mdi2a-account-plus");
     icon.setIconSize(18);
-    icon.setIconColor(Color.WHITE);
+    ThemeColors.setIconColor(icon, ThemeColors.WHITE);
     btn.setGraphic(icon);
     btn.setOnAction(e -> controller.registerCabinet());
     return btn;

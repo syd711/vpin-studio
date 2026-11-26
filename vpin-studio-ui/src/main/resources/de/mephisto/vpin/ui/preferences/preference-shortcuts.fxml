@@ -17,13 +17,13 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.shortcuts.help_support" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-title, c-text-white" text="%pref.shortcuts.help_support" wrapText="true" />
                   <Label styleClass="preference-subtitle" text="%pref.shortcuts.shortcuts" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.shortcuts.this_page_gives_an_overview_about_the_available" textFill="WHITE" wrapText="true">
+                  <Label styleClass="preference-description, c-text-white" text="%pref.shortcuts.this_page_gives_an_overview_about_the_available" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>

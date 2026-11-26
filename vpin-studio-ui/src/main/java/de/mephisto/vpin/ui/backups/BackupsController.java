@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.backups;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -362,15 +363,15 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo directb2s = value.getPackageInfo().getDirectb2s();
         if (directb2s != null) {
-          Label iconLabel = WidgetFactory.createCheckboxIcon("#FFFFFF", directb2s.toString());
+          Label iconLabel = WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, directb2s.toString());
           int nbVersions = directb2s.getFiles();
           FontIcon icon = null;
           if (nbVersions > 9) {
-            icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-box-multiple-outline", "#FFFFFF");
+            icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-box-multiple-outline", ThemeColors.WHITE);
             iconLabel.setGraphic(icon);
           }
           else if (nbVersions > 1) {
-            icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-box-multiple-outline", "#FFFFFF");
+            icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-box-multiple-outline", ThemeColors.WHITE);
             iconLabel.setGraphic(icon);
           }
           return iconLabel;
@@ -383,7 +384,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo pupPack = value.getPackageInfo().getPupPack();
         if (pupPack != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", pupPack.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, pupPack.toString());
         }
       }
       return new Label("");
@@ -393,7 +394,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo media = value.getPackageInfo().getPopperMedia();
         if (media != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", media.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, media.toString());
         }
       }
       return new Label("");
@@ -403,7 +404,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo pov = value.getPackageInfo().getPov();
         if (pov != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", pov.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, pov.toString());
         }
       }
       return new Label("");
@@ -416,7 +417,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
         BackupFileInfo vrIni = value.getPackageInfo().getVrIni();
         if (ini != null || vrIni != null) {
           String tooltip = Stream.of(ini, vrIni).filter(Objects::nonNull).map(BackupFileInfo::toString).collect(Collectors.joining(", "));
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", tooltip);
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, tooltip);
         }
       }
       return new Label("");
@@ -426,7 +427,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo vbs = value.getPackageInfo().getVbs();
         if (vbs != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", vbs.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, vbs.toString());
         }
       }
       return new Label("");
@@ -436,7 +437,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo res = value.getPackageInfo().getRes();
         if (res != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", res.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, res.toString());
         }
       }
       return new Label("");
@@ -446,7 +447,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo mus = value.getPackageInfo().getMusic();
         if (mus != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", mus.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, mus.toString());
         }
       }
       return new Label("");
@@ -456,7 +457,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo highscore = value.getPackageInfo().getHighscore();
         if (highscore != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", highscore.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, highscore.toString());
         }
       }
       return new Label("");
@@ -466,7 +467,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo dmd = value.getPackageInfo().getDmd();
         if (dmd != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", dmd.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, dmd.toString());
         }
       }
       return new Label("");
@@ -476,7 +477,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo reg = value.getPackageInfo().getMameData();
         if (reg != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", reg.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, reg.toString());
         }
       }
       return new Label("");
@@ -486,7 +487,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo altColor = value.getPackageInfo().getAltColor();
         if (altColor != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", altColor.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, altColor.toString());
         }
       }
       return new Label("");
@@ -496,7 +497,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo rom = value.getPackageInfo().getRom();
         if (rom != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", rom.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, rom.toString());
         }
       }
       return new Label("");
@@ -506,7 +507,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (value.getPackageInfo() != null) {
         BackupFileInfo altSound = value.getPackageInfo().getAltSound();
         if (altSound != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", altSound.toString());
+          return WidgetFactory.createCheckboxIcon(ThemeColors.WHITE, altSound.toString());
         }
       }
       return new Label("");

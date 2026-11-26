@@ -22,9 +22,9 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-title, c-text-white" text="%pref.backglass.3rd_party_preferences" wrapText="true" />
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.iscored.iscored_game_rooms" wrapText="true" />
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.iscored.iscored_game_rooms_used_for_competitions_can_be" textFill="WHITE" wrapText="true">
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description, c-text-white" text="%pref.iscored.iscored_game_rooms_used_for_competitions_can_be" wrapText="true">
                <VBox.margin>
                   <Insets bottom="24.0" top="12.0" />
                </VBox.margin>
@@ -36,53 +36,53 @@
                         <Insets />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="%pref.iscored.enable_the_iscored_integration_to_subscribe_to_game" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="checkbox-description, c-text-white" text="%pref.iscored.enable_the_iscored_integration_to_subscribe_to_game" wrapText="true" />
                </children>
             </VBox>
             <VBox fx:id="enabledBox">
                <children>
                   <ToolBar>
                     <items>
-                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                             <tooltip>
                                 <Tooltip text="%pref.iscored.reload_all_webhook_sets" />
                             </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAdd" text="%competitions.competitions_discord.add" textFill="WHITE">
+                        <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAdd" text="%competitions.competitions_discord.add" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                            </graphic>
                         </Button>
-                      <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
+                      <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                            </graphic>
                         </Button>
                         <Separator orientation="VERTICAL" prefWidth="12.0" />
-                        <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
+                        <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                            </graphic>
                         </Button>
                     </items>
                   </ToolBar>
-                  <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                  <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: -c-tile;" styleClass="base-component">
                     <columns>
                         <TableColumn fx:id="syncColumn" prefWidth="118.40002059936523" style="-fx-alignment: BASELINE_CENTER;" text="%pref.iscored.sync_enabled" />
                       <TableColumn fx:id="nameColumn" prefWidth="390.0" style="-fx-alignment: BASELINE_LEFT;" text="%pref.iscored.game_room_url" />

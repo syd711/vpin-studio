@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.vps;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.vps.model.*;
@@ -10,7 +11,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class VpsTableColumn extends HBox {
       if (vpsTable != null) {
         vpsTableVersion = vpsTable.getTableVersionById(vpsTableVersionId);
 
-        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(disabled ? WidgetFactory.DISABLED_COLOR : null);
+        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(disabled ? ThemeColors.ICON_DISABLED : null);
         checkboxIcon.setIconSize(iconSize);
         label.setGraphic(checkboxIcon);
         label.setTooltip(new Tooltip(Messages.get("dialog.vps_table_colon", vpsTable.getDisplayName())));
@@ -57,7 +57,7 @@ public class VpsTableColumn extends HBox {
 
       label = new Label();
       if (vpsTableVersion != null) {
-        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(disabled ? WidgetFactory.DISABLED_COLOR : null);
+        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(disabled ? ThemeColors.ICON_DISABLED : null);
         checkboxIcon.setIconSize(iconSize);
         label.setGraphic(checkboxIcon);
         label.setTooltip(new Tooltip(Messages.get("dialog.vps_table_version_colon", vpsTableVersion.toString())));
@@ -113,7 +113,7 @@ public class VpsTableColumn extends HBox {
       if (changeCounter > 0) {
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
         if (disabled) {
-          updateIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+          ThemeColors.setIconColor(updateIcon, ThemeColors.ICON_DISABLED);
         }
         label.setGraphic(updateIcon);
 

@@ -13,7 +13,7 @@
    <content>
       <VBox>
          <children>
-            <Label fx:id="emptyLabel" managed="false" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" text="%achievements.no_players" visible="false">
+            <Label fx:id="emptyLabel" managed="false" style="-fx-font-size: 14px; -fx-text-fill: -c-muted;" text="%achievements.no_players" visible="false">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>

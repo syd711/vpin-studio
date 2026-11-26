@@ -60,7 +60,7 @@
          <bottom>
             <ToolBar fx:id="toolbar" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
               <items>
-                <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="submit-button" text="%launcher.installer.install_service" textFill="WHITE">
+                <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="submit-button, c-text-white" text="%launcher.installer.install_service">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -94,27 +94,27 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="%launcher.installer.frontend_type" textFill="WHITE">
+                        <Label prefHeight="20.0" styleClass="preference-label, c-text-white" text="%launcher.installer.frontend_type">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <RadioButton fx:id="radioA" mnemonicParsing="false" selected="true" text="%launcher.installer.pinup_popper" textFill="WHITE" GridPane.columnIndex="1">
+                        <RadioButton fx:id="radioA" mnemonicParsing="false" selected="true" text="%launcher.installer.pinup_popper" styleClass="c-text-white" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioB" layoutX="217.0" layoutY="45.0" mnemonicParsing="false" text="%launcher.installer.pinballx" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <RadioButton fx:id="radioB" layoutX="217.0" layoutY="45.0" mnemonicParsing="false" text="%launcher.installer.pinballx" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioC" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="%launcher.installer.pinbally" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <RadioButton fx:id="radioC" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="%launcher.installer.pinbally" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioD" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="%launcher.installer.standalone" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <RadioButton fx:id="radioD" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="%launcher.installer.standalone" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -155,7 +155,7 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Label layoutX="10.0" layoutY="15.0" text="%launcher.installer.installation_folder" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="15.0" text="%launcher.installer.installation_folder" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -183,7 +183,7 @@
                            <children>
                               <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                                  <children>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                                  </children>
                               </StackPane>
                               <VBox spacing="2.0" HBox.hgrow="ALWAYS">

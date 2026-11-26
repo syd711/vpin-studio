@@ -9,14 +9,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="Infinity" maxWidth="Infinity" prefWidth="100.0" spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewRankingTileController">
+<VBox maxHeight="Infinity" maxWidth="Infinity" prefWidth="100.0" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewRankingTileController">
    <fx:define>
       <ToggleGroup fx:id="rankingGroup" />
    </fx:define>
    <children>
       <HBox alignment="CENTER_LEFT" spacing="8.0">
          <children>
-            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="%widgets.widget_player_rank.player_ranking" />
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%widgets.widget_player_rank.player_ranking" />
             <Region HBox.hgrow="ALWAYS" />
             <ToggleButton fx:id="cabinetBtn" mnemonicParsing="false" onAction="#onCabinet" selected="true" text="%achievements.cabinet">
                <font>

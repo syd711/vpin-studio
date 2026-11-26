@@ -40,7 +40,7 @@
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
+                                        <FontIcon styleClass="c-icon-white" iconLiteral="bi-trophy" />
                                     </graphic>
                                 </Tab>
                                 <Tab fx:id="iScoredSubscriptionsTab" closable="false" text="%competitions.competitions.iscored_subscriptions">
@@ -48,7 +48,7 @@
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
+                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-check" />
                                     </graphic>
                                 </Tab>
                                 <Tab fx:id="weeklySubscriptionsTab" closable="false" text="%competitions.competitions.wovp_challenges">
@@ -56,7 +56,7 @@
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-calendar-week" />
+                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-calendar-week" />
                                     </graphic>
                                 </Tab>
                                 <Tab fx:id="maniaChallengesTab" closable="false" text="%competitions.competitions.mania_challenges">
@@ -71,7 +71,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
                             </graphic>
                             <tooltip>
                                 <Tooltip text="%competitions.competitions.toggle_sidebar_f3" />
@@ -85,7 +85,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
                             </graphic>
                             <tooltip>
                                 <Tooltip text="%competitions.competitions.open_competition_settings" />
@@ -148,7 +148,7 @@
                                                               </Label>
                                                 <Button fx:id="copyBtn" mnemonicParsing="false" onAction="#onCopy">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%competitions.competitions.copy_id_to_clipboard" />
@@ -264,7 +264,7 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="16" />
                                                     </graphic>
                                                 </Button>
                                     <Button fx:id="rulesBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRulesOpen" styleClass="external-component" text="%competitions.competitions.open_rules">
@@ -272,16 +272,16 @@
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="16" />
                                        </graphic>
                                     </Button>
                                                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onDashboardReload" text="%competitions.competitions.reload" textFill="WHITE">
+                                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onDashboardReload" text="%competitions.competitions.reload" styleClass="c-text-white">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                                                     </graphic>
                                                 </Button>
                                             </items>

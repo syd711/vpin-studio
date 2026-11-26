@@ -30,7 +30,7 @@
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="%tables.tables_sidebar.open_screen_validators_settings" />
@@ -43,7 +43,7 @@
                                 </HBox>
                             </right>
                             <center>
-                                <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true" text="%backglass.res_generator.preview" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
+                                <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true" text="%backglass.res_generator.preview" styleClass="c-text-white" BorderPane.alignment="CENTER_RIGHT">
                                     <font>
                                         <Font size="10.0" />
                                     </font>
@@ -63,7 +63,7 @@
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="%dropins.dropin_container.open_folder" />
@@ -90,7 +90,7 @@
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="%tables.tables_sidebar.directb2s_folder" />
@@ -101,7 +101,7 @@
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="%tables.tables_sidebar.open_backglass_server_settings" />
@@ -127,7 +127,7 @@
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="%tables.tables_sidebar.open_dmd_folder" />
@@ -153,7 +153,7 @@
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="%tables.tables_sidebar.open_pup_pack_folder" />
@@ -177,7 +177,7 @@
                                         <Font size="10.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
+                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="%tables.tables_sidebar.alt_sound_folder" />
@@ -196,7 +196,7 @@
                             <right>
                                 <Button fx:id="altColorExplorerBtn" mnemonicParsing="false" onAction="#onAltColor" styleClass="folder-component" BorderPane.alignment="CENTER">
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
+                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="%tables.tables_sidebar.open_alt_color_folder" />
@@ -207,7 +207,7 @@
                                 </Button>
                             </right>
                             <left>
-                                <Label text="%backups.backup_restore.alt_color" textFill="WHITE" BorderPane.alignment="CENTER">
+                                <Label text="%backups.backup_restore.alt_color" styleClass="c-text-white" BorderPane.alignment="CENTER">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
@@ -227,7 +227,7 @@
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="%tables.tables_sidebar.open_point_of_view_pov_folder" />
@@ -253,7 +253,7 @@
                                     <children>
                                         <Button fx:id="nvramExplorerBtn" mnemonicParsing="false" onAction="#onHighscores" styleClass="folder-component">
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="%tables.tables_sidebar.open_highscore_file_or_folder" />
@@ -267,7 +267,7 @@
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="%tables.tables_sidebar.open_highscore_settings" />
@@ -293,7 +293,7 @@
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="%tables.tables_sidebar.open_vpin_mame_settings" />
@@ -318,7 +318,7 @@
                                             <Font size="10.0" />
                                         </font>
                                         <graphic>
-                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" />
                                         </graphic>
                                         <tooltip>
                                             <Tooltip text="%tables.table_asset_manager_embedded.https_virtual_pinball_spreadsheet_web_app" />
@@ -329,7 +329,7 @@
                                             <Font size="10.0" />
                                         </font>
                                         <graphic>
-                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
+                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" />
                                         </graphic>
                                         <tooltip>
                                             <Tooltip text="%tables.tables_sidebar.open_vpin_mame_settings" />
@@ -344,7 +344,7 @@
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <left>
-                                <Label text="%tables.tables_sidebar.script_details" textFill="WHITE" BorderPane.alignment="CENTER">
+                                <Label text="%tables.tables_sidebar.script_details" styleClass="c-text-white" BorderPane.alignment="CENTER">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
@@ -355,7 +355,7 @@
                            <children>
                                       <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScript" styleClass="external-component">
                                           <graphic>
-                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" />
                                           </graphic>
                                           <tooltip>
                                               <Tooltip text="%pref.pause_menu.open_script_in_visual_pinball_x" />
@@ -369,7 +369,7 @@
                                     <Font size="10.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-file-document-edit-outline" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%components.doftester.dof_tester.edit_script_with_the_linked_vbs_file_system" />

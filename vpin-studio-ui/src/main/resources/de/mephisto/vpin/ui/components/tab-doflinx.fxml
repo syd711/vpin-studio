@@ -18,23 +18,23 @@
         <top>
             <ToolBar BorderPane.alignment="CENTER" styleClass="sm-actionbar">
             <items>
-               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%components.b2s.open_folder" textFill="WHITE">
+               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component, c-text-white" text="%components.b2s.open_folder">
                   <font>
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="18" />
                   </graphic>
                   <tooltip>
                      <Tooltip text="%components.dof.open_serum_installation_folder" />
                   </tooltip>
                </Button>
-               <Button fx:id="configBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onConfigTool" styleClass="external-component" text="%components.doflinx.doflinxconfig" textFill="WHITE">
+               <Button fx:id="configBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onConfigTool" styleClass="external-component, c-text-white" text="%components.doflinx.doflinxconfig">
                   <font>
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                   <tooltip>
                      <Tooltip text="%components.dof.open_serum_installation_folder" />
@@ -46,7 +46,7 @@
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                   </graphic>
                </Button>
                <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" text="%components.doflinx.re_start_doflinx">
@@ -54,24 +54,24 @@
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-restart" iconSize="18" />
                   </graphic>
                </Button>
-               <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="%components.doflinx.stop_doflinx" textFill="WHITE">
+               <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="%components.doflinx.stop_doflinx" styleClass="c-text-white">
                   <font>
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2s-skull-crossbones-outline" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-skull-crossbones-outline" iconSize="18" />
                   </graphic>
                </Button>
                <Separator layoutX="270.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="iniBtn" mnemonicParsing="false" onAction="#onIni" styleClass="text-button" text="%components.doflinx.doflinx_ini" textFill="WHITE">
+               <Button fx:id="iniBtn" mnemonicParsing="false" onAction="#onIni" styleClass="text-button, c-text-white" text="%components.doflinx.doflinx_ini">
                   <font>
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                   </graphic>
                   <tooltip>
                      <Tooltip text="%components.doflinx.open_vpmalias_txt_file" />

@@ -36,7 +36,7 @@
                <center>
                   <HBox spacing="6.0" alignment="CENTER_LEFT" >
                      <children>
-                        <Label text="%cards.instructions_card.table" textFill="WHITE" >
+                        <Label text="%cards.instructions_card.table" styleClass="c-text-white" >
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -48,7 +48,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Label textAlignment="JUSTIFY" textFill="WHITE" >
+                              <Label textAlignment="JUSTIFY" styleClass="c-text-white" >
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
                                  </graphic>
@@ -57,14 +57,14 @@
                         </StackPane>                
                         <Button fx:id="openVpsTableBtn" mnemonicParsing="false" onAction="#onVpsTableOpen" styleClass="link-component">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" />
                            </graphic>
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Button>
 
-                        <Label text="%cards.instructions_card.language" textFill="WHITE" >
+                        <Label text="%cards.instructions_card.language" styleClass="c-text-white" >
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -84,7 +84,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_previous_entry_in_the_current" wrapText="true" />
@@ -95,13 +95,13 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-forward" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_next_entry_in_the_current" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="%cards.instructions_card.auto_save" textFill="WHITE">
+                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="%cards.instructions_card.auto_save" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -130,7 +130,7 @@
                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="%cards.instructions_card.table_id" styleClass="default-text" textFill="WHITE" />
+                  <Label text="%cards.instructions_card.table_id" styleClass="default-text, c-text-white" />
                   <Label fx:id="tableId" styleClass="default-text" text="-" GridPane.columnIndex="1" />
                </children>
             </GridPane>

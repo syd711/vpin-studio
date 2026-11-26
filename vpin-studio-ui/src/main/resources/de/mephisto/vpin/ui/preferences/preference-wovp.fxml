@@ -24,14 +24,14 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-title, c-text-white" text="%pref.backglass.3rd_party_preferences" wrapText="true" />
                   <Label styleClass="preference-subtitle" text="%pref.wovp.world_of_virtual_pinball" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.wovp.settings_for_the_weekly_challenges_from_the_world" textFill="WHITE" wrapText="true" />
-                  <Label styleClass="preference-description" text="%pref.dof.for_more_information_visit" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description, c-text-white" text="%pref.wovp.settings_for_the_weekly_challenges_from_the_world" wrapText="true" />
+                  <Label styleClass="preference-description, c-text-white" text="%pref.dof.for_more_information_visit" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -40,7 +40,7 @@
                      <VBox.margin>
                         <Insets left="-5.0" />
                      </VBox.margin></Hyperlink>
-                  <CheckBox fx:id="subscriptionCheckbox" mnemonicParsing="false" text="%pref.wovp.enable_world_of_virtual_pinball_competitions" textFill="WHITE">
+                  <CheckBox fx:id="subscriptionCheckbox" mnemonicParsing="false" text="%pref.wovp.enable_world_of_virtual_pinball_competitions" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -48,24 +48,24 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="%pref.wovp.this_will_automatically_update_the_weekly_competitions_to" textFill="WHITE" wrapText="true">
+                  <Label styleClass="checkbox-description, c-text-white" text="%pref.wovp.this_will_automatically_update_the_weekly_competitions_to" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
                   <VBox>
                      <children>
-                        <Label styleClass="preference-subtitle" text="%pref.dof.account_settings" textFill="WHITE" wrapText="true">
+                        <Label styleClass="preference-subtitle, c-text-white" text="%pref.dof.account_settings" wrapText="true">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%pref.wovp.you_find_the_api_key_in_the_account" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description, c-text-white" text="%pref.wovp.you_find_the_api_key_in_the_account" wrapText="true" />
                         <Hyperlink onAction="#onLink" text="%pref.wovp.https_worldofvirtualpinball_com_en_challenge_settings_tab_ge">
                            <VBox.margin>
                               <Insets left="-5.0" />
                            </VBox.margin></Hyperlink>
-                        <Label layoutX="10.0" layoutY="61.0" styleClass="preference-description" text="%pref.wovp.multiple_accounts_are_supported_and_you_can_select" textFill="WHITE" wrapText="true">
+                        <Label layoutX="10.0" layoutY="61.0" styleClass="preference-description, c-text-white" text="%pref.wovp.multiple_accounts_are_supported_and_you_can_select" wrapText="true">
                            <VBox.margin>
                               <Insets top="6.0" />
                            </VBox.margin>
@@ -95,7 +95,7 @@
                               <Label styleClass="default-text" text="%pref.wovp.api_key_player_1" wrapText="true" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2">
                                  <children>
-                                    <Button fx:id="testBtn1" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" textFill="WHITE">
+                                    <Button fx:id="testBtn1" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -129,7 +129,7 @@
                               </TextField>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                  <children>
-                                    <Button fx:id="testBtn2" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" textFill="WHITE">
+                                    <Button fx:id="testBtn2" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -139,7 +139,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                  <children>
-                                    <Button fx:id="testBtn3" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" textFill="WHITE">
+                                    <Button fx:id="testBtn3" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -149,7 +149,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                  <children>
-                                    <Button fx:id="testBtn4" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" textFill="WHITE">
+                                    <Button fx:id="testBtn4" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -159,7 +159,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                                  <children>
-                                    <Button fx:id="testBtn5" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" textFill="WHITE">
+                                    <Button fx:id="testBtn5" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -169,17 +169,17 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="0">
                                  <children>
-                                    <Button fx:id="upBtn1" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                    <Button fx:id="upBtn1" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-up" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-up" iconSize="16" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%pref.wovp.move_api_key_up" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="downBtn1" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                    <Button fx:id="downBtn1" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-down" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-down" iconSize="16" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%pref.wovp.move_api_key_down" />
@@ -189,17 +189,17 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                  <children>
-                                    <Button fx:id="upBtn2" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                    <Button fx:id="upBtn2" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-up" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-up" iconSize="16" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%pref.wovp.move_api_key_up" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="downBtn2" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                    <Button fx:id="downBtn2" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-down" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-down" iconSize="16" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%pref.wovp.move_api_key_down" />
@@ -209,17 +209,17 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
                                  <children>
-                                    <Button fx:id="upBtn3" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                    <Button fx:id="upBtn3" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-up" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-up" iconSize="16" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%pref.wovp.move_api_key_up" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="downBtn3" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                    <Button fx:id="downBtn3" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-down" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-down" iconSize="16" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%pref.wovp.move_api_key_down" />
@@ -229,17 +229,17 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
                                  <children>
-                                    <Button fx:id="upBtn4" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                    <Button fx:id="upBtn4" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-up" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-up" iconSize="16" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%pref.wovp.move_api_key_up" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="downBtn4" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                    <Button fx:id="downBtn4" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-down" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-down" iconSize="16" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%pref.wovp.move_api_key_down" />
@@ -249,17 +249,17 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
                                  <children>
-                                    <Button fx:id="upBtn5" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                    <Button fx:id="upBtn5" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-up" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-up" iconSize="16" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%pref.wovp.move_api_key_up" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="downBtn5" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                    <Button fx:id="downBtn5" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-down" iconSize="16" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-down" iconSize="16" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%pref.wovp.move_api_key_down" />
@@ -267,7 +267,7 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Button fx:id="invalidateAllBtn" layoutX="534.0" layoutY="145.0" mnemonicParsing="false" onAction="#onClearCache" text="%competitions.competitions_discord.clear_cache" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <Button fx:id="invalidateAllBtn" layoutX="534.0" layoutY="145.0" mnemonicParsing="false" onAction="#onClearCache" text="%competitions.competitions_discord.clear_cache" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -281,13 +281,13 @@
                   </VBox>
                   <VBox>
                      <children>
-                        <Label styleClass="preference-subtitle" text="%competitions.subscription_add.subscription_settings" textFill="WHITE" wrapText="true">
+                        <Label styleClass="preference-subtitle, c-text-white" text="%competitions.subscription_add.subscription_settings" wrapText="true">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%pref.wovp.let_the_vpin_server_subscribe_automatically_to_the" textFill="WHITE" wrapText="true" />
-                        <Label styleClass="preference-description" text="%pref.wovp.if_a_matching_table_is_found_it_will" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description, c-text-white" text="%pref.wovp.let_the_vpin_server_subscribe_automatically_to_the" wrapText="true" />
+                        <Label styleClass="preference-description, c-text-white" text="%pref.wovp.if_a_matching_table_is_found_it_will" wrapText="true" />
                         <GridPane>
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="766.4000244140625" minWidth="10.0" prefWidth="740.0" />
@@ -300,13 +300,13 @@
                            <children>
                               <VBox>
                                  <children>
-                                    <CheckBox fx:id="badgeCheckbox" mnemonicParsing="false" text="%pref.wovp.apply_wovp_competition_badges_to_the_active_table" textFill="WHITE">
+                                    <CheckBox fx:id="badgeCheckbox" mnemonicParsing="false" text="%pref.wovp.apply_wovp_competition_badges_to_the_active_table" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <Label styleClass="checkbox-description" text="%pref.wovp.if_a_matching_table_is_found_the_wheel" textFill="WHITE" wrapText="true" />
-                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%pref.wovp.logo_of_the_competition_type_for_the_duration" textFill="WHITE" wrapText="true" />
+                                    <Label styleClass="checkbox-description, c-text-white" text="%pref.wovp.if_a_matching_table_is_found_the_wheel" wrapText="true" />
+                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description, c-text-white" text="%pref.wovp.logo_of_the_competition_type_for_the_duration" wrapText="true" />
                                  </children>
                                  <GridPane.margin>
                                     <Insets top="6.0" />
@@ -314,7 +314,7 @@
                               </VBox>
                               <VBox GridPane.rowIndex="1">
                                  <children>
-                                    <CheckBox fx:id="resetCheckbox" mnemonicParsing="false" text="%pref.wovp.backup_and_reset_existing_table_highscores_on_subscription" textFill="WHITE">
+                                    <CheckBox fx:id="resetCheckbox" mnemonicParsing="false" text="%pref.wovp.backup_and_reset_existing_table_highscores_on_subscription" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -322,8 +322,8 @@
                                           <Insets />
                                        </VBox.margin>
                                     </CheckBox>
-                                    <Label styleClass="checkbox-description" text="%pref.wovp.when_a_table_is_selected_for_the_competition" textFill="WHITE" wrapText="true" />
-                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%pref.wovp.and_resetted_so_that_all_new_highscores_can" textFill="WHITE" wrapText="true" />
+                                    <Label styleClass="checkbox-description, c-text-white" text="%pref.wovp.when_a_table_is_selected_for_the_competition" wrapText="true" />
+                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description, c-text-white" text="%pref.wovp.and_resetted_so_that_all_new_highscores_can" wrapText="true" />
                                  </children>
                                  <GridPane.margin>
                                     <Insets top="6.0" />
@@ -331,12 +331,12 @@
                               </VBox>
                               <VBox GridPane.rowIndex="2">
                                  <children>
-                                    <CheckBox fx:id="autoPatchCheckbox" mnemonicParsing="false" text="%pref.wovp.auto_patch_tables_with_wovp_telemetry" textFill="WHITE">
+                                    <CheckBox fx:id="autoPatchCheckbox" mnemonicParsing="false" text="%pref.wovp.auto_patch_tables_with_wovp_telemetry" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <Label styleClass="checkbox-description" text="%pref.wovp.auto_patch_tables_description" textFill="WHITE" wrapText="true" />
+                                    <Label styleClass="checkbox-description, c-text-white" text="%pref.wovp.auto_patch_tables_description" wrapText="true" />
                                  </children>
                                  <GridPane.margin>
                                     <Insets top="6.0" />
@@ -356,7 +356,7 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%pref.wovp.scores_are_submitted_via_the_pause_menu_check" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description, c-text-white" text="%pref.wovp.scores_are_submitted_via_the_pause_menu_check" wrapText="true" />
                         <Hyperlink onAction="#onPauseMenuLink" text="%pref.wovp.open_pause_menu_preferences">
                            <VBox.margin>
                               <Insets bottom="12.0" left="-5.0" />
@@ -364,7 +364,7 @@
                         </Hyperlink>
                         <VBox>
                            <children>
-                              <CheckBox fx:id="addInputCheckbox" mnemonicParsing="false" text="%pref.wovp.show_input_field_for_additional_message" textFill="WHITE">
+                              <CheckBox fx:id="addInputCheckbox" mnemonicParsing="false" text="%pref.wovp.show_input_field_for_additional_message" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -372,7 +372,7 @@
                                     <Insets />
                                  </VBox.margin>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="%pref.wovp.when_enabled_an_additional_input_field_will_be" textFill="WHITE" wrapText="true" />
+                              <Label styleClass="checkbox-description, c-text-white" text="%pref.wovp.when_enabled_an_additional_input_field_will_be" wrapText="true" />
                            </children>
                         </VBox>
                      </children>
@@ -384,9 +384,9 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%pref.wovp.if_enabled_and_the_competed_table_is_updated" textFill="WHITE" wrapText="true" />
-                        <Label styleClass="preference-description" text="%pref.wovp.you_can_create_an_sql_playlist_for_competed" textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.validators_backglass.auto_tagging_enabled" textFill="WHITE">
+                        <Label styleClass="preference-description, c-text-white" text="%pref.wovp.if_enabled_and_the_competed_table_is_updated" wrapText="true" />
+                        <Label styleClass="preference-description, c-text-white" text="%pref.wovp.you_can_create_an_sql_playlist_for_competed" wrapText="true" />
+                        <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.validators_backglass.auto_tagging_enabled">
                            <font>
                               <Font size="14.0" />
                            </font>

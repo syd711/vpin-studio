@@ -18,33 +18,33 @@
         <top>
             <ToolBar BorderPane.alignment="CENTER" styleClass="sm-actionbar">
                 <items>
-               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%components.b2s.open_folder" textFill="WHITE">
+               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component, c-text-white" text="%components.b2s.open_folder">
                   <font>
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="18" />
                   </graphic>
                   <tooltip>
                      <Tooltip text="%components.mame.open_mame_installation_folder" />
                   </tooltip>
                </Button>
                <Separator fx:id="folderSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                    <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="%components.mame.vpin_mame_setup" textFill="WHITE">
+                    <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component, c-text-white" text="%components.mame.vpin_mame_setup">
                         <font>
                             <Font size="14.0" />
                         </font>
                         <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                         </graphic>
                     </Button>
                <Separator layoutX="128.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button mnemonicParsing="false" onAction="#onPrefsMame" text="%components.mame.vpin_mame_preferences" textFill="WHITE">
+               <Button mnemonicParsing="false" onAction="#onPrefsMame" text="%components.mame.vpin_mame_preferences" styleClass="c-text-white">
                   <font>
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
                   </graphic>
                   <tooltip>
                      <Tooltip prefWidth="300.0" text="%components.component_summary_panel.this_will_set_the_latest_available_version_as" wrapText="true" />

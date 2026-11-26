@@ -22,14 +22,14 @@
                <children>
                   <HBox spacing="6.0">
                      <children>
-                        <Label fx:id="titleLabel" text="%updater.vpin_studio_server_update_progress" textFill="WHITE">
+                        <Label fx:id="titleLabel" text="%updater.vpin_studio_server_update_progress" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <Label>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="400.0" text="%updater.consider_to_define_an_exception_for_the_windows" wrapText="true" />
@@ -40,14 +40,14 @@
                   <ProgressBar fx:id="serverProgress" prefHeight="14.0" prefWidth="642.0" progress="0.0" />
                   <HBox alignment="TOP_RIGHT">
                      <children>
-                        <Label fx:id="serverLabel" text="-" textFill="WHITE" />
+                        <Label fx:id="serverLabel" text="-" styleClass="c-text-white" />
                      </children>
                   </HBox>
                </children>
             </VBox>
             <VBox fx:id="remoteClientUpdate" spacing="3.0">
                <children>
-                  <Label fx:id="titleLabel111" text="%updater.vpin_studio_remote_client_update_progress" textFill="WHITE">
+                  <Label fx:id="titleLabel111" text="%updater.vpin_studio_remote_client_update_progress" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -55,14 +55,14 @@
                   <ProgressBar fx:id="remoteClientProgress" prefHeight="14.0" prefWidth="630.0" progress="0.0" />
                   <HBox alignment="TOP_RIGHT">
                      <children>
-                        <Label fx:id="remoteClientLabel" text="-" textFill="WHITE" />
+                        <Label fx:id="remoteClientLabel" text="-" styleClass="c-text-white" />
                      </children>
                   </HBox>
                </children>
             </VBox>
             <VBox spacing="3.0">
                <children>
-                  <Label fx:id="titleLabel11" text="%updater.vpin_studio_client_update_progress" textFill="WHITE">
+                  <Label fx:id="titleLabel11" text="%updater.vpin_studio_client_update_progress" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -70,7 +70,7 @@
                   <ProgressBar fx:id="clientProgress" prefHeight="14.0" prefWidth="630.0" progress="0.0" />
                   <HBox alignment="TOP_RIGHT">
                      <children>
-                        <Label fx:id="clientLabel" text="-" textFill="WHITE" />
+                        <Label fx:id="clientLabel" text="-" styleClass="c-text-white" />
                      </children>
                   </HBox>
                </children>

@@ -44,7 +44,7 @@
                                           <ComboBox fx:id="releasesCombo" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                                           <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#onFetch" styleClass="sm-button, sm-button-icon">
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-refresh" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="%components.component_update_panel.checks_the_installation_against_the_selected_version" wrapText="true" />
@@ -62,7 +62,7 @@
                               </VBox>
                               <Button fx:id="checkBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onCheck" styleClass="sm-button" text="%components.tab.compare_with_installation">
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-compare-horizontal" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-compare-horizontal" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="300.0" text="%components.component_update_panel.checks_the_installation_against_the_selected_version" wrapText="true" />
@@ -77,7 +77,7 @@
                                        <graphic>
                                           <HBox alignment="CENTER_LEFT" spacing="8.0">
                                              <children>
-                                                <FontIcon fx:id="releaseNotesChevron" iconColor="#BDBDBD" iconLiteral="mdi2c-chevron-right" iconSize="18" />
+                                                <FontIcon fx:id="releaseNotesChevron" styleClass="c-icon-muted" iconLiteral="mdi2c-chevron-right" iconSize="18" />
                                                 <Label styleClass="sm-text" text="%components.tab.release_notes" />
                                                 <Region HBox.hgrow="ALWAYS" />
                                                 <Label fx:id="releaseNotesState" styleClass="sm-small" />
@@ -105,7 +105,7 @@
                      <children>
                         <Button fx:id="simBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="sm-button" text="%components.tab.simulate" HBox.hgrow="ALWAYS">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-flask-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-flask-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%components.component_update_panel.simulate_installation" />
@@ -113,14 +113,14 @@
                         </Button>
                         <Button fx:id="installBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onInstall" styleClass="sm-accent-button" text="%components.component_update_panel.start_installation" HBox.hgrow="ALWAYS">
                            <graphic>
-                              <FontIcon fx:id="installIcon" iconColor="#1A1305" iconLiteral="mdi2d-download" iconSize="18" />
+                              <FontIcon fx:id="installIcon" styleClass="c-icon-on-warn" iconLiteral="mdi2d-download" iconSize="18" />
                            </graphic>
                         </Button>
                      </children>
                   </HBox>
                   <HBox fx:id="hintRow" spacing="8.0">
                      <children>
-                        <FontIcon iconColor="#9A9A9A" iconLiteral="mdi2i-information-outline" iconSize="16" />
+                        <FontIcon styleClass="c-icon-subtle" iconLiteral="mdi2i-information-outline" iconSize="16" />
                         <VBox fx:id="hintBox" spacing="4.0" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
@@ -144,12 +144,12 @@
                   <TextField fx:id="searchField" prefWidth="170.0" promptText="%components.tab.filter_files" styleClass="sm-text-field" />
                   <ToggleButton fx:id="groupToggle" minWidth="-Infinity" mnemonicParsing="false" selected="true" styleClass="sm-filter-pill" text="%components.tab.group">
                      <graphic>
-                        <FontIcon iconColor="#BDBDBD" iconLiteral="mdi2f-format-list-group" iconSize="16" />
+                        <FontIcon styleClass="c-icon-muted" iconLiteral="mdi2f-format-list-group" iconSize="16" />
                      </graphic>
                   </ToggleButton>
                   <Button fx:id="copyBtn" mnemonicParsing="false" onAction="#onCopyLog" styleClass="sm-button, sm-button-icon">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="16" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%components.tab.copy_log" />
@@ -157,7 +157,7 @@
                   </Button>
                   <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClearLog" styleClass="sm-button, sm-button-icon">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-delete-outline" iconSize="16" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-delete-outline" iconSize="16" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%components.tab.clear_log" />
@@ -172,7 +172,7 @@
                   <Insets bottom="12.0" left="14.0" right="14.0" top="12.0" />
                </padding>
                <children>
-                  <FontIcon fx:id="bannerIcon" iconColor="#DD9646" iconLiteral="mdi2a-alert-outline" iconSize="22" />
+                  <FontIcon fx:id="bannerIcon" styleClass="c-icon-warn" iconLiteral="mdi2a-alert-outline" iconSize="22" />
                   <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label fx:id="bannerTitle" styleClass="sm-alert-title" wrapText="true" />

@@ -46,7 +46,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%playlistmanager.add_tables.set_value_to_0_to_add_all_matching" wrapText="true" />
@@ -61,7 +61,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip prefWidth="300.0" text="%playlistmanager.add_tables.these_templates_are_only_working_for_tables_that" wrapText="true" />

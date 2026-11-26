@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -86,7 +87,7 @@ public class DiscordBotAllowListDialogController implements Initializable, Dialo
           checkBox.setUserData(user);
           checkBox.setText(user.getName());
           checkBox.setSelected(allowList.contains(user));
-          checkBox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
+          checkBox.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.WHITE + ";");
 
           checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override

@@ -41,7 +41,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.preferences.PreferenceType.dofSettings;
 import de.mephisto.vpin.commons.utils.i18n.Messages;

@@ -8,11 +8,19 @@ adding a new one**; a new color or font size needs a reason that none of the exi
   `stylesheet.css` only `@import`s one file per widget type (`stylesheet-textfield.css`, `stylesheet-tabpane.css`, …);
   put new rules into the matching file. The import order is the cascade order, keep containers (combo box, date
   picker, spinner) after the controls they contain
+- **Colors are only defined in `stylesheet-colors.css`** as `-c-*` tokens (`-c-error`, `-c-tile`, …). CSS and inline
+  styles use the tokens, FXML uses the classes `c-text-<token>`, `c-icon-<token>` and `c-fill-<token>` instead of the
+  `textFill` / `iconColor` / `fill` attributes, Java uses the `ThemeColors` constants (read from that file) and
+  `ThemeColors.setTextFill()` / `setIconColor()` for FXML nodes. A new color needs a token there first;
+  `ThemeColorsTest` fails on hard coded colors in the UI module.
 - Java builders and color constants: `vpin-studio-ui/.../ui/achievements/AchievementsUI.java`
 - Prefer `styleClass="sm-…"` over inline `style="…"`. Inline styles are only fine for values computed at
   runtime (a category color, a progress fraction) and must still use the tokens below.
 
 ## 1. Colors
+
+The token names below are the `-c-*` tokens of `stylesheet-colors.css` (e.g. `inset` is `-c-inset`, primary text is
+`-c-white`, body light is `-c-text-light`, the pill / banner backgrounds are `-c-ok-bg`, `-c-ok-banner`, …).
 
 ### Surfaces (dark → light)
 

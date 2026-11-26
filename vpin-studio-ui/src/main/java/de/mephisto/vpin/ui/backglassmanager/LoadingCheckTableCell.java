@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingTableCell;
 import javafx.scene.control.Tooltip;
@@ -49,7 +50,7 @@ abstract public class LoadingCheckTableCell  extends BaseLoadingTableCell<Direct
   }
 
   private String getIconColor(DirectB2SModel model) {
-    return model.getBacklass().isEnabled() ? null: WidgetFactory.DISABLED_COLOR;
+    return model.getBacklass().isEnabled() ? null: ThemeColors.ICON_DISABLED;
   }
 
 }

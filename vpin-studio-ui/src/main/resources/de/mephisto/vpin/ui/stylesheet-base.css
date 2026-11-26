@@ -1,30 +1,7 @@
 .debug {
     -fx-border-style: solid;
-    -fx-border-color: green;
+    -fx-border-color: -c-debug;
     -fx-border-width: 2;
-}
-
-/**
- * Colors
- */
-
-* {
-   -fx-base-1: #FFF8F8;
-   -fx-base-2: #C7C3C3;
-   -fx-base-3: #B0ABAB;
-   -fx-base-4: #888585;
-   -fx-base-5: #605E5E;
-   -fx-base-6: #222222;
-   -fx-base-7: #111111;
-   -fx-info-background: #333366;
-
-   -fx-font-1: #FFF8F8;
-   -fx-font-2: #B0ABAB;
-   -fx-font-hover: #333344;
-
-   -fx-primary-color: #333366;
-   -fx-secondary-color: #111111;
-   -fx-green: #33CC00;
 }
 
 .filter-component {
@@ -39,7 +16,7 @@
  */
 .root {
     -fx-border-style: solid;
-    -fx-border-color: #605E5E;
+    -fx-border-color: -c-warm-gray-darker;
     -fx-border-width: 1;
     -fx-border-radius: 6;
     -fx-background-radius: 6;
@@ -74,7 +51,7 @@
 .widget-title {
     -fx-font-size : 28px;
     -fx-font-weight : bold;
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: -c-white;
 }
 
 .widget-item-inverted {
@@ -88,13 +65,13 @@
 .subpanel {
     -fx-background-radius: 6 6 6 6;
     -fx-border-radius: 6 6 6 6;
-    -fx-background-color: #2a2a2a;
+    -fx-background-color: -c-tile;
 }
 
 .subpanel-tabbed {
     -fx-background-radius: 0 0 6 6;
     -fx-border-radius: 0 0 6 6;
-    -fx-background-color: #2a2a2a;
+    -fx-background-color: -c-tile;
    /* -fx-border-style: solid;
     -fx-border-color: -fx-base-6;*/
     -fx-border-width: 0 2 2 2;
@@ -104,8 +81,8 @@
  * Common Component Theme
  */
 .base-component {
-    -fx-text-fill: #FFFFFF;
-    -fx-base : #111111;
+    -fx-text-fill: -c-white;
+    -fx-base : -c-darkest;
 }
 
 /**
@@ -125,7 +102,7 @@
  */
 .info-container {
     -fx-border-style: solid solid solid solid;
-    -fx-border-color: #FFFFFF;
+    -fx-border-color: -c-white;
     -fx-border-width: 1;
     -fx-border-radius: 3px;
     -fx-background-color: -fx-info-background;
@@ -151,73 +128,73 @@
 .floating-toolbar {
     -fx-border-style: hidden hidden hidden hidden;
     -fx-background-radius: 6 6 6 6;
-    -fx-background-color: #222222;
+    -fx-background-color: -c-panel;
 }
 
 
 .floating-toolbar-inverted {
     -fx-border-style: hidden hidden hidden hidden;
     -fx-background-radius: 6 6 6 6;
-    -fx-background-color: #111111;
+    -fx-background-color: -c-darkest;
 }
 
 .external-component .arrow {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -c-white;
 }
 
 .external-component {
-    -fx-font-color: #FFFFFF;
-    -fx-text-fill: #FFFFFF;
-    -fx-background-color: #338800;
-    -fx-border-color: #33AA00;
+    -fx-font-color: -c-white;
+    -fx-text-fill: -c-white;
+    -fx-background-color: -c-green;
+    -fx-border-color: -c-green-border;
     -fx-border-style: solid;
     -fx-border-width: 1;
     -fx-border-radius: 3px;
 }
 
 .external-component:hover {
-    -fx-font-color: #FFFFFF;
-    -fx-text-fill: #FFFFFF;
-    -fx-border-color: #33AA00;
-    -fx-background-color: #339900;
+    -fx-font-color: -c-white;
+    -fx-text-fill: -c-white;
+    -fx-border-color: -c-green-border;
+    -fx-background-color: -c-green-hover;
 }
 
 .folder-component {
-    -fx-font-color: #FFFFFF;
-    -fx-text-fill: #FFFFFF;
-    -fx-base : #CC9933;
+    -fx-font-color: -c-white;
+    -fx-text-fill: -c-white;
+    -fx-base : -c-folder;
 }
 
 .default-headline {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: -c-white;
     -fx-font-size : 14px;
     -fx-font-weight : bold;
 }
 
 .default-text {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: -c-white;
     -fx-font-size : 14px;
 }
 
 .default-text-color {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: -c-white;
 }
 
 .default-title {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: -c-white;
     -fx-font-size : 18px;
     -fx-font-weight : bold;
 }
 
 .help-text {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: -c-white;
     -fx-font-size : 12px;
 }
 
 .action-selected {
-    -fx-text-fill: #FFFFFF;
-    -fx-background-color: #FF3333;
-    -fx-border-color: #990000;
+    -fx-text-fill: -c-white;
+    -fx-background-color: -c-danger;
+    -fx-border-color: -c-danger-darker;
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1;
     -fx-border-insets: 0 0 0 0;
@@ -225,22 +202,22 @@
 }
 
 .green {
-    -fx-background-color: #338800;
+    -fx-background-color: -c-green;
 }
 
 .orange-label {
-    -fx-text-fill: #FF9933;
+    -fx-text-fill: -c-orange;
     -fx-font-weight : bold;
     -fx-font-size: 14px;
 }
 
 
 .white-label {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: -c-white;
 }
 
 .green-label {
-    -fx-text-fill: #338800;
+    -fx-text-fill: -c-green;
     -fx-font-weight : bold;
     -fx-font-size: 14px;
 }
@@ -251,49 +228,49 @@
 }
 
 .edit-mode-border {
-    -fx-border-color: #6666FF;
+    -fx-border-color: -c-highlight;
     -fx-border-style: solid;
     -fx-border-width: 3;
 }
 
 .edit-mode-container {
-    -fx-background-color: #6666FF;
+    -fx-background-color: -c-highlight;
 }
 
 .dnd-dashed-border {
-    -fx-border-color: white;
+    -fx-border-color: -c-white;
     -fx-border-width: 3;
     -fx-border-style: segments(15, 15, 15, 15);
 }
 
 .dnd-dashed-border-small {
-    -fx-border-color: white;
+    -fx-border-color: -c-white;
     -fx-border-width: 2;
     -fx-border-style: segments(7, 7,7, 7);
 }
 
 
 .selection-panel {
-    -fx-background-color: #272b2f;
+    -fx-background-color: -c-separator;
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
     -fx-border-radius: 6 6 6 6;
-    -fx-border-color: #272b2f;
+    -fx-border-color: -c-separator;
 }
 
 .selection-panel:hover {
-    -fx-background-color: #272b3f;
+    -fx-background-color: -c-selection-panel-hover;
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
     -fx-border-radius: 6 6 6 6;
-    -fx-border-color: #6666FF;
+    -fx-border-color: -c-highlight;
 }
 .selection-panel-selected {
-    -fx-background-color: #272b3f;
+    -fx-background-color: -c-selection-panel-hover;
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
     -fx-border-radius: 6 6 6 6;
-    -fx-border-color: #6666FF;
+    -fx-border-color: -c-highlight;
 }
 
 
@@ -313,13 +290,13 @@
  }
 
 .separator:horizontal .line {
-    -fx-border-color: #272b2f;
+    -fx-border-color: -c-separator;
     -fx-border-width: 1;
     -fx-border-insets: 0, 1 0 0 0;
 }
 
 .separator:vertical .line {
-    -fx-border-color: #272b2f;
+    -fx-border-color: -c-separator;
     -fx-border-width: 1;
     -fx-border-insets: 0, 0 0 0 1;
 }

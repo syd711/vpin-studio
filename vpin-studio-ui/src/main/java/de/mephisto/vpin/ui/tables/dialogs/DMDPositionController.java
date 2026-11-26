@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -539,7 +540,7 @@ public class DMDPositionController extends BasePrevNextController {
 
     emptyImage = new Rectangle();
     emptyImage.setFill(Color.grayRgb(30));
-    emptyImage.setStroke(Color.BLACK);
+    emptyImage.setStroke(Color.web(ThemeColors.BLACK));
 
     // canvas zoom: follow the dialog size unless the user zoomed manually
     canvasScrollPane.viewportBoundsProperty().addListener((obs, o, viewport) -> {

@@ -53,7 +53,7 @@
             </GridPane>
          </top>
          <center>
-            <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component" BorderPane.alignment="CENTER">
+            <TableView fx:id="tableView" style="-fx-background-color: -c-tile;" styleClass="base-component" BorderPane.alignment="CENTER">
                <columns>
                   <TableColumn fx:id="columnSelected" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.bulk_import.column_display_name" />

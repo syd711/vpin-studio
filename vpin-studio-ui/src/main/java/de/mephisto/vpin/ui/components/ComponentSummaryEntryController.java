@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import javafx.fxml.FXML;
@@ -34,7 +35,7 @@ public class ComponentSummaryEntryController implements Initializable {
     description.setText(entry.getDescription());
 
     if (!entry.isValid()) {
-      String color = WidgetFactory.ERROR_COLOR;
+      String color = ThemeColors.DANGER;
       valueLabel.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;-fx-font-size: 14px;");
     }
 

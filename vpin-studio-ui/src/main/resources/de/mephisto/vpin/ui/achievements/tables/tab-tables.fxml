@@ -24,7 +24,7 @@
          <content>
             <VBox spacing="10.0">
                <children>
-                  <Label fx:id="messageLabel" managed="false" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" visible="false" />
+                  <Label fx:id="messageLabel" managed="false" style="-fx-font-size: 14px; -fx-text-fill: -c-muted;" visible="false" />
                   <fx:include fx:id="summaryTile" managed="false" source="tile-summary.fxml" visible="false" />
                   <fx:include fx:id="infoTile" managed="false" source="tile-info.fxml" visible="false" />
                   <HBox fx:id="lowerBox" managed="false" spacing="10.0" visible="false">

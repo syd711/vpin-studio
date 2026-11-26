@@ -17,7 +17,7 @@
          <content>
             <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0">
                <children>
-                  <Label styleClass="preference-title" text="%mania.mania_discord_settings.title" textFill="WHITE" />
+                  <Label styleClass="preference-title, c-text-white" text="%mania.mania_discord_settings.title" />
                   <Label styleClass="preference-subtitle" text="%mania.mania_discord_settings.discord_settings">
                      <VBox.margin>
                         <Insets bottom="12.0" />
@@ -25,17 +25,17 @@
                   </Label>
                   <VBox fx:id="discordNotLinkedInfo" managed="false" styleClass="info-container" visible="false">
                      <children>
-                        <Label text="%mania.mania_discord_settings.discord_not_linked" textFill="WHITE" wrapText="true">
+                        <Label text="%mania.mania_discord_settings.discord_not_linked" styleClass="c-text-white" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Button mnemonicParsing="false" onAction="#onOpenManiaSettings" text="%mania.mania_discord_settings.open_vpin_mania_settings" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onOpenManiaSettings" text="%mania.mania_discord_settings.open_vpin_mania_settings" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                            </graphic>
                            <VBox.margin>
                               <Insets top="8.0" />
@@ -56,8 +56,8 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.the_table_you_are_playing_is_sent_to_vpin_mania" textFill="WHITE" />
-                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.the_vpin_mania_discord_bot_posts_it_on" textFill="WHITE" />
+                        <Label styleClass="checkbox-description, c-text-white" text="%mania.mania_discord_settings.the_table_you_are_playing_is_sent_to_vpin_mania" />
+                        <Label styleClass="checkbox-description, c-text-white" text="%mania.mania_discord_settings.the_vpin_mania_discord_bot_posts_it_on" />
                         <CheckBox fx:id="participateInDiscordChallengesCheckbox" mnemonicParsing="false" text="%mania.mania_discord_settings.participate_in_discord_challenges">
                            <font>
                               <Font size="14.0" />
@@ -66,8 +66,8 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </CheckBox>
-                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.participate_in_discord_challenges_description" textFill="WHITE" />
-                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.participate_in_discord_challenges_description2" textFill="WHITE" />
+                        <Label styleClass="checkbox-description, c-text-white" text="%mania.mania_discord_settings.participate_in_discord_challenges_description" />
+                        <Label styleClass="checkbox-description, c-text-white" text="%mania.mania_discord_settings.participate_in_discord_challenges_description2" />
                         <CheckBox fx:id="challengeResetHighscoresCheckbox" mnemonicParsing="false" text="%mania.mania_discord_settings.reset_challenge_highscores">
                            <font>
                               <Font size="14.0" />
@@ -76,8 +76,8 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </CheckBox>
-                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.reset_challenge_highscores_description" textFill="WHITE" />
-                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.reset_challenge_highscores_description2" textFill="WHITE" />
+                        <Label styleClass="checkbox-description, c-text-white" text="%mania.mania_discord_settings.reset_challenge_highscores_description" />
+                        <Label styleClass="checkbox-description, c-text-white" text="%mania.mania_discord_settings.reset_challenge_highscores_description2" />
                         <CheckBox fx:id="challengeBadgeCheckbox" mnemonicParsing="false" text="%mania.mania_discord_settings.apply_challenge_badge">
                            <font>
                               <Font size="14.0" />
@@ -86,19 +86,19 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </CheckBox>
-                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.apply_challenge_badge_description" textFill="WHITE" />
-                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.apply_challenge_badge_description2" textFill="WHITE" />
+                        <Label styleClass="checkbox-description, c-text-white" text="%mania.mania_discord_settings.apply_challenge_badge_description" />
+                        <Label styleClass="checkbox-description, c-text-white" text="%mania.mania_discord_settings.apply_challenge_badge_description2" />
                         <VBox spacing="3.0">
                            <children>
-                              <Button fx:id="addDiscordBotBtn" mnemonicParsing="false" onAction="#onAddDiscordBot" text="%mania.mania_discord_settings.add_bot_to_discord_server" textFill="WHITE">
+                              <Button fx:id="addDiscordBotBtn" mnemonicParsing="false" onAction="#onAddDiscordBot" text="%mania.mania_discord_settings.add_bot_to_discord_server" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi-discord" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi-discord" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Label styleClass="preference-description" text="%mania.mania_discord_settings.add_bot_to_discord_server_description" textFill="WHITE" />
+                              <Label styleClass="preference-description, c-text-white" text="%mania.mania_discord_settings.add_bot_to_discord_server_description" />
                            </children>
                            <VBox.margin>
                               <Insets top="24.0" />

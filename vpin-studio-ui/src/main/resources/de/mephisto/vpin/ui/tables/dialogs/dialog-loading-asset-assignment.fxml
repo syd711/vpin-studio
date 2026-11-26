@@ -49,7 +49,7 @@
                   <Label fx:id="titleLabel1111" layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="%tables.loading_asset_assignment.the_id_of_the_screen_is_reflected_in" />
                   <VBox spacing="6.0">
                      <children>
-                        <RadioButton fx:id="screen0" mnemonicParsing="false" selected="true" text="%tables.loading_asset_assignment.topper_0" textFill="WHITE">
+                        <RadioButton fx:id="screen0" mnemonicParsing="false" selected="true" text="%tables.loading_asset_assignment.topper_0" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -57,22 +57,22 @@
                               <ToggleGroup fx:id="screenToggle" />
                            </toggleGroup>
                         </RadioButton>
-                        <RadioButton fx:id="screen1" mnemonicParsing="false" text="%tables.loading_asset_assignment.dmd_1" textFill="WHITE" toggleGroup="$screenToggle">
+                        <RadioButton fx:id="screen1" mnemonicParsing="false" text="%tables.loading_asset_assignment.dmd_1" styleClass="c-text-white" toggleGroup="$screenToggle">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="screen2" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="%tables.loading_asset_assignment.backglass_2" textFill="WHITE" toggleGroup="$screenToggle">
+                        <RadioButton fx:id="screen2" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="%tables.loading_asset_assignment.backglass_2" styleClass="c-text-white" toggleGroup="$screenToggle">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="screen3" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%tables.loading_asset_assignment.playfield_3" textFill="WHITE" toggleGroup="$screenToggle">
+                        <RadioButton fx:id="screen3" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%tables.loading_asset_assignment.playfield_3" styleClass="c-text-white" toggleGroup="$screenToggle">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="screen4" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%tables.loading_asset_assignment.full_dmd_4" textFill="WHITE" toggleGroup="$screenToggle">
+                        <RadioButton fx:id="screen4" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%tables.loading_asset_assignment.full_dmd_4" styleClass="c-text-white" toggleGroup="$screenToggle">
                            <font>
                               <Font size="14.0" />
                            </font>

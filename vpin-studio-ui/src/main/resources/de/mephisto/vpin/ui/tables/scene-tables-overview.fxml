@@ -27,9 +27,9 @@
             <Insets bottom="6.0" />
          </BorderPane.margin>
          <children>
-                  <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                  <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                         <children>
-                           <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                           <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: -c-tile;" styleClass="base-component">
                               <columns>
                                  <TableColumn fx:id="columnStatus" minWidth="60" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.status" />
                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="%cards.highscore_cards.display_name" />
@@ -63,7 +63,7 @@
                                           <Tooltip text="%tables.tables_overview.the_modification_date_for_this_game_s_entry" />
                                        </tooltip>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                     </Label>
                                  </children>
@@ -71,67 +71,67 @@
                            </graphic></TableColumn>
                                  <TableColumn fx:id="columnWheel" minWidth="10.4000244140625" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="%cards.highscore_cards.wheel">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="89.5999755859375" style="-fx-alignment: CENTER;" text="%pref.validators_screens.playfield">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.backglass">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnLoading" minWidth="10.4000244140625" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="%pref.validators_screens.loading">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="65" style="-fx-alignment: CENTER;" text="%backups.backups.dmd">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="78" style="-fx-alignment: CENTER;" text="%pref.validators_screens.topper">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="100.800048828125" style="-fx-alignment: CENTER;" text="%tables.tables_overview.full_dmd">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnInfo" minWidth="10.4000244140625" prefWidth="62.39990234375" style="-fx-alignment: CENTER;" text="%tables.tables_overview.info">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnHelp" minWidth="10.4000244140625" prefWidth="71.999755859375" style="-fx-alignment: CENTER;" text="%launcher.launcher.help">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnOther2" minWidth="10.4000244140625" prefWidth="88" style="-fx-alignment: CENTER;" text="%pref.validators_screens.other2">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnAudio" minWidth="10.4000244140625" prefWidth="68.7998046875" style="-fx-alignment: CENTER;" text="%pref.validators_screens.audio">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnAudioLaunch" minWidth="10.4000244140625" prefWidth="91.19970703125" style="-fx-alignment: CENTER;" text="%tables.tables_overview.audio_l">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnLogo" minWidth="10.4000244140625" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="%tables.tables_overview.logo">
                                     <graphic>
-                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
                                  <TableColumn fx:id="columnComment" minWidth="100.0" prefWidth="400" style="-fx-alignment: BASELINE_LEFT;" text="%tables.tables_overview.comment">
@@ -157,7 +157,7 @@
                      <children>
                         <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                            <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                            </children>
                         </StackPane>
                         <VBox spacing="2.0" HBox.hgrow="ALWAYS">
@@ -174,7 +174,7 @@
                               </Button>
                               <Button mnemonicParsing="false" onAction="#onValidationSettings" styleClass="sm-alert-button">
                                  <graphic>
-                                    <FontIcon iconColor="#F3D6D7" iconLiteral="mdi2c-cog" iconSize="16" />
+                                    <FontIcon styleClass="c-icon-error-text-light" iconLiteral="mdi2c-cog" iconSize="16" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%backglass.directb2s_admin.open_validators_settings" />
@@ -191,7 +191,7 @@
             </BorderPane>
          </center>
          <top>
-            <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
+            <Label fx:id="labelCount" styleClass="c-text-white" BorderPane.alignment="TOP_RIGHT">
                <BorderPane.margin>
                      <Insets bottom="3.0" />
                </BorderPane.margin>
@@ -204,7 +204,7 @@
          <children>
             <ToolBar fx:id="toolbar" prefHeight="40.0">
                <items>
-                  <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+                  <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -212,15 +212,15 @@
                         <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
                      </tooltip>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                      <font>
                            <Font size="14.0" />
                      </font>
                      <graphic>
-                           <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%tables.tables_overview.execute_a_full_reload_of_all_tables_from" />
@@ -234,21 +234,21 @@
                                  <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                              <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                            </graphic>
                         </Button>
                      </children>
                   </StackPane>
                   <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
                   <ComboBox fx:id="emulatorCombo" prefWidth="190.0" promptText="%recorder.recorder.all_vpx_tables" />
-                  <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" textFill="WHITE">
+                  <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" styleClass="c-text-white">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-controller" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-controller" iconSize="18" />
                      </graphic>
                      <font>
                         <Font size="14.0" />
@@ -257,12 +257,12 @@
                         <Tooltip text="%backglass.directb2s_admin.open_emulator_manager" />
                      </tooltip>
                   </Button>
-                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorReload" textFill="WHITE">
+                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorReload" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-refresh" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%tables.tables_overview.reload_selected_emulator" />
@@ -271,9 +271,9 @@
                   <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
       
                   <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="180.0" promptText="%tables.tables_overview.select_playlist" />
-                  <Button fx:id="playlistManagerBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" textFill="WHITE">
+                  <Button fx:id="playlistManagerBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" styleClass="c-text-white">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-edit" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-playlist-edit" iconSize="18" />
                      </graphic>
                      <font>
                         <Font size="14.0" />
@@ -284,9 +284,9 @@
                   </Button>
       
                   <Separator fx:id="assetManagerSeparator" layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                  <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" textFill="WHITE">
+                  <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" styleClass="c-text-white">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted-type" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-format-list-bulleted-type" iconSize="18" />
                      </graphic>
                      <font>
                         <Font size="14.0" />
@@ -295,16 +295,16 @@
                         <Tooltip text="%tables.tables_overview.asset_manager_view_ctrl_m" />
                      </tooltip>
                   </Button>
-                  <SplitMenuButton fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
+                  <SplitMenuButton fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
                      <items>
                         <MenuItem fx:id="bulkImporterItem" mnemonicParsing="false" onAction="#onBulkImporter" text="%tables.tables_overview.bulk_importer">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-multiple-image" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-multiple-image" iconSize="18" />
                            </graphic>
                         </MenuItem>
                      </items>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
                      </graphic>
                      <font>
                         <Font size="14.0" />
@@ -313,35 +313,35 @@
                         <Tooltip text="%tables.tables_overview.asset_manager_ctrl_i" />
                      </tooltip>
                   </SplitMenuButton>
-                  <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
+                  <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%components.doftester.dof_tester.edit_table_data_ctrl_o" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="converterBtn" layoutX="833.0" layoutY="11.0" mnemonicParsing="false" onAction="#onConvert" textFill="WHITE">
+                  <Button fx:id="converterBtn" layoutX="833.0" layoutY="11.0" mnemonicParsing="false" onAction="#onConvert" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%components.doftester.dof_tester.edit_table_data_ctrl_o" />
                      </tooltip>
                   </Button>
                   <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                  <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+                  <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" styleClass="c-text-danger">
                      <font>
                            <Font size="14.0" />
                      </font>
                      <graphic>
-                           <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2s-stop" iconSize="18" />
                      </graphic>
                      <tooltip>
                            <Tooltip text="%competitions.competitions_iscored.kill_all_emulator_and_frontend_processes_ctrl_k" />
@@ -350,45 +350,45 @@
                   <HBox fx:id="importUploadButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
                      <children>
                         <Separator fx:id="importSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                        <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onBackup" textFill="WHITE">
+                        <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onBackup" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-archive-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.tables_overview.backup_the_selected_tables" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="vpxzBtn" mnemonicParsing="false" onAction="#onVpxz" textFill="#FFFFFF">
+                        <Button fx:id="vpxzBtn" mnemonicParsing="false" onAction="#onVpxz" styleClass="c-text-white">
                            <font>
                                  <Font size="14.0" />
                            </font>
                            <graphic>
-                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cellphone" iconSize="18" />
+                                 <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cellphone" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.tables_overview.package_the_table_into_vpxz_file" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
+                        <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.tables_overview.import_existing_game_files_into_frontend" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
+                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="c-text-danger">
                            <font>
                                  <Font size="14.0" />
                            </font>
                            <graphic>
-                                 <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
+                                 <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.tables_overview.delete_table_and_assets_delete" />
@@ -403,12 +403,12 @@
                            <items>
                               <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="%tables.tables_overview.scan_all">
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-map-search" iconSize="18" />
                                  </graphic>
                               </MenuItem>
                            </items>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.tables_overview.scans_the_selected_tables_to_extract_metadata" />
@@ -417,11 +417,11 @@
                               <Font size="14.0" />
                            </font>
                         </SplitMenuButton>
-                        <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
+                        <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" styleClass="c-text-white">
                            <items>
                               <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="%tables.tables_overview.validate_all">
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-check-bold" iconSize="18" />
                                  </graphic>
                               </MenuItem>
                            </items>
@@ -429,7 +429,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-check-bold" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%tables.tables_overview.resets_the_dismissed_validations_and_revalidates_the_table" />

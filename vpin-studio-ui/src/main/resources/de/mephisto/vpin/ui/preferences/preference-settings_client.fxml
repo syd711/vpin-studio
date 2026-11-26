@@ -25,13 +25,13 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
                <children>
-                  <Label styleClass="preference-title" text="%pref.title" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-title, c-text-white" text="%pref.title" wrapText="true" />
                   <Label styleClass="preference-subtitle" text="%pref.client.title" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.client.description" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description, c-text-white" text="%pref.client.description" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
@@ -40,7 +40,7 @@
                      <children>
                         <!-- ============ Language ============ -->
                         <Label styleClass="preference-subtitle" text="%pref.client.language.title" wrapText="true" />
-                        <Label styleClass="preference-description" text="%pref.client.language.description" textFill="WHITE" wrapText="true">
+                        <Label styleClass="preference-description, c-text-white" text="%pref.client.language.description" wrapText="true">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
@@ -48,7 +48,7 @@
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                            <children>
                               <ComboBox fx:id="languageComboBox" prefWidth="200.0" />
-                              <Label fx:id="languageRestartHint" managed="false" styleClass="preference-description" text="%pref.client.language.restart_hint" textFill="ORANGE" visible="false" wrapText="true" />
+                              <Label fx:id="languageRestartHint" managed="false" styleClass="preference-description, c-text-orange-named" text="%pref.client.language.restart_hint" visible="false" wrapText="true" />
                            </children>
                         </HBox>
                      </children>
@@ -58,8 +58,8 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.client.emulators.description1" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="34.0" layoutY="208.0" styleClass="preference-description" text="%pref.client.emulators.description2" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-description, c-text-white" text="%pref.client.emulators.description1" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="208.0" styleClass="preference-description, c-text-white" text="%pref.client.emulators.description2" wrapText="true" />
                   <VBox fx:id="emulatorList" spacing="6.0">
                      <VBox.margin>
                         <Insets top="6.0" />
@@ -70,14 +70,14 @@
                      </VBox.margin></Label>
                   <VBox fx:id="dropIns" spacing="3.0">
                      <children>
-                        <CheckBox fx:id="dropInFolderCheckbox" mnemonicParsing="false" text="%pref.client.dropin.enable" textFill="WHITE">
+                        <CheckBox fx:id="dropInFolderCheckbox" mnemonicParsing="false" text="%pref.client.dropin.enable" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
                         <VBox spacing="6.0">
                            <children>
-                              <Label styleClass="preference-description" text="%pref.client.dropin.description" textFill="WHITE" wrapText="true" />
+                              <Label styleClass="preference-description, c-text-white" text="%pref.client.dropin.description" wrapText="true" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
                                     <TextField fx:id="dropInTextField" editable="false" prefWidth="400.0" promptText="%pref.client.dropin.select_dropin_folder">
@@ -85,15 +85,15 @@
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Button fx:id="dropInFolderButton" mnemonicParsing="false" onAction="#onDropInFolderSelection" text="%pref.client.select.folder" textFill="WHITE">
+                                    <Button fx:id="dropInFolderButton" mnemonicParsing="false" onAction="#onDropInFolderSelection" text="%pref.client.select.folder" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label styleClass="preference-description" text="%pref.client.dropin.action" textFill="WHITE" wrapText="true" />
-                              <RadioButton fx:id="radioDoNothing" mnemonicParsing="false" text="%pref.client.dropin.action.nothing" textFill="WHITE">
+                              <Label styleClass="preference-description, c-text-white" text="%pref.client.dropin.action" wrapText="true" />
+                              <RadioButton fx:id="radioDoNothing" mnemonicParsing="false" text="%pref.client.dropin.action.nothing" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -102,7 +102,7 @@
                                  <children>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                                        <children>
-                                          <RadioButton fx:id="radioMoveToFolder" mnemonicParsing="false" text="%pref.client.dropin.action.move" textFill="WHITE">
+                                          <RadioButton fx:id="radioMoveToFolder" mnemonicParsing="false" text="%pref.client.dropin.action.move" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -112,14 +112,14 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <Button fx:id="dropInMoveTargetButton" mnemonicParsing="false" onAction="#onDropInMoveTargetFolderSelection" text="%pref.client.select.folder" textFill="WHITE">
+                                          <Button fx:id="dropInMoveTargetButton" mnemonicParsing="false" onAction="#onDropInMoveTargetFolderSelection" text="%pref.client.select.folder" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Button>
                                        </children>
                                     </HBox>
-                                    <CheckBox fx:id="dropInMoveTargetCheckbox" mnemonicParsing="false" text="%pref.client.dropin.action.pertable" textFill="WHITE">
+                                    <CheckBox fx:id="dropInMoveTargetCheckbox" mnemonicParsing="false" text="%pref.client.dropin.action.pertable" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -129,24 +129,24 @@
                                     </CheckBox>
                                  </children>
                               </VBox>
-                              <RadioButton fx:id="radioDoMove" mnemonicParsing="false" text="%pref.client.dropin.action.ask" textFill="WHITE">
+                              <RadioButton fx:id="radioDoMove" mnemonicParsing="false" text="%pref.client.dropin.action.ask" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </RadioButton>
                               <HBox alignment="CENTER_LEFT" spacing="12.0">
                                  <children>
-                                    <RadioButton fx:id="radioDoDelete" mnemonicParsing="false" text="%pref.client.dropin.action.delete" textFill="WHITE">
+                                    <RadioButton fx:id="radioDoDelete" mnemonicParsing="false" text="%pref.client.dropin.action.delete" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </RadioButton>
-                                    <CheckBox fx:id="dropInMoveTrashCheckbox" mnemonicParsing="false" text="%pref.client.dropin.action.trash" textFill="WHITE">
+                                    <CheckBox fx:id="dropInMoveTrashCheckbox" mnemonicParsing="false" text="%pref.client.dropin.action.trash" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="dropInConfirmDeletionCheckbox" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.dropin.confirm" textFill="WHITE">
+                                    <CheckBox fx:id="dropInConfirmDeletionCheckbox" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.dropin.confirm" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -168,12 +168,12 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="488.0" styleClass="preference-description" text="%pref.client.overview.description" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="488.0" styleClass="preference-description, c-text-white" text="%pref.client.overview.description" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="uiShowVersion" mnemonicParsing="false" text="%pref.client.overview.show_version" textFill="WHITE">
+                  <CheckBox fx:id="uiShowVersion" mnemonicParsing="false" text="%pref.client.overview.show_version" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -181,9 +181,9 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="%pref.client.overview.version_hint1" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="%pref.client.overview.version_hint2" textFill="WHITE" wrapText="true" />
-                  <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="%pref.client.overview.auto_edit" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description, c-text-white" text="%pref.client.overview.version_hint1" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description, c-text-white" text="%pref.client.overview.version_hint2" wrapText="true" />
+                  <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="%pref.client.overview.auto_edit" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -191,8 +191,8 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="%pref.client.overview.auto_edit_hint" textFill="WHITE" wrapText="true" />
-                  <CheckBox fx:id="uiHideCustomIcons" layoutX="34.0" layoutY="507.0" mnemonicParsing="false" styleClass="default-text" text="%pref.client.overview.material_icons" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description, c-text-white" text="%pref.client.overview.auto_edit_hint" wrapText="true" />
+                  <CheckBox fx:id="uiHideCustomIcons" layoutX="34.0" layoutY="507.0" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.client.overview.material_icons">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -200,8 +200,8 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="526.0" styleClass="checkbox-description" text="%pref.client.overview.material_icons_hint" textFill="WHITE" wrapText="true" />
-                  <CheckBox fx:id="uiHideGreenMarker" layoutX="34.0" layoutY="620.0" mnemonicParsing="false" styleClass="default-text" text="%pref.client.overview.green_marker" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="526.0" styleClass="checkbox-description, c-text-white" text="%pref.client.overview.material_icons_hint" wrapText="true" />
+                  <CheckBox fx:id="uiHideGreenMarker" layoutX="34.0" layoutY="620.0" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.client.overview.green_marker">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -209,8 +209,8 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="640.0" styleClass="checkbox-description" text="%pref.client.overview.green_marker_hint" textFill="WHITE" wrapText="true" />
-                  <Label styleClass="default-headline" text="%pref.client.columns.title" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="640.0" styleClass="checkbox-description, c-text-white" text="%pref.client.overview.green_marker_hint" wrapText="true" />
+                  <Label styleClass="default-headline, c-text-white" text="%pref.client.columns.title" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
@@ -222,42 +222,42 @@
                      <children>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="columnAltColor" layoutX="10.0" layoutY="248.0" mnemonicParsing="false" text="%pref.client.col.altcolor" textFill="WHITE">
+                              <CheckBox fx:id="columnAltColor" layoutX="10.0" layoutY="248.0" mnemonicParsing="false" text="%pref.client.col.altcolor" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnAltSound" layoutX="10.0" layoutY="221.0" mnemonicParsing="false" text="%pref.client.col.altsound" textFill="WHITE">
+                              <CheckBox fx:id="columnAltSound" layoutX="10.0" layoutY="221.0" mnemonicParsing="false" text="%pref.client.col.altsound" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnBackglass" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="%pref.client.col.backglass" textFill="WHITE">
+                              <CheckBox fx:id="columnBackglass" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="%pref.client.col.backglass" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnBackupDate" mnemonicParsing="false" text="%pref.client.col.backup_date" textFill="WHITE">
+                              <CheckBox fx:id="columnBackupDate" mnemonicParsing="false" text="%pref.client.col.backup_date" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnComment" mnemonicParsing="false" text="%pref.client.col.comment" textFill="WHITE">
+                              <CheckBox fx:id="columnComment" mnemonicParsing="false" text="%pref.client.col.comment" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnDateAdded" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.col.date_added" textFill="WHITE">
+                              <CheckBox fx:id="columnDateAdded" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.col.date_added" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnDateModified" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.col.date_updated" textFill="WHITE">
+                              <CheckBox fx:id="columnDateModified" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.col.date_updated" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnEmulator" mnemonicParsing="false" text="%pref.client.col.emulator" textFill="WHITE">
+                              <CheckBox fx:id="columnEmulator" mnemonicParsing="false" text="%pref.client.col.emulator" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -266,42 +266,42 @@
                         </VBox>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="columnHighscore" mnemonicParsing="false" text="%pref.client.col.highscore" textFill="WHITE">
+                              <CheckBox fx:id="columnHighscore" mnemonicParsing="false" text="%pref.client.col.highscore" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnIni" mnemonicParsing="false" text="%pref.client.col.ini" textFill="WHITE">
+                              <CheckBox fx:id="columnIni" mnemonicParsing="false" text="%pref.client.col.ini" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnLauncher" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%pref.client.col.launcher" textFill="WHITE">
+                              <CheckBox fx:id="columnLauncher" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%pref.client.col.launcher" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnMusic" mnemonicParsing="false" text="%pref.client.col.music" textFill="WHITE">
+                              <CheckBox fx:id="columnMusic" mnemonicParsing="false" text="%pref.client.col.music" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnPatchVersion" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%pref.client.col.patch_version" textFill="WHITE">
+                              <CheckBox fx:id="columnPatchVersion" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%pref.client.col.patch_version" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnPinVol" mnemonicParsing="false" text="%pref.client.col.pinvol" textFill="WHITE">
+                              <CheckBox fx:id="columnPinVol" mnemonicParsing="false" text="%pref.client.col.pinvol" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnPlaylists" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="%pref.client.col.playlists" textFill="WHITE">
+                              <CheckBox fx:id="columnPlaylists" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="%pref.client.col.playlists" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnPov" mnemonicParsing="false" text="%pref.client.col.pov" textFill="WHITE">
+                              <CheckBox fx:id="columnPov" mnemonicParsing="false" text="%pref.client.col.pov" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -310,42 +310,42 @@
                         </VBox>
                         <VBox spacing="6.0">
                            <children>
-                              <CheckBox fx:id="columnPupPack" mnemonicParsing="false" text="%pref.client.col.puppack" textFill="WHITE">
+                              <CheckBox fx:id="columnPupPack" mnemonicParsing="false" text="%pref.client.col.puppack" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnRes" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.col.res" textFill="WHITE">
+                              <CheckBox fx:id="columnRes" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.col.res" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnRating" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%pref.client.col.rating" textFill="WHITE">
+                              <CheckBox fx:id="columnRating" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%pref.client.col.rating" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnRom" mnemonicParsing="false" text="%pref.client.col.rom" textFill="WHITE">
+                              <CheckBox fx:id="columnRom" mnemonicParsing="false" text="%pref.client.col.rom" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnTutorials" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%pref.client.col.tutorials" textFill="WHITE">
+                              <CheckBox fx:id="columnTutorials" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%pref.client.col.tutorials" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnVbs" mnemonicParsing="false" text="%pref.client.col.vbs" textFill="WHITE">
+                              <CheckBox fx:id="columnVbs" mnemonicParsing="false" text="%pref.client.col.vbs" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnVersion" mnemonicParsing="false" text="%pref.client.col.version" textFill="WHITE">
+                              <CheckBox fx:id="columnVersion" mnemonicParsing="false" text="%pref.client.col.version" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnVpsStatus" mnemonicParsing="false" text="%pref.client.col.vps_status" textFill="WHITE">
+                              <CheckBox fx:id="columnVpsStatus" mnemonicParsing="false" text="%pref.client.col.vps_status" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -354,7 +354,7 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="572.0" styleClass="default-headline" text="%pref.client.sections.title" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="572.0" styleClass="default-headline, c-text-white" text="%pref.client.sections.title" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
@@ -366,27 +366,27 @@
                      <children>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="sectionAltColor" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.sec.altcolor" textFill="WHITE">
+                              <CheckBox fx:id="sectionAltColor" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.sec.altcolor" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.sec.altsound" textFill="WHITE">
+                              <CheckBox fx:id="sectionAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.sec.altsound" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionBackglass" mnemonicParsing="false" text="%pref.client.sec.backglass" textFill="WHITE">
+                              <CheckBox fx:id="sectionBackglass" mnemonicParsing="false" text="%pref.client.sec.backglass" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionDMD" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%pref.client.sec.dmd" textFill="WHITE">
+                              <CheckBox fx:id="sectionDMD" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%pref.client.sec.dmd" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionHighscore" mnemonicParsing="false" text="%pref.client.sec.highscore" textFill="WHITE">
+                              <CheckBox fx:id="sectionHighscore" mnemonicParsing="false" text="%pref.client.sec.highscore" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -395,22 +395,22 @@
                         </VBox>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="sectionAssets" mnemonicParsing="false" text="%pref.client.sec.media_assets" textFill="WHITE">
+                              <CheckBox fx:id="sectionAssets" mnemonicParsing="false" text="%pref.client.sec.media_assets" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionPov" mnemonicParsing="false" text="%pref.client.sec.pov" textFill="WHITE">
+                              <CheckBox fx:id="sectionPov" mnemonicParsing="false" text="%pref.client.sec.pov" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionPlaylists" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%pref.client.sec.playlists" textFill="WHITE">
+                              <CheckBox fx:id="sectionPlaylists" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%pref.client.sec.playlists" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionPupPack" mnemonicParsing="false" text="%pref.client.sec.puppack" textFill="WHITE">
+                              <CheckBox fx:id="sectionPupPack" mnemonicParsing="false" text="%pref.client.sec.puppack" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -419,22 +419,22 @@
                         </VBox>
                         <VBox spacing="6.0">
                            <children>
-                              <CheckBox fx:id="sectionScriptDetails" mnemonicParsing="false" text="%pref.client.sec.script_details" textFill="WHITE">
+                              <CheckBox fx:id="sectionScriptDetails" mnemonicParsing="false" text="%pref.client.sec.script_details" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionTableData" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="%pref.client.sec.table_data" textFill="WHITE">
+                              <CheckBox fx:id="sectionTableData" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="%pref.client.sec.table_data" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionVps" mnemonicParsing="false" text="%pref.client.sec.vps" textFill="WHITE">
+                              <CheckBox fx:id="sectionVps" mnemonicParsing="false" text="%pref.client.sec.vps" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionVPinMAME" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.sec.vpin_mame" textFill="WHITE">
+                              <CheckBox fx:id="sectionVPinMAME" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.sec.vpin_mame" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -450,9 +450,9 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%pref.client.network.description1" textFill="WHITE" wrapText="true" />
-                        <Label styleClass="preference-description" text="%pref.client.network.description2" textFill="WHITE" wrapText="true" />
-                        <Label styleClass="preference-description" text="%pref.client.network.restart_hint" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description, c-text-white" text="%pref.client.network.description1" wrapText="true" />
+                        <Label styleClass="preference-description, c-text-white" text="%pref.client.network.description2" wrapText="true" />
+                        <Label styleClass="preference-description, c-text-white" text="%pref.client.network.restart_hint" wrapText="true" />
                         <GridPane alignment="BASELINE_RIGHT">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" />
@@ -464,12 +464,12 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="%pref.client.network.label" textFill="WHITE" wrapText="true">
+                              <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label, c-text-white" text="%pref.client.network.label" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="vpinNameLabel1" layoutX="212.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="-" textFill="WHITE" wrapText="true" GridPane.columnIndex="1">
+                              <Label fx:id="vpinNameLabel1" layoutX="212.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label, c-text-white" text="-" wrapText="true" GridPane.columnIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -479,12 +479,12 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="winNetworkShareTestBtn" mnemonicParsing="false" onAction="#onWinShareTest" styleClass="folder-component" text="%pref.client.network.test" textFill="WHITE" GridPane.columnIndex="2">
+                              <Button fx:id="winNetworkShareTestBtn" mnemonicParsing="false" onAction="#onWinShareTest" styleClass="folder-component, c-text-white" text="%pref.client.network.test" GridPane.columnIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%pref.client.network.test_tooltip" />
@@ -511,7 +511,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Button mnemonicParsing="false" onAction="#onHideReset" text="%pref.client.dialogs.restore" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onHideReset" text="%pref.client.dialogs.restore" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -519,8 +519,8 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Button>
-                  <Label layoutX="34.0" layoutY="708.0" styleClass="preference-description" text="%pref.client.dialogs.restore_hint" textFill="WHITE" wrapText="true" />
-                  <Button layoutX="34.0" layoutY="1470.0" mnemonicParsing="false" onAction="#onDialogReset" text="%pref.client.dialogs.reset" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="708.0" styleClass="preference-description, c-text-white" text="%pref.client.dialogs.restore_hint" wrapText="true" />
+                  <Button layoutX="34.0" layoutY="1470.0" mnemonicParsing="false" onAction="#onDialogReset" text="%pref.client.dialogs.reset" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -528,7 +528,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Button>
-                  <Label layoutX="34.0" layoutY="1500.0" styleClass="preference-description" text="%pref.client.dialogs.reset_hint" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="1500.0" styleClass="preference-description, c-text-white" text="%pref.client.dialogs.reset_hint" wrapText="true" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

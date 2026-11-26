@@ -73,12 +73,12 @@
                            </children>
                         </HBox>
                         <ComboBox fx:id="repositoryCombo" GridPane.columnIndex="1" />
-                        <Label text="%backups.backup_source_folder.folder" textFill="WHITE">
+                        <Label text="%backups.backup_source_folder.folder" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="%vpxz.vpxz_upload.vpxz_files" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text="%vpxz.vpxz_upload.vpxz_files" styleClass="c-text-white" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

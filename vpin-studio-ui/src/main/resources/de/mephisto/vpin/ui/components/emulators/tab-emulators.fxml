@@ -37,7 +37,7 @@
                         <Region HBox.hgrow="ALWAYS" />
                         <Button fx:id="reloadBtn" minWidth="-Infinity" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="16" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="16" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%components.emulators.reload" />
@@ -45,7 +45,7 @@
                         </Button>
                         <Button fx:id="createBtn" minWidth="-Infinity" mnemonicParsing="false" onAction="#onCreate" styleClass="sm-button, sm-button-icon">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus" iconSize="16" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-plus" iconSize="16" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%components.emulators.emulators.create_a_new_emulator_configuration" />
@@ -91,7 +91,7 @@
                         <Label fx:id="statusPill" minWidth="-Infinity" styleClass="sm-pill" />
                         <Button fx:id="duplicateBtn" minWidth="-Infinity" mnemonicParsing="false" onAction="#onDuplicate" styleClass="sm-button, sm-button-icon">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="16" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-duplicate" iconSize="16" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%components.emulators.emulators.duplicate_the_selected_emulator" />
@@ -99,7 +99,7 @@
                         </Button>
                         <Button fx:id="deleteBtn" minWidth="-Infinity" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-button, sm-button-icon">
                            <graphic>
-                              <FontIcon iconColor="#FF6B70" iconLiteral="mdi2d-delete-outline" iconSize="16" />
+                              <FontIcon styleClass="c-icon-error" iconLiteral="mdi2d-delete-outline" iconSize="16" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%components.emulators.emulators.delete_selected_emulator" />
@@ -123,7 +123,7 @@
                                  <children>
                                     <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                                        <children>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                                        </children>
                                     </StackPane>
                                     <VBox spacing="2.0" HBox.hgrow="ALWAYS">
@@ -177,7 +177,7 @@
                                                 <TextField fx:id="launchFolderField" styleClass="sm-text-field" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="selectFolderButtonLaunch" minWidth="-Infinity" mnemonicParsing="false" onAction="#onSelectFolderLaunch" styleClass="sm-button, sm-button-icon">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%components.emulators.select_folder" />
@@ -185,7 +185,7 @@
                                                 </Button>
                                                 <Button fx:id="openFolderButtonLaunch" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderLaunch" styleClass="sm-button, sm-button-icon">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="16" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%components.emulators.emulators.open_the_folder_on_the_local_system_if" />
@@ -203,7 +203,7 @@
                                                 <TextField fx:id="gamesFolderField" styleClass="sm-text-field" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="selectFolderButtonGames" minWidth="-Infinity" mnemonicParsing="false" onAction="#onSelectFolderGames" styleClass="sm-button, sm-button-icon">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%components.emulators.select_folder" />
@@ -211,7 +211,7 @@
                                                 </Button>
                                                 <Button fx:id="openFolderButtonGames" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderGames" styleClass="sm-button, sm-button-icon">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="16" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%components.emulators.emulators.open_the_folder_on_the_local_system_if" />
@@ -229,7 +229,7 @@
                                                 <TextField fx:id="customField1" styleClass="sm-text-field" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="selectFolderButtonMedia" minWidth="-Infinity" mnemonicParsing="false" onAction="#onSelectFolderMedia" styleClass="sm-button, sm-button-icon">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%components.emulators.select_folder" />
@@ -237,7 +237,7 @@
                                                 </Button>
                                                 <Button fx:id="openFolderButtonMedia" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderMedia" styleClass="sm-button, sm-button-icon">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="16" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%components.emulators.emulators.open_the_folder_on_the_local_system_if" />
@@ -255,7 +255,7 @@
                                                 <TextField fx:id="romsFolderField" styleClass="sm-text-field" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="selectFolderButtonRoms" minWidth="-Infinity" mnemonicParsing="false" onAction="#onSelectFolderRoms" styleClass="sm-button, sm-button-icon">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%components.emulators.select_folder" />
@@ -263,7 +263,7 @@
                                                 </Button>
                                                 <Button fx:id="openFolderButtonRoms" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderRoms" styleClass="sm-button, sm-button-icon">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="16" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%components.emulators.emulators.open_the_folder_on_the_local_system_if" />
@@ -288,7 +288,7 @@
                      <children>
                         <Button fx:id="saveBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onSave" styleClass="sm-accent-button" text="%components.emulators.save_changes" HBox.hgrow="ALWAYS">
                            <graphic>
-                              <FontIcon iconColor="#1A1305" iconLiteral="mdi2c-content-save" iconSize="18" />
+                              <FontIcon styleClass="c-icon-on-warn" iconLiteral="mdi2c-content-save" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%components.emulators.emulators.saves_the_current_emulator_changes" />

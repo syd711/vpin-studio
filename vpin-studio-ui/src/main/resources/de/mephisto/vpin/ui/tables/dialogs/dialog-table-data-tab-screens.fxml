@@ -13,12 +13,12 @@
       <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
    </padding>
    <children>
-      <Label styleClass="default-title" text="%tables.table_data_tab_screens.screen_settings" textFill="WHITE">
+      <Label styleClass="default-title, c-text-white" text="%tables.table_data_tab_screens.screen_settings">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Label styleClass="preference-description" text="%tables.table_data_tab_screens.all_screens_hide_during_gameplay_you_can_keep" textFill="WHITE">
+      <Label styleClass="preference-description, c-text-white" text="%tables.table_data_tab_screens.all_screens_hide_during_gameplay_you_can_keep">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
@@ -38,7 +38,7 @@
                   <Insets bottom="12.0" />
                </VBox.margin>
             </CheckBox>
-            <Label styleClass="default-text" text="%tables.table_data_tab_screens.keep_the_following_displays_on" textFill="WHITE">
+            <Label styleClass="default-text, c-text-white" text="%tables.table_data_tab_screens.keep_the_following_displays_on">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>

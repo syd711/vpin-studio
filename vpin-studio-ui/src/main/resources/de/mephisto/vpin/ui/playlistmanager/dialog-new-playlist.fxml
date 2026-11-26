@@ -54,13 +54,13 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%cards.highscore_cards.emulator" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label styleClass="default-text, c-text-white" text="%cards.highscore_cards.emulator" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
                         <ComboBox fx:id="emulatorCombo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%backglass.directb2s_sidebar.name" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text, c-text-white" text="%backglass.directb2s_sidebar.name">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>

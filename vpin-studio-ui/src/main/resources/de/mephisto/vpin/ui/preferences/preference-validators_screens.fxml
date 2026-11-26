@@ -22,18 +22,18 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.validators_backglass.validators" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-title, c-text-white" text="%pref.validators_backglass.validators" wrapText="true" />
             <Label styleClass="preference-subtitle" text="%pref.validators_screens.screen_validators" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="%pref.validators_screens.if_enabled_the_validator_will_check_if_the" textFill="WHITE" wrapText="true">
+            <Label styleClass="preference-description, c-text-white" text="%pref.validators_screens.if_enabled_the_validator_will_check_if_the" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.validators_screens.use_the_asset_management_view_to_check_the" textFill="WHITE" wrapText="true" />
+            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description, c-text-white" text="%pref.validators_screens.use_the_asset_management_view_to_check_the" wrapText="true" />
             <GridPane alignment="BASELINE_RIGHT" vgap="3.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" />
@@ -59,7 +59,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <CheckBox fx:id="Audio_30" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.audio" textFill="WHITE" GridPane.rowIndex="1">
+                  <CheckBox fx:id="Audio_30" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text, c-text-white" text="%pref.validators_screens.audio" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font></CheckBox>
@@ -117,74 +117,74 @@
                                     <Tooltip prefWidth="300.0" text="%pref.validators_screens.if_the_screen_is_checked_and_an_asset" wrapText="true" />
                                  </tooltip>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                               </Label>
                            </children>
                         </HBox>
                      </children>
                   </HBox>
-                  <CheckBox fx:id="TagAudio_30" layoutX="10.0" layoutY="49.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                  <CheckBox fx:id="TagAudio_30" layoutX="10.0" layoutY="49.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagAudioLaunch_31" layoutX="501.0" layoutY="49.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                  <CheckBox fx:id="TagAudioLaunch_31" layoutX="501.0" layoutY="49.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagMenu_32" layoutX="501.0" layoutY="83.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                  <CheckBox fx:id="TagMenu_32" layoutX="501.0" layoutY="83.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagGameInfo_33" layoutX="501.0" layoutY="116.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                  <CheckBox fx:id="TagGameInfo_33" layoutX="501.0" layoutY="116.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagGameHelp_34" layoutX="501.0" layoutY="150.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                  <CheckBox fx:id="TagGameHelp_34" layoutX="501.0" layoutY="150.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagTopper_35" layoutX="501.0" layoutY="184.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                  <CheckBox fx:id="TagTopper_35" layoutX="501.0" layoutY="184.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagDMD_37" layoutX="501.0" layoutY="217.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="7">
+                  <CheckBox fx:id="TagDMD_37" layoutX="501.0" layoutY="217.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="7">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagLoading_39" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="8">
+                  <CheckBox fx:id="TagLoading_39" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="8">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagBackGlass_36" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="9">
+                  <CheckBox fx:id="TagBackGlass_36" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="9">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagPlayField_38" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="10">
+                  <CheckBox fx:id="TagPlayField_38" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="10">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagWheel_41" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="11">
+                  <CheckBox fx:id="TagWheel_41" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="11">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagLogo_42" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="12">
+                  <CheckBox fx:id="TagLogo_42" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="12">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="TagOther2_40" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="13">
+                  <CheckBox fx:id="TagOther2_40" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text, c-text-white" GridPane.columnIndex="3" GridPane.rowIndex="13">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -198,13 +198,13 @@
                </VBox.margin>
             </GridPane>
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.validators_backglass.auto_tagging" wrapText="true" />
-            <Label layoutX="34.0" layoutY="117.0" styleClass="preference-description" text="%pref.validators_screens.if_enabled_and_assets_are_changed_for_an" textFill="WHITE" wrapText="true">
+            <Label layoutX="34.0" layoutY="117.0" styleClass="preference-description, c-text-white" text="%pref.validators_screens.if_enabled_and_assets_are_changed_for_an" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="691.0" styleClass="preference-description" text="%pref.validators_screens.automatically_applied_to_the_table_to_keep_track" textFill="WHITE" wrapText="true" />
-            <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.validators_backglass.auto_tagging_enabled" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="691.0" styleClass="preference-description, c-text-white" text="%pref.validators_screens.automatically_applied_to_the_table_to_keep_track" wrapText="true" />
+            <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text, c-text-white" text="%pref.validators_backglass.auto_tagging_enabled">
                <font>
                   <Font size="14.0" />
                </font>

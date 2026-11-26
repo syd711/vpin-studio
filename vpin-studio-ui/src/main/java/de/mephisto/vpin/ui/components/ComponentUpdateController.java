@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
@@ -29,7 +30,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -59,12 +59,12 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
 
   /** display order, label and color of the diff states */
   enum DiffKind {
-    SIZE_DIFF(ComponentDiffEntryRepresentation.SIZE_DIFF, "components.tab.diff_size", "#DD9646"),
-    TARGET_FILE_NOT_EXIST(ComponentDiffEntryRepresentation.TARGET_FILE_NOT_EXIST, "components.tab.diff_missing", "#7FB2FF"),
-    TARGET_FOLDER_NOT_EXIST(ComponentDiffEntryRepresentation.TARGET_FOLDER_NOT_EXIST, "components.tab.diff_folder_missing", "#FF6B70"),
-    FILE_MATCH(ComponentDiffEntryRepresentation.FILE_MATCH, "components.tab.diff_match", "#5CC46A"),
-    SKIPPED(ComponentDiffEntryRepresentation.SKIPPED, "components.tab.diff_skipped", "#9A9A9A"),
-    OTHER("", "components.tab.diff_other", "#BDBDBD");
+    SIZE_DIFF(ComponentDiffEntryRepresentation.SIZE_DIFF, "components.tab.diff_size", ThemeColors.WARN),
+    TARGET_FILE_NOT_EXIST(ComponentDiffEntryRepresentation.TARGET_FILE_NOT_EXIST, "components.tab.diff_missing", ThemeColors.LINK),
+    TARGET_FOLDER_NOT_EXIST(ComponentDiffEntryRepresentation.TARGET_FOLDER_NOT_EXIST, "components.tab.diff_folder_missing", ThemeColors.ERROR),
+    FILE_MATCH(ComponentDiffEntryRepresentation.FILE_MATCH, "components.tab.diff_match", ThemeColors.OK),
+    SKIPPED(ComponentDiffEntryRepresentation.SKIPPED, "components.tab.diff_skipped", ThemeColors.SUBTLE),
+    OTHER("", "components.tab.diff_other", ThemeColors.MUTED);
 
     final String state;
     final String labelKey;
@@ -555,7 +555,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     String artifact = logArtifact != null ? logArtifact : Messages.get("components.tab.latest_artifact");
 
     if (log != null && !StringUtils.isEmpty(log.getStatus())) {
-      setBanner("sm-banner-error", "mdi2c-close-circle-outline", "#FF6B70",
+      setBanner("sm-banner-error", "mdi2c-close-circle-outline", ThemeColors.ERROR,
           Messages.get(switch (logType) {
             case COMPARISON -> "components.tab.banner_comparison_failed";
             case SIMULATION -> "components.tab.banner_simulation_failed";
@@ -573,18 +573,18 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         String details = Messages.get("components.tab.banner_diff_details", sizeDiffs, missing, entries.size());
         if (entries.isEmpty()) {
           // older servers do not send the compared files and the result, the plain log tells
-          setBanner("sm-banner-info", "mdi2i-information-outline", "#8C8CE0", Messages.get("components.tab.banner_compared", artifact), "");
+          setBanner("sm-banner-info", "mdi2i-information-outline", ThemeColors.INFO, Messages.get("components.tab.banner_compared", artifact), "");
         }
         else if (log != null && log.isDiffering()) {
-          setBanner("sm-banner-warn", "mdi2a-alert-outline", "#DD9646", Messages.get("components.tab.banner_outdated", artifact), details);
+          setBanner("sm-banner-warn", "mdi2a-alert-outline", ThemeColors.WARN, Messages.get("components.tab.banner_outdated", artifact), details);
         }
         else {
-          setBanner("sm-banner-ok", "mdi2c-check-circle-outline", "#5CC46A", Messages.get("components.tab.banner_matches", artifact), details);
+          setBanner("sm-banner-ok", "mdi2c-check-circle-outline", ThemeColors.OK, Messages.get("components.tab.banner_matches", artifact), details);
         }
       }
-      case SIMULATION -> setBanner("sm-banner-info", "mdi2f-flask-outline", "#8C8CE0",
+      case SIMULATION -> setBanner("sm-banner-info", "mdi2f-flask-outline", ThemeColors.INFO,
           Messages.get("components.tab.banner_simulated", artifact), Messages.get("components.tab.banner_simulated_details"));
-      case INSTALLATION -> setBanner("sm-banner-ok", "mdi2c-check-circle-outline", "#5CC46A",
+      case INSTALLATION -> setBanner("sm-banner-ok", "mdi2c-check-circle-outline", ThemeColors.OK,
           Messages.get("components.tab.banner_installed", artifact), Messages.get("components.tab.banner_installed_details"));
     }
   }
@@ -592,7 +592,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
   private void setBanner(String style, String icon, String color, String title, String text) {
     banner.getStyleClass().add(style);
     bannerIcon.setIconLiteral(icon);
-    bannerIcon.setIconColor(Paint.valueOf(color));
+    ThemeColors.setIconColor(bannerIcon, color);
     bannerTitle.setText(title);
     bannerText.setText(text);
     bannerText.setVisible(!StringUtils.isEmpty(text));
@@ -611,7 +611,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     }
 
     ToggleGroup group = new ToggleGroup();
-    filterBox.getChildren().add(createFilterPill(group, null, Messages.get("components.screens.all"), "#BDBDBD", entries.size()));
+    filterBox.getChildren().add(createFilterPill(group, null, Messages.get("components.screens.all"), ThemeColors.MUTED, entries.size()));
     for (DiffKind kind : DiffKind.values()) {
       long count = entries.stream().filter(e -> DiffKind.of(e.getState()) == kind).count();
       if (count > 0) {
@@ -730,10 +730,10 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     private Node createGroupHeader(GroupItem item) {
       FontIcon chevron = new FontIcon(item.open() ? "mdi2c-chevron-down" : "mdi2c-chevron-right");
       chevron.setIconSize(16);
-      chevron.setIconColor(Paint.valueOf("#BDBDBD"));
+      ThemeColors.setIconColor(chevron, ThemeColors.MUTED);
 
       Label title = new Label(Messages.get(item.kind().labelKey));
-      title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;");
+      title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: " + ThemeColors.WHITE + ";");
       Label count = new Label(String.valueOf(item.count()));
       count.getStyleClass().add("sm-small");
 
@@ -755,7 +755,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
       File file = new File(entry.getFile());
 
       Label name = new Label(file.getName());
-      name.setStyle("-fx-font-size: 14px; -fx-text-fill: white;");
+      name.setStyle("-fx-font-size: 14px; -fx-text-fill: " + ThemeColors.WHITE + ";");
       Label path = new Label(entry.getFile());
       path.getStyleClass().add("sm-small");
       path.setTooltip(new Tooltip(entry.getFile()));
@@ -769,16 +769,16 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
       switch (kind) {
         case SIZE_DIFF -> {
           long delta = entry.getReleaseSize() - entry.getInstalledSize();
-          Label from = small(formatSize(entry.getInstalledSize()), "#9A9A9A");
-          Label arrow = small("→", "#7A7A7A");
-          Label to = small(formatSize(entry.getReleaseSize()), "white");
+          Label from = small(formatSize(entry.getInstalledSize()), ThemeColors.SUBTLE);
+          Label arrow = small("→", ThemeColors.DISABLED);
+          Label to = small(formatSize(entry.getReleaseSize()), ThemeColors.WHITE);
           Label diff = small((delta >= 0 ? "+" : "−") + formatSize(Math.abs(delta)), kind.color);
           diff.setMinWidth(90);
           diff.setAlignment(Pos.CENTER_RIGHT);
           sizes.getChildren().addAll(from, arrow, to, diff);
         }
         case TARGET_FILE_NOT_EXIST, TARGET_FOLDER_NOT_EXIST -> sizes.getChildren().add(small(Messages.get("components.tab.diff_will_be_added"), kind.color));
-        case FILE_MATCH -> sizes.getChildren().add(small(formatSize(entry.getInstalledSize()), "#9A9A9A"));
+        case FILE_MATCH -> sizes.getChildren().add(small(formatSize(entry.getInstalledSize()), ThemeColors.SUBTLE));
         default -> {
         }
       }

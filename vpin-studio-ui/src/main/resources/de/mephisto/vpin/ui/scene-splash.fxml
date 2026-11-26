@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<StackPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.SplashScreenController">
+<StackPane stylesheets="@stylesheet-colors.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.SplashScreenController">
    <children>
       <ImageView fx:id="splashImage" fitHeight="534.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
       </ImageView>
-      <Label fx:id="versionLabel" text="%competitions.discord_competition_edit.label" textFill="WHITE" StackPane.alignment="BOTTOM_LEFT">
+      <Label fx:id="versionLabel" text="%competitions.discord_competition_edit.label" styleClass="c-text-white" StackPane.alignment="BOTTOM_LEFT">
          <font>
             <Font size="14.0" />
          </font>
@@ -18,7 +18,7 @@
             <Insets bottom="32.0" left="17.0" />
          </StackPane.margin>
       </Label>
-      <Label fx:id="factLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="%competitions.discord_competition_edit.label" textAlignment="RIGHT" textFill="WHITE" wrapText="true" StackPane.alignment="TOP_RIGHT">
+      <Label fx:id="factLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="%competitions.discord_competition_edit.label" textAlignment="RIGHT" styleClass="c-text-white" wrapText="true" StackPane.alignment="TOP_RIGHT">
          <StackPane.margin>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
          </StackPane.margin>
@@ -26,7 +26,7 @@
             <Font name="System Bold Italic" size="16.0" />
          </font>
       </Label>
-      <Label fx:id="versionLabel1" layoutX="27.0" layoutY="492.0" text="%launcher.installer.vpin_studio" textFill="WHITE" StackPane.alignment="BOTTOM_LEFT">
+      <Label fx:id="versionLabel1" layoutX="27.0" layoutY="492.0" text="%launcher.installer.vpin_studio" styleClass="c-text-white" StackPane.alignment="BOTTOM_LEFT">
          <font>
             <Font name="Impact" size="48.0" />
          </font>
@@ -34,7 +34,7 @@
             <Insets bottom="43.0" left="17.0" />
          </StackPane.margin>
       </Label>
-      <Label fx:id="statusLabel" text="" textFill="WHITE" StackPane.alignment="BOTTOM_RIGHT">
+      <Label fx:id="statusLabel" text="" styleClass="c-text-white" StackPane.alignment="BOTTOM_RIGHT">
          <font>
             <Font size="14.0" />
          </font>

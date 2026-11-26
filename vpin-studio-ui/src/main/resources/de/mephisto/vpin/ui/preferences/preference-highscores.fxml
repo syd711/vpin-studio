@@ -21,7 +21,7 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.highscore_cards.highscore_preferences" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-title, c-text-white" text="%pref.highscore_cards.highscore_preferences" wrapText="true" />
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.highscores.highscore_settings" wrapText="true">
                <VBox.margin>
                   <Insets top="24.0" />
@@ -40,12 +40,12 @@
                      <children>
                         <VBox>
                            <children>
-                              <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%pref.highscores.filter_highscores_events_and_dashboard_by_the_list" textFill="WHITE">
+                              <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%pref.highscores.filter_highscores_events_and_dashboard_by_the_list" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="%pref.highscores.if_enabled_only_highscores_will_be_processed_where_of_the_players" textFill="WHITE" wrapText="true" />
+                              <Label styleClass="checkbox-description, c-text-white" text="%pref.highscores.if_enabled_only_highscores_will_be_processed_where_of_the_players" wrapText="true" />
                            </children>
                            <HBox.margin>
                               <Insets />
@@ -55,13 +55,13 @@
                   </HBox>
                         <VBox fx:id="monitorSection" GridPane.rowIndex="1">
                            <children>
-                              <CheckBox fx:id="monitorCheckbox" mnemonicParsing="false" text="%pref.highscores.enable_highscore_monitor_that_monitors_all_highscore_files" textFill="WHITE">
+                              <CheckBox fx:id="monitorCheckbox" mnemonicParsing="false" text="%pref.highscores.enable_highscore_monitor_that_monitors_all_highscore_files" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="%pref.highscores.if_enabled_the_server_monitor_all_highscore_related_this_is_useful" textFill="WHITE" wrapText="true" />
-                              <Label layoutX="10.0" layoutY="73.0" styleClass="checkbox-description" text="%pref.highscores.you_can_use_this_monitor_in_addition_to_your_frontend" textFill="WHITE" wrapText="true">
+                              <Label styleClass="checkbox-description, c-text-white" text="%pref.highscores.if_enabled_the_server_monitor_all_highscore_related_this_is_useful" wrapText="true" />
+                              <Label layoutX="10.0" layoutY="73.0" styleClass="checkbox-description, c-text-white" text="%pref.highscores.you_can_use_this_monitor_in_addition_to_your_frontend" wrapText="true">
                                  <VBox.margin>
                                     <Insets top="6.0" />
                                  </VBox.margin>
@@ -78,16 +78,16 @@
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.highscores.new_resetted_nvrams_are_automatically_downloaded_by_the" textFill="WHITE" wrapText="true">
+            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description, c-text-white" text="%pref.highscores.new_resetted_nvrams_are_automatically_downloaded_by_the" wrapText="true">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="416.0" styleClass="preference-description" text="%pref.highscores.they_are_used_to_lower_the_initial_score" textFill="WHITE" wrapText="true">
+            <Label layoutX="34.0" layoutY="416.0" styleClass="preference-description, c-text-white" text="%pref.highscores.they_are_used_to_lower_the_initial_score" wrapText="true">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin></Label>
-            <Label layoutX="34.0" layoutY="394.0" styleClass="preference-description" text="%pref.highscores.you_can_download_all_available_resetted_nvrams_again_e_g" textFill="WHITE" wrapText="true" />
+            <Label layoutX="34.0" layoutY="394.0" styleClass="preference-description, c-text-white" text="%pref.highscores.you_can_download_all_available_resetted_nvrams_again_e_g" wrapText="true" />
             <Button mnemonicParsing="false" onAction="#onNvRamReset" text="%pref.highscores.download_nvrams">
                <VBox.margin>
                   <Insets top="6.0" />
@@ -96,7 +96,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-download" iconSize="18" />
                </graphic>
             </Button>
          </children>

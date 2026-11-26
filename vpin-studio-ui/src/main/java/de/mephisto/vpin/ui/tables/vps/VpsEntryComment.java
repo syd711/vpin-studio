@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.vps;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -15,7 +16,7 @@ public class VpsEntryComment extends HBox {
     this.getChildren().add(spacer(100));
 
     Label commentLabel = WidgetFactory.createDefaultLabel(comment.trim());
-    commentLabel.setStyle("-fx-font-size: 12px;-fx-font-color: #B0ABAB;-fx-text-fill: #B0ABAB;");
+    commentLabel.setStyle("-fx-font-size: 12px;-fx-font-color: " + ThemeColors.WARM_GRAY + ";-fx-text-fill: " + ThemeColors.WARM_GRAY + ";");
     commentLabel.setPrefWidth(306);
     commentLabel.setTooltip(new Tooltip(comment));
     this.getChildren().add(commentLabel);

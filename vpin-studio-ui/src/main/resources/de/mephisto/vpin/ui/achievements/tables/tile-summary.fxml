@@ -9,24 +9,24 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TableSummaryTileController">
+<VBox spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TableSummaryTileController">
    <children>
       <HBox alignment="CENTER_LEFT" maxHeight="112.0" minHeight="112.0" prefHeight="112.0" spacing="18.0">
          <children>
             <StackPane fx:id="wheelBox" maxHeight="112.0" maxWidth="112.0" minHeight="112.0" minWidth="112.0" prefHeight="112.0" prefWidth="112.0" />
             <VBox spacing="3.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label fx:id="nameLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" />
-                  <Label fx:id="metaLabel" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" />
+                  <Label fx:id="nameLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: -c-white;" />
+                  <Label fx:id="metaLabel" style="-fx-font-size: 14px; -fx-text-fill: -c-muted;" />
                </children>
             </VBox>
             <VBox fx:id="progressBox" minWidth="260.0" spacing="6.0">
                <children>
                   <HBox spacing="8.0">
                      <children>
-                        <Label fx:id="countLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" />
+                        <Label fx:id="countLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -c-white;" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Label fx:id="pctLabel" style="-fx-font-size: 14px; -fx-text-fill: #DD9646; -fx-font-weight: bold;" />
+                        <Label fx:id="pctLabel" style="-fx-font-size: 14px; -fx-text-fill: -c-warn; -fx-font-weight: bold;" />
                      </children>
                   </HBox>
                   <StackPane fx:id="progressBarBox" />

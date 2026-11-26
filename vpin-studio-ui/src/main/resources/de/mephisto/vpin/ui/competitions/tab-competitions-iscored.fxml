@@ -22,7 +22,7 @@
             <center>
                 <StackPane fx:id="tableStack">
                     <children>
-                        <TableView fx:id="tableView" onMouseClicked="#onMouseClick" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                        <TableView fx:id="tableView" onMouseClicked="#onMouseClick" style="-fx-background-color: -c-tile;" styleClass="base-component">
                             <columns>
                         <TableColumn fx:id="settingsColumn" prefWidth="140.0" sortable="false" style="-fx-alignment: CENTER;" text="%competitions.competitions_iscored.game_settings" />
                         <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;">
@@ -30,12 +30,12 @@
                               <HBox alignment="CENTER" spacing="6.0">
                                  <children>
                                     <Label text="%competitions.competitions_iscored.your_table" />
-                                    <Label fx:id="publicReadAPIHint1" textFill="WHITE">
+                                    <Label fx:id="publicReadAPIHint1" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%competitions.competitions_iscored.only_the_first_table_match_is_shown_here" wrapText="true" />
@@ -56,12 +56,12 @@
             <top>
                 <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <items>
-                        <Button fx:id="reloadBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                        <Button fx:id="reloadBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.reload_and_invalidate_game_room_caches" />
@@ -75,116 +75,116 @@
                                       <Font size="14.0" />
                                   </font>
                               </TextField>
-                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                              <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                            </graphic>
                         </Button>
                      </children>
                   </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <ComboBox fx:id="gameRoomsCombo" prefWidth="260.0" />
-                  <Button fx:id="syncBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSync" textFill="WHITE">
+                  <Button fx:id="syncBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSync" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2s-sync" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-sync" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.synchronize_the_iscored_game_room_games_with_the" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="editBtn" layoutX="640.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" textFill="WHITE">
+                  <Button fx:id="editBtn" layoutX="640.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.edit_game_room_settings" />
                      </tooltip>
                   </Button>
-                  <Button layoutX="288.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGameRooms" textFill="WHITE">
+                  <Button layoutX="288.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGameRooms" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.open_game_room_preferences" />
                      </tooltip>
                   </Button>
                   <Separator fx:id="playBtnSeparator" layoutX="809.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+                  <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="c-text-danger">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+                        <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2s-stop" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.kill_all_emulator_and_frontend_processes_ctrl_k" />
                      </tooltip>
                   </Button>
                   <Separator layoutX="272.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" textFill="WHITE">
+                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                             </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.create_a_new_competition_for_the_selected_game" />
                      </tooltip>
                         </Button>
-                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
+                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" styleClass="c-text-danger">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                             </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.delete_the_selected_competition_note_that_it_might" />
                      </tooltip>
                         </Button>
                   <Separator layoutX="867.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" textFill="WHITE">
+                  <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+                  <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-edit" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
                      </tooltip>
                   </Button>
                   <Separator layoutX="946.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="eventLogBtn" layoutX="1004.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEventLog" textFill="WHITE">
+                  <Button fx:id="eventLogBtn" layoutX="1004.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEventLog" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.open_event_log" />

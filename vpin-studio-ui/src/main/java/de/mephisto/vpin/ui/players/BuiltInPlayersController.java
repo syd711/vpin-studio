@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
@@ -277,7 +278,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
       PlayerRepresentation value = cellData.getValue();
       if (!StringUtils.isEmpty(value.getDuplicatePlayerName())) {
         Label label = new Label(value.getInitials());
-        String color = WidgetFactory.ERROR_COLOR;
+        String color = ThemeColors.DANGER;
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
         return new SimpleObjectProperty(label);
       }

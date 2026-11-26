@@ -33,7 +33,7 @@
                         <Font size="10.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye-outline" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%cards.template_editor_title.toggle_title_visibility" />
@@ -44,7 +44,7 @@
                         <Font size="10.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
@@ -60,7 +60,7 @@
          <content>
             <VBox styleClass="accordion-container" >
                <children>
-                  <Label text="%cards.template_editor_title.title" textFill="WHITE">
+                  <Label text="%cards.template_editor_title.title" styleClass="c-text-white">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -73,7 +73,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label text="%cards.template_editor_title.title_font" textFill="WHITE">
+                  <Label text="%cards.template_editor_title.title_font" styleClass="c-text-white">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -83,7 +83,7 @@
                   </Label>
                   <BorderPane>
                      <left>
-                        <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="170.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                        <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="170.0" styleClass="c-text-white" BorderPane.alignment="CENTER">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -97,7 +97,7 @@
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="bi-fonts" />
                                  </graphic>
                               </Button>
                               <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontTitleApplyAll">
@@ -105,7 +105,7 @@
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-check-all" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%cards.template_editor_scores.apply_selected_font_settings_to_all_templates" />
@@ -118,14 +118,14 @@
 
                   <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="titleUseDefaultColor" mnemonicParsing="false" text="%cards.template_editor_tablename.use_default_color" textFill="WHITE">
+                      <CheckBox fx:id="titleUseDefaultColor" mnemonicParsing="false" text="%cards.template_editor_tablename.use_default_color" styleClass="c-text-white">
                           <font>
                             <Font size="14.0" />
                           </font>
                       </CheckBox>
                       <Label>
                           <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
                             <Tooltip text="%cards.template_editor_title.when_checked_the_title_is_rendered_with_the" />
@@ -139,7 +139,7 @@
 
                   <VBox fx:id="titleColorBox" spacing="3.0">
                      <children>
-                        <Label text="%cards.template_editor_title.title_color" textFill="WHITE">
+                        <Label text="%cards.template_editor_title.title_color" styleClass="c-text-white">
                         <font>
                            <Font size="14.0" />
                         </font>

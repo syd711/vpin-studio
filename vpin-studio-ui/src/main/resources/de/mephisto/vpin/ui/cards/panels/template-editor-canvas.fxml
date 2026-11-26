@@ -34,7 +34,7 @@
                         <Font size="10.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye-outline" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%cards.template_editor_canvas.toggle_canvas_visibility" />
@@ -45,7 +45,7 @@
                         <Font size="10.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
@@ -63,13 +63,13 @@
                <children>
                   <Label text="%cards.template_editor_canvas.adds_an_additional_background_layer_so_that_it" prefWidth="200" wrapText="true">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
                      </graphic>
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </Label>
-                  <Label text="%cards.template_editor_canvas.color" textFill="WHITE">
+                  <Label text="%cards.template_editor_canvas.color" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -83,7 +83,7 @@
                      </VBox.margin>
                   </ColorPicker>
 
-                  <Label text="%cards.template_editor_background.alpha_percentage" textFill="WHITE">
+                  <Label text="%cards.template_editor_background.alpha_percentage" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -99,7 +99,7 @@
 
                   <fx:include fx:id="position" source="template-subeditor-position.fxml" />
 
-                  <Label text="%cards.template_editor_canvas.border_radius" textFill="WHITE">
+                  <Label text="%cards.template_editor_canvas.border_radius" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

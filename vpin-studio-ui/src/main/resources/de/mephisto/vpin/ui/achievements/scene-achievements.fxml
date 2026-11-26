@@ -20,9 +20,9 @@
       <!-- shared by all tabs, moved into the top of the selected tab by the controller -->
       <ToolBar fx:id="toolbar" prefHeight="40.0">
          <items>
-            <Button mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+            <Button mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />
@@ -32,25 +32,25 @@
                </tooltip>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Label text="%achievements.player" textFill="WHITE">
+            <Label text="%achievements.player" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
             <ComboBox fx:id="playerCombo" prefWidth="240.0" />
             <Separator fx:id="syncSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSync" text="%achievements.sync" textFill="WHITE">
+            <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSync" text="%achievements.sync" styleClass="c-text-white">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2s-sync" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-sync" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
             <Separator fx:id="tableSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+            <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="c-text-white">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-edit" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />
@@ -59,9 +59,9 @@
                   <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
                </tooltip>
             </Button>
-            <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onAssetManager" textFill="WHITE">
+            <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onAssetManager" styleClass="c-text-white">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />
@@ -70,9 +70,9 @@
                   <Tooltip text="%dialog.asset_manager" />
                </tooltip>
             </Button>
-            <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onDataManager" textFill="WHITE">
+            <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onDataManager" styleClass="c-text-white">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />
@@ -82,15 +82,15 @@
                </tooltip>
             </Button>
             <Region HBox.hgrow="ALWAYS" />
-            <Label fx:id="statusLabel" textFill="#bdbdbd">
+            <Label fx:id="statusLabel" styleClass="c-text-muted">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button mnemonicParsing="false" onAction="#onSettings" textFill="WHITE">
+            <Button mnemonicParsing="false" onAction="#onSettings" styleClass="c-text-white">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />
@@ -107,7 +107,7 @@
          <tabs>
             <Tab fx:id="overviewTab" closable="false" text="%achievements.tab.overview">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-award" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-trophy-award" iconSize="18" />
                </graphic>
                <content>
                   <BorderPane fx:id="overviewPane">
@@ -119,7 +119,7 @@
             </Tab>
             <Tab fx:id="tablesTab" closable="false" text="%achievements.tab.tables">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-check" iconSize="18" />
                </graphic>
                <content>
                   <BorderPane fx:id="tablesPane">
@@ -131,7 +131,7 @@
             </Tab>
             <Tab fx:id="badgesTab" closable="false" text="%achievements.tab.badges">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2s-star-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-star-outline" iconSize="18" />
                </graphic>
                <content>
                   <BorderPane fx:id="badgesPane">
@@ -143,7 +143,7 @@
             </Tab>
             <Tab fx:id="leaderboardsTab" closable="false" text="%achievements.tab.leaderboards">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-variant" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-trophy-variant" iconSize="18" />
                </graphic>
                <content>
                   <BorderPane fx:id="leaderboardsPane">

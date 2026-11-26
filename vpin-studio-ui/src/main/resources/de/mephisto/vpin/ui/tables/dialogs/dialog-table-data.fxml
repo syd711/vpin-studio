@@ -51,14 +51,14 @@
                                              <children>
                                                 <BorderPane>
                                                    <left>
-                                                      <Label styleClass="default-title" text="%backups.backups_sidebar.table_details" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                      <Label styleClass="default-title, c-text-white" text="%backups.backups_sidebar.table_details" BorderPane.alignment="CENTER">
                                                          <font>
                                                             <Font name="System Bold" size="14.0" />
                                                          </font>
                                                       </Label>
                                                    </left>
                                                    <right>
-                                                      <Label fx:id="databaseIdLabel" alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="default-text" text="-" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                      <Label fx:id="databaseIdLabel" alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="default-text, c-text-white" text="-" BorderPane.alignment="CENTER">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -79,7 +79,7 @@
                                                   </rowConstraints>
                                                    <children>
                                                       <!-- row 0: Display Name -->
-                                                      <Label styleClass="default-text" text="%backglass.directb2s_sidebar.display_name" textFill="WHITE">
+                                                      <Label styleClass="default-text, c-text-white" text="%backglass.directb2s_sidebar.display_name">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -117,7 +117,7 @@
                                                       </TextField>
                                                       <Label GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip prefWidth="300.0" text="%tables.table_data.changing_the_game_file_name_will_also_rename" wrapText="true" />
@@ -130,7 +130,7 @@
                                                          </GridPane.margin>
                                                       </Label>
                                                       <!-- row 2: Asset Name -->
-                                                      <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="2">
+                                                      <Label layoutX="253.0" layoutY="16.0" styleClass="c-text-white" GridPane.rowIndex="2">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -138,7 +138,7 @@
                                                             <Tooltip text="%backups.backups_sidebar.every_table_will_be_added_to_the_first" />
                                                          </tooltip>
                                                       </Label>
-                                                      <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%tables.table_data.asset_name" textFill="WHITE" GridPane.rowIndex="2">
+                                                      <Label layoutX="10.0" layoutY="15.0" styleClass="default-text, c-text-white" text="%tables.table_data.asset_name" GridPane.rowIndex="2">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -157,7 +157,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip prefWidth="300.0" text="%tables.table_data.changing_the_game_name_will_also_rename_all" wrapText="true" />
@@ -179,12 +179,12 @@
                                                       </TextField>
                                                       <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                                          <children>
-                                                            <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="%tables.table_data.fix_version" textFill="WHITE">
+                                                            <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="%tables.table_data.fix_version" styleClass="c-text-white">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                                <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
+                                                                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
                                                                </graphic>
                                                             </Button>
                                                             <Label>
@@ -192,7 +192,7 @@
                                                                   <Font size="14.0" />
                                                                </font>
                                                                <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                                </graphic>
                                                                <tooltip>
                                                                   <Tooltip prefWidth="300.0" text="%tables.table_data.enabled_if_the_spreadsheet_version_differs_with_the" wrapText="true" />
@@ -239,7 +239,7 @@
                                                                   <Font size="14.0" />
                                                                </font>
                                                                <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                                </graphic>
                                                                <tooltip>
                                                                   <Tooltip prefWidth="300.0" text="%tables.table_data.if_the_table_has_been_patched_you_can" wrapText="true" />
@@ -259,18 +259,18 @@
                                           </VBox>
                                           <VBox fx:id="vpsPanel" minHeight="260.0" prefHeight="260.0" styleClass="navigation-panel">
                                              <children>
-                                                <Label styleClass="default-title" text="%tables.table_data.virtual_pinball_spreadsheet_entry" textFill="WHITE">
+                                                <Label styleClass="default-title, c-text-white" text="%tables.table_data.virtual_pinball_spreadsheet_entry">
                                                    <font>
                                                       <Font name="System Bold" size="14.0" />
                                                    </font>
                                                 </Label>
                                                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                                                    <children>
-                                                      <SplitMenuButton mnemonicParsing="false" onAction="#onAutoMatch" text="%tables.table_data.auto_match" textFill="WHITE">
+                                                      <SplitMenuButton mnemonicParsing="false" onAction="#onAutoMatch" text="%tables.table_data.auto_match" styleClass="c-text-white">
                                                          <items>
                                                             <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="%tables.table_data.auto_match_all">
                                                                <graphic>
-                                                                  <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
+                                                                  <FontIcon styleClass="c-fill-white, c-icon-white" iconLiteral="mdi2a-auto-fix">
                                                                      <font>
                                                                         <Font size="14.0" />
                                                                      </font>
@@ -282,24 +282,24 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip text="%tables.table_data.tries_to_resolve_the_matching_vps_table_and" />
                                                          </tooltip>
                                                       </SplitMenuButton>
-                                                      <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="%cards.template_editor_background.reset" textFill="WHITE">
+                                                      <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="%cards.template_editor_background.reset" styleClass="c-text-white">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip text="%tables.table_data.resets_the_assigned_vps_table_mapping" />
                                                          </tooltip>
                                                       </Button>
-                                                      <CheckBox fx:id="autoFillCheckbox" mnemonicParsing="false" text="%tables.table_data.auto_apply_data" textFill="WHITE">
+                                                      <CheckBox fx:id="autoFillCheckbox" mnemonicParsing="false" text="%tables.table_data.auto_apply_data" styleClass="c-text-white">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -312,7 +312,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip prefWidth="300.0" text="%tables.table_data.if_enabled_applying_the_the_new_table_or" wrapText="true" />
@@ -334,7 +334,7 @@
                                                       <RowConstraints minHeight="10.0" prefHeight="128.0" valignment="TOP" vgrow="SOMETIMES" />
                                                    </rowConstraints>
                                                    <children>
-                                                      <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE">
+                                                      <Label text="%backglass.directb2s_sidebar.name" styleClass="c-text-white">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -348,7 +348,7 @@
                                                             </TextField>
                                                          </children>
                                                       </HBox>
-                                                      <Label layoutX="10.0" layoutY="168.0" text="%tables.table_data.table_version" textFill="WHITE" GridPane.rowIndex="1">
+                                                      <Label layoutX="10.0" layoutY="168.0" text="%tables.table_data.table_version" styleClass="c-text-white" GridPane.rowIndex="1">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -361,7 +361,7 @@
                                                             <ComboBox fx:id="tableVersionsCombo" prefWidth="487.0" />
                                                          </children>
                                                       </HBox>
-                                                      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+                                                      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
                                                          <graphic>
                                                             <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
                                                          </graphic>
@@ -373,7 +373,7 @@
                                                          <children>
                                                             <Button fx:id="openVpsTableBtn" mnemonicParsing="false" onAction="#onVpsTableOpen" styleClass="link-component">
                                                                <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
+                                                                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" />
                                                                </graphic>
                                                                <font>
                                                                   <Font size="14.0" />
@@ -396,7 +396,7 @@
                                                                <children>
                                                                   <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
                                                                      <graphic>
-                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
                                                                      </graphic>
                                                                      <font>
                                                                         <Font size="14.0" />
@@ -407,7 +407,7 @@
                                                                   </Button>
                                                                   <Button fx:id="openVpsTableVersionBtn" mnemonicParsing="false" onAction="#onVpsTableVersionOpen" styleClass="link-component">
                                                                      <graphic>
-                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                                                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-download" iconSize="18" />
                                                                      </graphic>
                                                                      <font>
                                                                         <Font size="14.0" />
@@ -460,7 +460,7 @@
                                              <children>
                                                 <BorderPane>
                                                    <left>
-                                                      <Label styleClass="default-title" text="%tables.table_data.meta_data_information" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                      <Label styleClass="default-title, c-text-white" text="%tables.table_data.meta_data_information" BorderPane.alignment="CENTER">
                                                          <font>
                                                             <Font name="System Bold" size="14.0" />
                                                          </font>
@@ -469,11 +469,11 @@
                                                    <right>
                                                       <HBox BorderPane.alignment="CENTER_RIGHT">
                                                          <children>
-                                                            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="%tables.autofill_settings.auto_fill" textFill="WHITE">
+                                                            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="%tables.autofill_settings.auto_fill" styleClass="c-text-white">
                                                                <items>
                                                                   <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="%tables.table_data.auto_fill_all">
                                                                      <graphic>
-                                                                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
+                                                                        <FontIcon styleClass="c-fill-white, c-icon-white" iconLiteral="mdi2a-auto-fix">
                                                                            <font>
                                                                               <Font size="14.0" />
                                                                            </font>
@@ -485,7 +485,7 @@
                                                                   <Font size="14.0" />
                                                                </font>
                                                                <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
+                                                                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                                                                </graphic>
                                                                <tooltip>
                                                                   <Tooltip prefWidth="350.0" text="%tables.table_data.fill_the_table_data_with_values_read_from" wrapText="true" />
@@ -523,14 +523,14 @@
                                                    </rowConstraints>
                                                    <children>
                                                       <!-- row 0: Status -->
-                                                      <Label text="%mania.mania_table_sync.status" textFill="WHITE">
+                                                      <Label text="%mania.mania_table_sync.status" styleClass="c-text-white">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
                                                       <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
                                                       <!-- row 1: Media Search -->
-                                                      <Label layoutX="10.0" layoutY="15.0" text="%tables.table_data.media_search" textFill="WHITE" GridPane.rowIndex="1">
+                                                      <Label layoutX="10.0" layoutY="15.0" text="%tables.table_data.media_search" styleClass="c-text-white" GridPane.rowIndex="1">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -545,7 +545,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip prefWidth="350.0" text="%tables.table_data.this_value_is_used_for_the_media_search" wrapText="true" />
@@ -642,7 +642,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip text="%tables.table_asset_manager_embedded.https_virtual_pinball_spreadsheet_web_app" />
@@ -664,7 +664,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip text="%tables.table_asset_manager_embedded.https_virtual_pinball_spreadsheet_web_app" />
@@ -700,7 +700,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip prefWidth="350.0" text="%tables.table_data.this_field_is_reserved_by_the_vpin_studio" wrapText="true" />
@@ -722,7 +722,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip text="%tables.table_asset_manager_embedded.https_virtual_pinball_spreadsheet_web_app" />
@@ -737,7 +737,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <CheckBox fx:id="modCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="15">
+                                                      <CheckBox fx:id="modCheckbox" mnemonicParsing="false" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="15">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -785,7 +785,7 @@
                                  <content>
                                     <VBox fx:id="customizationRoot">
                                        <children>
-                                          <Label styleClass="default-title" text="%tables.table_data.launch_and_runtime_settings" textFill="WHITE">
+                                          <Label styleClass="default-title, c-text-white" text="%tables.table_data.launch_and_runtime_settings">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -803,7 +803,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                               <Label text="%tables.table_data.alternative_launcher" textFill="WHITE">
+                                               <Label text="%tables.table_data.alternative_launcher" styleClass="c-text-white">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -816,7 +816,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip text="%tables.table_data.if_no_value_is_set_the_frontend_default" />
@@ -876,7 +876,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip prefWidth="350.0" text="%tables.table_data.this_field_is_reserved_by_the_vpin_studio" wrapText="true" />
@@ -894,14 +894,14 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip prefWidth="350.0" text="%tables.table_data.this_field_is_reserved_by_the_vpin_studio" wrapText="true" />
                                                    </tooltip>
                                                 </Label>
 
-                                                <Label styleClass="default-text" text="%backups.backups_sidebar.custom_4" textFill="WHITE" GridPane.rowIndex="6">
+                                                <Label styleClass="default-text, c-text-white" text="%backups.backups_sidebar.custom_4" GridPane.rowIndex="6">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -916,14 +916,14 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip prefWidth="350.0" text="%tables.table_data.this_field_is_reserved_by_the_vpin_studio" wrapText="true" />
                                                    </tooltip>
                                                 </Label>
 
-                                                <Label styleClass="default-text" text="%backups.backups_sidebar.custom_5" textFill="WHITE" GridPane.rowIndex="7">
+                                                <Label styleClass="default-text, c-text-white" text="%backups.backups_sidebar.custom_5" GridPane.rowIndex="7">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -938,7 +938,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip prefWidth="350.0" text="%tables.table_data.this_field_is_reserved_by_the_vpin_studio" wrapText="true" />
@@ -958,7 +958,7 @@
 
                                                 <HBox GridPane.rowIndex="10">
                                                    <children>
-                                                      <Label text="%tables.table_data.table_volume" textFill="WHITE">
+                                                      <Label text="%tables.table_data.table_volume" styleClass="c-text-white">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -968,7 +968,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip text="%tables.table_data.launches_the_game_at_the_given_volume_level" />
@@ -981,7 +981,7 @@
                                              </children>
                                           </GridPane>
 
-                                          <Label layoutX="22.0" layoutY="22.0" styleClass="default-title" text="%tables.table_data.pinvol_settings" textFill="WHITE">
+                                          <Label layoutX="22.0" layoutY="22.0" styleClass="default-title, c-text-white" text="%tables.table_data.pinvol_settings">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -1004,7 +1004,7 @@
                                  <content>
                                     <VBox maxWidth="1.7976931348623157E308">
                                        <children>
-                                          <Label styleClass="default-title" text="%tables.table_data.table_extras" textFill="WHITE">
+                                          <Label styleClass="default-title, c-text-white" text="%tables.table_data.table_extras">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -1025,7 +1025,7 @@
                                                 <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                                <Label fx:id="databaseIdLabel1" layoutX="22.0" layoutY="28.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                                                <Label fx:id="databaseIdLabel1" layoutX="22.0" layoutY="28.0" styleClass="default-text, c-text-white" text="-" GridPane.columnIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -1091,7 +1091,7 @@
                <right>
                   <HBox alignment="CENTER" spacing="3.0" styleClass="subpanel" BorderPane.alignment="CENTER">
                      <children>
-                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="%cards.instructions_card.auto_save" textFill="WHITE">
+                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="%cards.instructions_card.auto_save" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -1104,7 +1104,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_previous_entry_in_the_current" wrapText="true" />
@@ -1115,7 +1115,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-forward" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_next_entry_in_the_current" wrapText="true" />
@@ -1128,7 +1128,7 @@
                   </HBox>
                </right>
                <left>
-                  <Label fx:id="titleLabel" prefWidth="590.0" styleClass="default-title" text="%backups.tables_backup.title" textFill="WHITE" BorderPane.alignment="CENTER">
+                  <Label fx:id="titleLabel" prefWidth="590.0" styleClass="default-title, c-text-white" text="%backups.tables_backup.title" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="18.0" />
                      </font>

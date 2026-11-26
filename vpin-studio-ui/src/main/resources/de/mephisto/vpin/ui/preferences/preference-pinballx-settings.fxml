@@ -22,9 +22,9 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.pinballx_settings.frontend_preferences" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-title, c-text-white" text="%pref.pinballx_settings.frontend_preferences" wrapText="true" />
             <Label styleClass="preference-subtitle" text="%pref.pinballx_settings.pinballx_settings" wrapText="true" />
-            <Label styleClass="preference-description" text="%pref.pinballx_settings.global_settings_for_the_pinballx_frontend" textFill="WHITE" wrapText="true">
+            <Label styleClass="preference-description, c-text-white" text="%pref.pinballx_settings.global_settings_for_the_pinballx_frontend" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
@@ -53,12 +53,12 @@
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="%pref.pinballx_settings.e_mail_address" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
+                  <Label text="%pref.pinballx_settings.e_mail_address" styleClass="c-text-white" wrapText="true" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="15.0" text="%backups.backup_source_http.password" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="15.0" text="%backups.backup_source_http.password" styleClass="c-text-white" wrapText="true" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -73,17 +73,17 @@
                         <Font size="14.0" />
                      </font>
                   </PasswordField>
-                  <Label layoutX="10.0" layoutY="48.0" text="%pref.pinballx_settings.activated" textFill="WHITE" wrapText="true">
+                  <Label layoutX="10.0" layoutY="48.0" text="%pref.pinballx_settings.activated" styleClass="c-text-white" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox fx:id="gameExEnabledCheckbox" mnemonicParsing="false" text="%pref.pinballx_settings.gameex_enabled" textFill="WHITE" GridPane.columnIndex="1">
+                  <CheckBox fx:id="gameExEnabledCheckbox" mnemonicParsing="false" text="%pref.pinballx_settings.gameex_enabled" styleClass="c-text-white" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Button mnemonicParsing="false" onAction="#onConnectionTest" text="%pref.pinballx_settings.test_connection" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <Button mnemonicParsing="false" onAction="#onConnectionTest" text="%pref.pinballx_settings.test_connection" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>

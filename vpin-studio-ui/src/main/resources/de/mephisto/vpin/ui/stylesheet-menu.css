@@ -1,30 +1,30 @@
 .menu-item {
     -fx-min-width: 160px;
     -fx-padding: 6 6 6 6;
-    -fx-text-fill: #FFFFFF;
-    -fx-background: #111111;
-    -fx-background-color: #111111;
+    -fx-text-fill: -c-white;
+    -fx-background: -c-darkest;
+    -fx-background-color: -c-darkest;
 }
 
 .menu-item .label {
     -fx-font-size: 14px;
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: -c-white;
 }
 
 .menu-item .label:hover {
     -fx-font-size: 14px;
-    -fx-background: #222222;
-    -fx-background-color: #222222;
-    -fx-text-fill: #FFFFFF;
+    -fx-background: -c-panel;
+    -fx-background-color: -c-panel;
+    -fx-text-fill: -c-white;
 }
 
 .custom-menu-item, .custom-menu-item:hover{
-   -fx-background-color: #222222;
+   -fx-background-color: -c-panel;
    -fx-padding: 0 0 0 0;
 }
 
 .custom-menu-item .label:hover {
-    -fx-background-color: #222222;
+    -fx-background-color: -c-panel;
 }
 
 .dropin-menu-item, .dropin-menu-item:hover{
@@ -36,14 +36,14 @@
 }
 
 .dropin-menu-item:focused {
-    -fx-border-color: #5080ff;
+    -fx-border-color: -c-focus-border;
     -fx-border-width: 1px;
     -fx-border-radius: 3px;
 }
 
 .context-menu {
     -fx-min-width: 160px;
-    -fx-background-color: #222222;
+    -fx-background-color: -c-panel;
     -fx-text-fill: -fx-font-1;
 }
 
@@ -52,5 +52,5 @@
 }
 
 .split-menu-button .arrow {
-    -fx-background-color: white;
+    -fx-background-color: -c-white;
 }

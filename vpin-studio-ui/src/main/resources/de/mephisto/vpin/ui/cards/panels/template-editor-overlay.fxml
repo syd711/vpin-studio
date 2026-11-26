@@ -21,7 +21,7 @@
                                 <Font size="10.0"/>
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline"/>
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye-outline"/>
                             </graphic>
                             <tooltip>
                                 <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates"/>
@@ -33,7 +33,7 @@
                                 <Font size="10.0"/>
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline"
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lock-open-variant-outline"
                                           iconSize="13"/>
                             </graphic>
                             <tooltip>
@@ -54,14 +54,14 @@
                                text="%cards.template_editor_overlay.this_mode_is_to_simulate_the_rendering_of"
                                wrapText="true">
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18"/>
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18"/>
                             </graphic>
                             <VBox.margin>
                                 <Insets top="6.0"/>
                             </VBox.margin>
                         </Label>
 
-                        <Label text="%cards.template_editor_overlay.screen" textFill="WHITE">
+                        <Label text="%cards.template_editor_overlay.screen" styleClass="c-text-white">
                             <font>
                                 <Font size="14.0"/>
                             </font>
@@ -78,7 +78,7 @@
                                         <Font size="14.0"/>
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline"
+                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline"
                                                   iconSize="18" text="󰘥"/>
                                     </graphic>
                                     <tooltip>

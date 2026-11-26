@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="Infinity" spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewLevelTileController">
+<VBox maxHeight="Infinity" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewLevelTileController">
    <children>
       <HBox alignment="CENTER_LEFT" spacing="18.0">
          <children>
@@ -15,12 +15,12 @@
                <children>
                   <HBox alignment="BASELINE_LEFT" spacing="10.0">
                      <children>
-                        <Label fx:id="nameLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" />
-                        <Label fx:id="prestigeLabel" style="-fx-font-size: 14px; -fx-text-fill: #DD9646;" />
+                        <Label fx:id="nameLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: -c-white;" />
+                        <Label fx:id="prestigeLabel" style="-fx-font-size: 14px; -fx-text-fill: -c-warn;" />
                      </children>
                   </HBox>
                   <StackPane fx:id="progressBox" />
-                  <Label fx:id="nextLabel" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" />
+                  <Label fx:id="nextLabel" style="-fx-font-size: 14px; -fx-text-fill: -c-muted;" />
                </children>
             </VBox>
          </children>

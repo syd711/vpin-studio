@@ -85,7 +85,7 @@
                                     <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
                                     <Label styleClass="default-text" text="%vpxz.tables_vpxz.target" />
                                     <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%backups.tables_backup.overwrite_settings" GridPane.rowIndex="2" />
-                                    <CheckBox fx:id="overwriteCheckbox" mnemonicParsing="false" text="%vpxz.tables_vpxz.overwrite_existing_vpxz_files" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <CheckBox fx:id="overwriteCheckbox" mnemonicParsing="false" text="%vpxz.tables_vpxz.overwrite_existing_vpxz_files" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -98,7 +98,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-refresh" iconSize="18" />
                                              </graphic>
                                           </Button>
                                        </children>
@@ -112,7 +112,7 @@
                   </VBox>
                </center>
                <top>
-                  <Label fx:id="titleLabel" styleClass="default-headline" text="%backups.tables_backup.title" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                  <Label fx:id="titleLabel" styleClass="default-headline, c-text-white" text="%backups.tables_backup.title" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font size="18.0" />
                      </font>

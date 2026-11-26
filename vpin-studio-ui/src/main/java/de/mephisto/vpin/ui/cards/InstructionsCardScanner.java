@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -62,7 +63,7 @@ public class InstructionsCardScanner extends Application {
       controller.setDatabase(database);
 
       Scene scene = new Scene(root);
-      scene.setFill(Paint.valueOf("#212529"));
+      scene.setFill(Paint.valueOf(ThemeColors.CARD_BACKGROUND));
       stage.setTitle("Instructions Cards");
         if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
             stage.getIcons().add(new Image(Objects.requireNonNull(Studio.class.getResourceAsStream("logo-64.png"))));

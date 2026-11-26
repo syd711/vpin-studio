@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.achievements.badges;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.achievements.BadgeInfo;
 import javafx.fxml.FXML;
@@ -84,12 +85,12 @@ public class BadgeGroupController {
     card.setAlignment(Pos.CENTER_LEFT);
     card.setPadding(new Insets(8, 10, 8, 10));
     card.setStyle(isSelected ? "-fx-background-color: " + ROW_SELECTED + "; -fx-border-color: " + ACCENT + ";"
-        : "-fx-background-color: #222222; -fx-border-color: #2E2E2E;");
+        : "-fx-background-color: " + ThemeColors.PANEL + "; -fx-border-color: " + ThemeColors.PANEL_BORDER + ";");
     card.setMaxWidth(Double.MAX_VALUE);
     VBox texts = new VBox(1);
     Label name = b.earned ? bold(b.name) : colored(b.name, MUTED, 14, true);
     String sub = b.earned ? (b.selected ? Messages.get("achievements.display_badge_short") : Messages.get("achievements.badge_earned")) : b.progressText;
-    texts.getChildren().addAll(name, colored(sub, "#9A9A9A", 11, false));
+    texts.getChildren().addAll(name, colored(sub, ThemeColors.SUBTLE, 11, false));
     card.getChildren().addAll(medal(b.category, b.earned, 32), texts);
     tooltip(card, b.description);
     card.setOnMouseClicked(e -> onClick.accept(b));

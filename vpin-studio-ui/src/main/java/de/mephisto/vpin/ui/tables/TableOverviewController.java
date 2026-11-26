@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.BaseTableSettings;
@@ -74,7 +75,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Paint;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -93,7 +93,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.*;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 
@@ -973,7 +972,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       String tooltip = value.getGameFilePath();
       if (status != null) {
         if (status.getLastActiveId() == value.getId() || status.getGameId() == value.getId()) {
-          label.setStyle("-fx-text-fill: " + WidgetFactory.OK_COLOR + ";-fx-font-weight: bold;");
+          label.setStyle("-fx-text-fill: " + ThemeColors.SUCCESS_LIGHT + ";-fx-font-weight: bold;");
           tooltip += "\n" + Messages.get("dialog.last_played_game");
         }
       }
@@ -1061,7 +1060,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         label.setTooltip(new Tooltip(builder.toString()));
       }
       if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(GameValidationCode.CODE_ROM_NOT_EXISTS)) {
-        String color = WidgetFactory.ERROR_COLOR;
+        String color = ThemeColors.DANGER;
         label.setTooltip(new Tooltip(Messages.get("dialog.no_rom_file_found_but_required")));
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
       }
@@ -1090,7 +1089,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         String iconLiteral = BackglassManagerControllerUtils.getBackglassIconLiteral(value.getDirectB2SPath(), nbVersions);
         FontIcon icon = nbVersions > 1 ?
             WidgetFactory.createIcon(iconLiteral, getIconColor(value)) :
-            WidgetFactory.createIcon(iconLiteral, value.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
+            WidgetFactory.createIcon(iconLiteral, value.isDisabled() ? ThemeColors.ICON_DISABLED : ThemeColors.WHITE);
 
         Button button = new Button();
         icon.setIconSize(22);
@@ -1292,7 +1291,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         compBtn.getStyleClass().add("table-media-button");
         compBtn.setTooltip(new Tooltip(Messages.get("dialog.table_is_competed")));
         FontIcon cmpIcon = WidgetFactory.createIcon("mdi2t-trophy-variant");
-        cmpIcon.setIconColor(Paint.valueOf("#00c4ec"));
+        ThemeColors.setIconColor(cmpIcon, ThemeColors.CYAN);
         compBtn.setGraphic(cmpIcon);
         row.getChildren().add(compBtn);
         compBtn.setOnAction(event -> {
@@ -1315,13 +1314,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         commentBtn.setTooltip(tooltip);
 
         if (notes.toLowerCase().contains("//error")) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+          ThemeColors.setIconColor(icon, ThemeColors.DANGER);
         }
         else if (notes.toLowerCase().contains("//todo")) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.TODO_COLOR));
+          ThemeColors.setIconColor(icon, ThemeColors.UPDATE);
         }
         else if (notes.toLowerCase().contains("//outdated")) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
+          ThemeColors.setIconColor(icon, ThemeColors.OUTDATED);
         }
 
         row.getChildren().add(commentBtn);
@@ -1458,7 +1457,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         FontIcon icon = WidgetFactory.createIcon("mdi2s-star-outline", getIconColor(value));
         label.setGraphic(icon);
         icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE + 2);
-        icon.setIconColor(Paint.valueOf(DISABLED_COLOR));
+        ThemeColors.setIconColor(icon, ThemeColors.ICON_DISABLED);
         label.setCursor(Cursor.HAND);
         label.setOnMouseClicked(event -> setGameRating(value, (Integer) label.getUserData()));
         root.getChildren().add(label);
@@ -1674,7 +1673,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     Button iniBtn = new Button();
     iniBtn.getStyleClass().add("table-media-button");
     iniBtn.setTooltip(new Tooltip(Messages.get("dialog.edit_named", iniPath)));
-    FontIcon iniIcon = WidgetFactory.createIcon(iconLiteral, game.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
+    FontIcon iniIcon = WidgetFactory.createIcon(iconLiteral, game.isDisabled() ? ThemeColors.ICON_DISABLED : ThemeColors.WHITE);
     iniIcon.setIconSize(22);
     iniBtn.setGraphic(iniIcon);
     iniBtn.setOnAction(event -> {
@@ -1727,7 +1726,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         tt.append(Messages.get("msg.type_audio") + "\n");
         FontIcon icon = WidgetFactory.createIcon("bi-music-note-beamed");
         if (!ignored && !config.getMedia().equals(ValidatorMedia.audio)) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+          ThemeColors.setIconColor(icon, ThemeColors.DANGER);
           tt.append(Messages.get("dialog.asset_status_should_have_type", config.getMedia().getDisplayName()) + "\n");
         }
 
@@ -1737,7 +1736,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         tt.append(Messages.get("msg.type_picture") + "\n");
         FontIcon icon = WidgetFactory.createIcon("bi-card-image");
         if (!ignored && !config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+          ThemeColors.setIconColor(icon, ThemeColors.DANGER);
           tt.append(Messages.get("dialog.asset_status_should_have_type", config.getMedia().getDisplayName()) + "\n");
         }
         btn.setGraphic(icon);
@@ -1746,7 +1745,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         tt.append(Messages.get("msg.type_video") + "\n");
         FontIcon icon = WidgetFactory.createIcon("bi-film");
         if (!ignored && !config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+          ThemeColors.setIconColor(icon, ThemeColors.DANGER);
           tt.append(Messages.get("dialog.asset_status_should_have_type", config.getMedia().getDisplayName()) + "\n");
         }
         btn.setGraphic(icon);
@@ -1754,7 +1753,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
       FontIcon fontIcon = (FontIcon) btn.getGraphic();
       if (!ignored && config.getOption().equals(ValidatorOption.empty)) {
-        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+        ThemeColors.setIconColor(fontIcon, ThemeColors.DANGER);
         tt.append(Messages.get("dialog.asset_status_should_remain_empty") + "\n");
       }
 
@@ -1779,15 +1778,15 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
       if (!ignored) {
         if (config.getOption().equals(ValidatorOption.empty)) {
-          fontIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
+          ThemeColors.setIconColor(fontIcon, ThemeColors.ICON_DISABLED);
           tt.append(Messages.get("dialog.asset_status_should_remain_empty") + "\n");
         }
         else if (config.getOption().equals(ValidatorOption.optional)) {
-          fontIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
+          ThemeColors.setIconColor(fontIcon, ThemeColors.ICON_DISABLED);
           tt.append(Messages.get("dialog.asset_status_optional") + "\n");
         }
         else if (config.getOption().equals(ValidatorOption.mandatory)) {
-          fontIcon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+          ThemeColors.setIconColor(fontIcon, ThemeColors.DANGER);
           tt.append(Messages.get("dialog.asset_status_mandatory") + "\n");
         }
       }
@@ -1949,7 +1948,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private String getIconColor(GameRepresentation value) {
     if (value.isDisabled()) {
-      return DISABLED_COLOR;
+      return ThemeColors.ICON_DISABLED;
     }
     return null;
   }

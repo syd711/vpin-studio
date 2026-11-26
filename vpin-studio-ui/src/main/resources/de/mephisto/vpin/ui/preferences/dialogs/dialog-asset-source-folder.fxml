@@ -42,7 +42,7 @@
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="10.0" layoutY="135.0" styleClass="default-headline" text="%pref.asset_source_folder.media_source_configuration" textFill="WHITE" wrapText="true">
+            <Label layoutX="10.0" layoutY="135.0" styleClass="default-headline, c-text-white" text="%pref.asset_source_folder.media_source_configuration" wrapText="true">
                <font>
                   <Font size="14.0" />
                </font>
@@ -62,7 +62,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE" wrapText="true">
+                  <Label text="%backglass.directb2s_sidebar.name" styleClass="c-text-white" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -71,7 +71,7 @@
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
-                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_folder.folder" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_folder.folder" styleClass="c-text-white" wrapText="true" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -81,19 +81,19 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_folder.enabled" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_folder.enabled" styleClass="c-text-white" wrapText="true" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" selected="true" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" selected="true" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
-                        <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backups.backup_download.select_folder" textFill="WHITE">
+                        <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backups.backup_download.select_folder" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -103,7 +103,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%pref.asset_source_folder.enter_the_media_source_folder_located_on_your" wrapText="true" />
@@ -116,7 +116,7 @@
                   <Insets bottom="3.0" />
                </VBox.margin>
             </GridPane>
-            <Label styleClass="default-headline" text="%pref.asset_source_folder.search_strategy" textFill="WHITE" wrapText="true">
+            <Label styleClass="default-headline, c-text-white" text="%pref.asset_source_folder.search_strategy" wrapText="true">
                <font>
                   <Font size="14.0" />
                </font>
@@ -128,7 +128,7 @@
                <children>
                   <VBox fx:id="autoDetectBox" prefWidth="400.0" styleClass="selection-panel">
                      <children>
-                        <RadioButton fx:id="autoDetectRadio" mnemonicParsing="false" text="%pref.asset_source_folder.auto_detect" textFill="WHITE" wrapText="true">
+                        <RadioButton fx:id="autoDetectRadio" mnemonicParsing="false" text="%pref.asset_source_folder.auto_detect" styleClass="c-text-white" wrapText="true">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -136,7 +136,7 @@
                               <Insets />
                            </VBox.margin>
                         </RadioButton>
-                        <Label fx:id="uploadAndReplaceDescription1" styleClass="checkbox-description" text="%pref.asset_source_folder.the_asset_type_will_be_determined_by_its" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription1" styleClass="checkbox-description, c-text-white" text="%pref.asset_source_folder.the_asset_type_will_be_determined_by_its" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -144,7 +144,7 @@
                   </VBox>
                   <VBox fx:id="screensBox" prefWidth="400.0" styleClass="selection-panel">
                      <children>
-                        <RadioButton fx:id="screensRadio" mnemonicParsing="false" text="%pref.asset_source_folder.selected_screens" textFill="WHITE" wrapText="true">
+                        <RadioButton fx:id="screensRadio" mnemonicParsing="false" text="%pref.asset_source_folder.selected_screens" styleClass="c-text-white" wrapText="true">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -152,7 +152,7 @@
                               <Insets />
                            </VBox.margin>
                         </RadioButton>
-                        <Label styleClass="checkbox-description" text="%pref.asset_source_folder.the_media_source_will_only_be_used_when" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="checkbox-description, c-text-white" text="%pref.asset_source_folder.the_media_source_will_only_be_used_when" wrapText="true" />
                         <VBox fx:id="screensPanel" minHeight="50.0" spacing="6.0">
                            <VBox.margin>
                               <Insets left="26.0" top="12.0" />

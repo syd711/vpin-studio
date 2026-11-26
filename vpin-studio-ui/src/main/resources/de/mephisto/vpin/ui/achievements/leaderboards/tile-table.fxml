@@ -13,12 +13,12 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.leaderboards.LeaderboardsTableTileController">
+<VBox spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.leaderboards.LeaderboardsTableTileController">
    <children>
       <VBox spacing="2.0">
          <children>
-            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.per_table" />
-            <Label style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" text="%achievements.per_table_info" />
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%achievements.per_table" />
+            <Label style="-fx-font-size: 14px; -fx-text-fill: -c-muted;" text="%achievements.per_table_info" />
          </children>
       </VBox>
       <HBox spacing="6.0">
@@ -30,12 +30,12 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE" visible="false">
+                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white" visible="false">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                        <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                      </graphic>
                   </Button>
                </children>
@@ -50,27 +50,27 @@
       <FlowPane fx:id="chipsPane" hgap="5.0" vgap="5.0" />
       <VBox spacing="10.0">
          <children>
-            <HBox fx:id="infoPanel" alignment="CENTER_LEFT" managed="false" spacing="16.0" style="-fx-background-color: #222222;" visible="false">
+            <HBox fx:id="infoPanel" alignment="CENTER_LEFT" managed="false" spacing="16.0" style="-fx-background-color: -c-panel;" visible="false">
                <children>
                   <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label fx:id="tableNameLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" />
-                        <Label fx:id="tableMetaLabel" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" />
+                        <Label fx:id="tableNameLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" />
+                        <Label fx:id="tableMetaLabel" style="-fx-font-size: 14px; -fx-text-fill: -c-muted;" />
                      </children>
                   </VBox>
-                  <VBox style="-fx-background-color: #161616;">
+                  <VBox style="-fx-background-color: -c-inset;">
                      <children>
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #9A9A9A;" text="%achievements.your_rank" />
-                        <Label fx:id="ownRankLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: -c-subtle;" text="%achievements.your_rank" />
+                        <Label fx:id="ownRankLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -c-white;" />
                      </children>
                      <padding>
                         <Insets bottom="7.0" left="12.0" right="12.0" top="7.0" />
                      </padding>
                   </VBox>
-                  <VBox style="-fx-background-color: #161616;">
+                  <VBox style="-fx-background-color: -c-inset;">
                      <children>
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #9A9A9A;" text="%achievements.your_progress" />
-                        <Label fx:id="ownProgressLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #DD9646;" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: -c-subtle;" text="%achievements.your_progress" />
+                        <Label fx:id="ownProgressLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -c-warn;" />
                      </children>
                      <padding>
                         <Insets bottom="7.0" left="12.0" right="12.0" top="7.0" />
@@ -82,16 +82,16 @@
                   <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
                </padding>
             </HBox>
-            <Label fx:id="messageLabel" managed="false" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" visible="false" />
+            <Label fx:id="messageLabel" managed="false" style="-fx-font-size: 14px; -fx-text-fill: -c-muted;" visible="false" />
             <VBox fx:id="registerBox" managed="false" visible="false" />
             <VBox fx:id="rankingBox" managed="false" visible="false">
                <children>
-                  <HBox spacing="10.0" style="-fx-background-color: #161616;">
+                  <HBox spacing="10.0" style="-fx-background-color: -c-inset;">
                      <children>
-                        <Label minWidth="56.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.rank" />
-                        <Label minWidth="220.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.player" />
-                        <Label maxWidth="Infinity" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.progress" HBox.hgrow="ALWAYS" />
-                        <Label minWidth="100.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.date" />
+                        <Label minWidth="56.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%achievements.rank" />
+                        <Label minWidth="220.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%achievements.player" />
+                        <Label maxWidth="Infinity" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%achievements.progress" HBox.hgrow="ALWAYS" />
+                        <Label minWidth="100.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%achievements.date" />
                      </children>
                      <padding>
                         <Insets bottom="7.0" left="10.0" right="10.0" top="7.0" />

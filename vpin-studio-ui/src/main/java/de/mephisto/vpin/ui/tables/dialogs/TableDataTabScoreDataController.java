@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -24,7 +25,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -322,7 +322,7 @@ public class TableDataTabScoreDataController implements Initializable {
       String statusRom = gameScoreValidation.getRomStatus();
       if (statusRom != null) {
         FontIcon icon = WidgetFactory.createIcon(gameScoreValidation.getRomIcon());
-        icon.setIconColor(javafx.scene.paint.Paint.valueOf(gameScoreValidation.getRomIconColor()));
+        ThemeColors.setIconColor(icon, gameScoreValidation.getRomIconColor());
         Label l = new Label();
         l.setGraphic(icon);
         l.setTooltip(new Tooltip(statusRom));
@@ -332,7 +332,7 @@ public class TableDataTabScoreDataController implements Initializable {
       String statusHsFile = gameScoreValidation.getHighscoreFilenameStatus();
       if (statusHsFile != null) {
         FontIcon icon = WidgetFactory.createIcon(gameScoreValidation.getHighscoreFilenameIcon());
-        icon.setIconColor(Paint.valueOf(gameScoreValidation.getHighscoreFilenameIconColor()));
+        ThemeColors.setIconColor(icon, gameScoreValidation.getHighscoreFilenameIconColor());
         Label l = new Label();
         l.setGraphic(icon);
         l.setTooltip(new Tooltip(statusHsFile));

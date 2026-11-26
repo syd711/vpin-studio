@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -203,14 +204,14 @@ public class DiscordBotPreferencesController implements Initializable {
       root.setAlignment(Pos.BASELINE_LEFT);
       root.setSpacing(3);
       Label label = new Label("- " + user.getName());
-      label.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
+      label.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.WHITE + ";");
       root.getChildren().add(label);
       allowListPane.getChildren().add(root);
     }
 
     if (allowList.isEmpty()) {
       Label label = new Label(Messages.get("pref.discord_bot.no_users_filtered"));
-      label.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
+      label.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.WHITE + ";");
       allowListPane.getChildren().add(label);
     }
   }

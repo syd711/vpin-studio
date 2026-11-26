@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
@@ -528,16 +529,16 @@ public class BulkImporterController implements Initializable, DialogController {
         }
         if (item.gameProperty().get() == null) {
           setText("-");
-          setStyle("-fx-text-fill: #FF9900;");
+          setStyle("-fx-text-fill: " + ThemeColors.ORANGE_BRIGHT + ";");
         }
         else if (SOURCE_MANUAL.equals(item.matchSourceProperty().get())) {
           setText(Messages.get("bulk_importer.manual"));
-          setStyle("-fx-text-fill: #66FF66;");
+          setStyle("-fx-text-fill: " + ThemeColors.SUCCESS_LIGHT + ";");
         }
         else {
           int pct = (int) Math.round(item.scoreProperty().get() * 100);
           setText(pct + "% (" + Messages.get("bulk_importer.matched_by_" + item.matchSourceProperty().get()) + ")");
-          setStyle(pct >= 80 ? "-fx-text-fill: #66FF66;" : "-fx-text-fill: #FFFF66;");
+          setStyle(pct >= 80 ? "-fx-text-fill: " + ThemeColors.SUCCESS_LIGHT + ";" : "-fx-text-fill: " + ThemeColors.YELLOW_LIGHT + ";");
         }
       }
     });
@@ -637,10 +638,10 @@ public class BulkImporterController implements Initializable, DialogController {
     else {
       String icon = VIDEO_EXT.contains(ext) ? "mdi2v-video" : AUDIO_EXT.contains(ext) ? "mdi2m-music-note" : "mdi2f-file-outline";
       FontIcon fontIcon = new FontIcon(icon);
-      fontIcon.setIconColor(javafx.scene.paint.Color.WHITE);
+      ThemeColors.setIconColor(fontIcon, ThemeColors.WHITE);
       fontIcon.setIconSize(Math.max(24, previewSize / 2));
       Label label = new Label(ext.toUpperCase());
-      label.setStyle("-fx-text-fill: #CCCCCC;");
+      label.setStyle("-fx-text-fill: " + ThemeColors.TEXT_SECONDARY + ";");
       javafx.scene.layout.VBox box = new javafx.scene.layout.VBox(4, fontIcon, label);
       box.setAlignment(Pos.CENTER);
       pane.getChildren().add(box);
@@ -944,7 +945,7 @@ public class BulkImporterController implements Initializable, DialogController {
       Button search = new Button();
       FontIcon searchIcon = new FontIcon("mdi2m-magnify");
       searchIcon.setIconSize(18);
-      searchIcon.setIconColor(javafx.scene.paint.Color.WHITE);
+      ThemeColors.setIconColor(searchIcon, ThemeColors.WHITE);
       search.setGraphic(searchIcon);
       search.setTooltip(new Tooltip(Messages.get("bulk_importer.search_table")));
       search.setOnAction(e -> {

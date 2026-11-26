@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -13,7 +14,6 @@ import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 
 import java.time.Instant;
 
-import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation, GameRepresentationModel> implements BaseGameModel {
@@ -69,39 +69,39 @@ public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation
       String mimeType = defaultMediaItem.getMimeType();
       if (mimeType.contains("audio")) {
         if (!ignored && !config.getMedia().equals(ValidatorMedia.audio)) {
-          return WidgetFactory.ERROR_COLOR;
+          return ThemeColors.DANGER;
         }
       }
       else if (mimeType.contains("image")) {
         if (!ignored && !config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
-          return WidgetFactory.ERROR_COLOR;
+          return ThemeColors.DANGER;
         }
       }
       else if (mimeType.contains("video")) {
         if (!ignored && !config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
-          return WidgetFactory.ERROR_COLOR;
+          return ThemeColors.DANGER;
         }
       }
 
       if (!ignored && config.getOption().equals(ValidatorOption.empty)) {
-        return WidgetFactory.ERROR_COLOR;
+        return ThemeColors.DANGER;
       }
     }
     else {
       if (!ignored) {
         if (config.getOption().equals(ValidatorOption.empty)) {
-          return DISABLED_COLOR;
+          return ThemeColors.ICON_DISABLED;
         }
         else if (config.getOption().equals(ValidatorOption.optional)) {
-          return DISABLED_COLOR;
+          return ThemeColors.ICON_DISABLED;
         }
         else if (config.getOption().equals(ValidatorOption.mandatory)) {
-          return WidgetFactory.ERROR_COLOR;
+          return ThemeColors.DANGER;
         }
       }
     }
 
-    return "#FFFFFF";
+    return ThemeColors.WHITE;
   }
 
   @Override

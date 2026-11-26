@@ -14,7 +14,7 @@
             <StackPane fx:id="barStack" alignment="CENTER_LEFT">
                <children>
                   <HBox fx:id="bar" />
-                  <Label fx:id="valueLabel" text="%competitions.discord_competition_edit.label" textFill="WHITE">
+                  <Label fx:id="valueLabel" text="%competitions.discord_competition_edit.label" styleClass="c-text-white">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -33,7 +33,7 @@
    <top>
       <BorderPane BorderPane.alignment="CENTER">
          <left>
-            <Label fx:id="titleLabel" contentDisplay="RIGHT" text="-" textFill="WHITE" BorderPane.alignment="CENTER">
+            <Label fx:id="titleLabel" contentDisplay="RIGHT" text="-" styleClass="c-text-white" BorderPane.alignment="CENTER">
                <font>
                   <Font size="14.0" />
                </font>

@@ -27,7 +27,7 @@
                      <children>
                         <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                            <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                            </children>
                         </StackPane>
                         <VBox spacing="2.0" HBox.hgrow="ALWAYS">
@@ -40,7 +40,7 @@
                            <children>
                               <Button mnemonicParsing="false" onAction="#onDismiss" styleClass="sm-alert-close">
                                  <graphic>
-                                    <FontIcon iconColor="#E6C3C5" iconLiteral="mdi2c-close" iconSize="16" />
+                                    <FontIcon styleClass="c-icon-error-text" iconLiteral="mdi2c-close" iconSize="16" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%backglass.directb2s_admin.dismiss" />
@@ -60,7 +60,7 @@
             </VBox>
             <VBox fx:id="dataBox">
                <children>
-                  <Label text="%tables.tables_sidebar_dmd.dmd_data" textFill="WHITE">
+                  <Label text="%tables.tables_sidebar_dmd.dmd_data" styleClass="c-text-white">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -77,45 +77,45 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="%tables.tables_sidebar_dmd.dmd_type" textFill="WHITE">
+                        <Label text="%tables.tables_sidebar_dmd.dmd_type" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="bundleTypeLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-
-                        <Label text="%tables.tables_sidebar_dmd.dmd_folder" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="dmdFolderLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="bundleTypeLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
 
-                        <Label text="%tables.tables_sidebar_altsound.bundle_size_unpacked" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label text="%tables.tables_sidebar_dmd.dmd_folder" styleClass="c-text-white" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="bundleSizeLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label fx:id="dmdFolderLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
 
-                        <Label text="%backups.backups_sidebar.last_modified" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label text="%tables.tables_sidebar_altsound.bundle_size_unpacked" styleClass="c-text-white" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="lastModifiedLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <Label fx:id="bundleSizeLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+
+                        <Label text="%backups.backups_sidebar.last_modified" styleClass="c-text-white" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lastModifiedLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -132,7 +132,7 @@
             </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label text="%tables.tables_sidebar_dmd.no_dmd_media_found" textFill="WHITE">
+                  <Label text="%tables.tables_sidebar_dmd.no_dmd_media_found" styleClass="c-text-white">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -157,12 +157,12 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" textFill="WHITE">
+            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </Button>
             <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
@@ -171,7 +171,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
             <Separator layoutX="246.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
@@ -180,16 +180,16 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-target-variant" iconSize="18" />
                </graphic>
             </Button>
             <Separator layoutX="336.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="text-button" text="%components.freezy.dmddevice_ini" textFill="WHITE">
+            <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="text-button, c-text-white" text="%components.freezy.dmddevice_ini">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tables.tables_sidebar_dmd.open_dmddevice_ini_configuration_file" />
@@ -200,7 +200,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-laptop" iconSize="18" />
                </graphic>
             </Button>
          </items>

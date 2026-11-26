@@ -24,12 +24,12 @@
 }
 
 .ghost-button:hover {
-    -fx-font-color: #fff8f8;
+    -fx-font-color: -c-warm-white;
     -fx-font-size : 32px;
     -fx-background-color: transparent;
     -fx-border-style: hidden hidden hidden hidden;
     -fx-background-radius: 4 4 4 4;
-    -fx-text-fill: #fff8f8;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
@@ -42,11 +42,11 @@
 }
 
 .ghost-button-small:hover {
-    -fx-font-color: #fff8f8;
+    -fx-font-color: -c-warm-white;
     -fx-font-size : 16px;
     -fx-background-color: transparent;
     -fx-border-style: hidden hidden hidden hidden;
-    -fx-text-fill: #fff8f8;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
@@ -62,11 +62,11 @@
 }
 
 .ghost-button-tiny:hover {
-    -fx-font-color: #fff8f8;
+    -fx-font-color: -c-warm-white;
     -fx-font-size : 14px;
     -fx-background-color: transparent;
     -fx-border-style: hidden hidden hidden hidden;
-    -fx-text-fill: #fff8f8;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
@@ -79,37 +79,37 @@
 }
 
 .playlist-button:hover {
-    -fx-font-color: #fff8f8;
+    -fx-font-color: -c-warm-white;
     -fx-background-color: transparent;
     -fx-border-style: hidden hidden hidden hidden;
-    -fx-text-fill: #fff8f8;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
 .table-media-button {
-    -fx-font-color: #FFFFFF;
+    -fx-font-color: -c-white;
     -fx-background-color: transparent;
     -fx-border-style: hidden hidden hidden hidden;
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: -c-white;
     -fx-padding: 3px;
 }
 
 .table-media-button:hover {
-    -fx-font-color: #fff8f8;
-    -fx-background-color: #28333566;
+    -fx-font-color: -c-warm-white;
+    -fx-background-color: -c-media-button-hover;
     -fx-border-style: hidden hidden hidden hidden;
-    -fx-text-fill: #fff8f8;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
 .table-media-button-selected {
-    -fx-font-color: #fff8f8;
-    -fx-background-color: black;
+    -fx-font-color: -c-warm-white;
+    -fx-background-color: -c-black;
     -fx-border-style: solid solid solid solid;
-    -fx-border-color: green;
+    -fx-border-color: -c-debug;
     -fx-border-width: 1px;
     -fx-border-radius: 4px;
-    -fx-text-fill: #fff8f8;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
@@ -122,13 +122,13 @@
     -fx-padding: 2 0 0 0;
     -fx-border-radius: 0 0 0 4;
     -fx-background-radius: 0 0 0 5;
-    -fx-background-color: #494949;
+    -fx-background-color: -c-bar-button;
     -fx-border-style: solid;
     -fx-border-width: 1;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-border-color: #373737;
-    -fx-text-fill: #DDDDDD;
+    -fx-border-color: -c-bar-button-border;
+    -fx-text-fill: -c-text-soft;
 }
 .bar-button-right {
     -fx-min-width: 44px;
@@ -136,26 +136,26 @@
     -fx-padding: 2 0 0 0;
     -fx-border-radius: 0 0 4 0;
     -fx-background-radius: 0 0 5 0;
-    -fx-background-color: #494949;
+    -fx-background-color: -c-bar-button;
     -fx-border-style: solid;
     -fx-border-width: 1;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-border-color: #373737;
-    -fx-text-fill: #DDDDDD;
+    -fx-border-color: -c-bar-button-border;
+    -fx-text-fill: -c-text-soft;
 }
 
 .bar-button-left:hover,.bar-button-right:hover,.bar-button-left:selected,.bar-button-right:selected {
     -fx-background-color: -fx-font-hover;
-    -fx-background-color: #5858D3;
-    -fx-text-fill: #fff8f8;
+    -fx-background-color: -c-bar-button-hover;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
 .bar-button-selected {
     -fx-background-color: -fx-font-hover;
-    -fx-background-color: #6666FF;
-    -fx-text-fill: #fff8f8;
+    -fx-background-color: -c-highlight;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
@@ -171,7 +171,7 @@
     -fx-border-width: 1;
     -fx-font-size: 14px;
     -fx-border-color:-fx-base-6;
-    -fx-text-fill: #DDDDDD;
+    -fx-text-fill: -c-text-soft;
 }
 
 .vps-table-button:hover {
@@ -179,8 +179,8 @@
     -fx-border-width: 1 1 1 1;
     -fx-font-size: 14px;
     -fx-border-radius: 6 6 6 6;
-    -fx-border-color: #6666FF;
-    -fx-text-fill: #fff8f8;
+    -fx-border-color: -c-highlight;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
@@ -189,8 +189,8 @@
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
     -fx-border-radius: 6 6 6 6;
-    -fx-border-color: #6666FF;
-    -fx-text-fill: #fff8f8;
+    -fx-border-color: -c-highlight;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
@@ -204,9 +204,9 @@
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 2;
     -fx-font-size: 14px;
-    -fx-border-color: #FF9933;
+    -fx-border-color: -c-orange;
     -fx-border-radius: 3px;
-    -fx-text-fill: #DDDDDD;
+    -fx-text-fill: -c-text-soft;
 }
 
 .installer-button:hover {
@@ -215,8 +215,8 @@
     -fx-border-width: 2;
     -fx-font-size: 14px;
     -fx-border-radius: 6 6 6 6;
-    -fx-border-color: #FF0033;
-    -fx-text-fill: #fff8f8;
+    -fx-border-color: -c-installer-hover;
+    -fx-text-fill: -c-warm-white;
     -fx-border-radius: 3px;
     -fx-cursor: hand;
 }
@@ -226,8 +226,8 @@
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
     -fx-border-radius: 6 6 6 6;
-    -fx-border-color: #FF9933;
-    -fx-text-fill: #fff8f8;
+    -fx-border-color: -c-orange;
+    -fx-text-fill: -c-warm-white;
     -fx-border-radius: 3px;
     -fx-cursor: hand;
 }
@@ -237,66 +237,66 @@
  */
 .submit-button {
     -fx-border-style: solid solid solid solid;
-    -fx-border-color: #6666FF;
+    -fx-border-color: -c-highlight;
     -fx-border-width: 1;
     -fx-font-size : 14px;
-    -fx-background-color: #333366;
-    -fx-text-fill: #fff8f8;
+    -fx-background-color: -c-primary;
+    -fx-text-fill: -c-warm-white;
     -fx-border-radius: 3px;
 }
 
 .submit-button:hover {
     -fx-border-style: solid solid solid solid;
-    -fx-border-color: #4D4DB3;
+    -fx-border-color: -c-primary-hover-border;
     -fx-border-width: 1;
     -fx-font-size : 14px;
-    -fx-background-color: #6666FF;
-    -fx-text-fill: #fff8f8;
+    -fx-background-color: -c-highlight;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
 .default-button {
     -fx-border-radius: 3px;
     -fx-border-style: solid solid solid solid;
-    -fx-border-color: #111111;
+    -fx-border-color: -c-darkest;
     -fx-border-width: 1;
     -fx-font-size : 14px;
-    -fx-background-color: #272b2f;
-    -fx-text-fill: #fff8f8;
+    -fx-background-color: -c-separator;
+    -fx-text-fill: -c-warm-white;
 }
 
 .default-button:hover {
     -fx-border-style: solid solid solid solid;
-    -fx-border-color: #4D4DB3;
+    -fx-border-color: -c-primary-hover-border;
     -fx-border-width: 1;
     -fx-font-size : 14px;
     -fx-background-color: -fx-font-hover;
-    -fx-text-fill: #fff8f8;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
 .warn-button {
     -fx-border-radius: 3px;
-    -fx-border-color: #663333;
+    -fx-border-color: -c-danger-border;
     -fx-border-width: 1;
     -fx-font-size : 14px;
-    -fx-background-color: #CC3333;
-    -fx-text-fill: #DDDDDD;
+    -fx-background-color: -c-danger-dark;
+    -fx-text-fill: -c-text-soft;
 }
 
 .warn-button:hover {
-    -fx-border-color: #663333;
+    -fx-border-color: -c-danger-border;
     -fx-border-width: 1;
     -fx-font-size : 14px;
-    -fx-background-color: #FF3333;
-    -fx-text-fill: #DDDDDD;
+    -fx-background-color: -c-danger;
+    -fx-text-fill: -c-text-soft;
     -fx-cursor: hand;
 }
 
 
 .vps-button {
     -fx-cursor: hand;
-    -fx-font-color: white;
+    -fx-font-color: -c-white;
     -fx-font-weight : bold;
     -fx-font-size : 11px;
     -fx-border-style: hidden hidden hidden hidden;
@@ -305,7 +305,7 @@
 }
 
 .vps-badge {
-    -fx-font-color: white;
+    -fx-font-color: -c-white;
     -fx-font-weight : bold;
     -fx-font-size : 12px;
     -fx-border-style: hidden hidden hidden hidden;
@@ -314,36 +314,36 @@
 }
 
 .vps-badge-button {
-    -fx-font-color: white;
+    -fx-font-color: -c-white;
     -fx-font-weight : bold;
     -fx-font-size : 14px;
     -fx-border-style: solid solid solid solid;
-    -fx-border-color: #338033;
+    -fx-border-color: -c-feature;
     -fx-border-radius: 3 3 3 3;
     -fx-padding: 2 4 2 4;
 }
 
 .text-button {
-    -fx-font-color: #FFFFFF;
-    -fx-text-fill: #FFFFFF;
+    -fx-font-color: -c-white;
+    -fx-text-fill: -c-white;
     -fx-base : -fx-info-background;
 }
 
 .edit-button {
-    -fx-background-color: #5555FF;
+    -fx-background-color: -c-edit-button;
     -fx-border-style: solid solid solid solid;
     -fx-border-color: transparent;
     -fx-border-width: 1;
     -fx-font-weight: bold;
     -fx-border-radius: 3 3 3 3;
     -fx-font-size: 14px;
-    -fx-border-color: #FFFFFF;
-    -fx-text-fill: #DDDDDD;
+    -fx-border-color: -c-white;
+    -fx-text-fill: -c-text-soft;
 }
 
 .edit-button:hover {
-    -fx-background-color: #7777FF;
+    -fx-background-color: -c-edit-button-hover;
     -fx-border-style: solid solid solid solid;
     -fx-font-size: 14px;
-    -fx-border-color: #6666FF;
+    -fx-border-color: -c-highlight;
 }

@@ -77,12 +77,12 @@
                   <HBox alignment="CENTER_LEFT" spacing="12.0">
                      <children>
                         <CheckBox fx:id="synchronizeRatingsCheckbox" mnemonicParsing="false" styleClass="default-text" text="%mania.mania_registration.submit_table_ratings" />
-                        <Label textFill="WHITE">
+                        <Label styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%mania.mania_registration.this_will_synchronize_your_table_ratings_with_the" wrapText="true" />
@@ -93,12 +93,12 @@
                   <HBox alignment="CENTER_LEFT" spacing="12.0">
                      <children>
                         <CheckBox fx:id="synchronizePlayCountCheckbox" mnemonicParsing="false" styleClass="default-text" text="%mania.mania_registration.submit_play_count" />
-                        <Label textFill="WHITE">
+                        <Label styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%mania.mania_registration.this_will_synchronize_the_play_count_of_your" wrapText="true" />
@@ -113,12 +113,12 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label textFill="WHITE">
+                        <Label styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%mania.mania_registration.this_will_synchronize_the_list_of_installed_tables" wrapText="true" />
@@ -129,12 +129,12 @@
                   <HBox alignment="CENTER_LEFT" spacing="12.0">
                      <children>
                         <CheckBox fx:id="synchronizeHighscoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="%mania.mania_privacy_settings.submit_all_highscores" />
-                        <Label textFill="WHITE">
+                        <Label styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%mania.mania_privacy_settings.submit_your_highscores_to_rank_them_on_vpin" wrapText="true" />

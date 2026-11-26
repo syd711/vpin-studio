@@ -29,7 +29,7 @@
          <children>
             <StackPane maxHeight="26.0" maxWidth="26.0" minHeight="26.0" minWidth="26.0" styleClass="sm-alert-icon">
                <children>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="16" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="16" />
                </children>
             </StackPane>
             <VBox spacing="2.0" HBox.hgrow="ALWAYS">
@@ -78,22 +78,22 @@
                      <children>
                         <Button mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%components.emulators.emulator_script.reload_screen_settings" />
                            </tooltip>
                         </Button>
-                        <Region minWidth="1.0" prefHeight="20.0" prefWidth="1.0" style="-fx-background-color: #444444;" />
+                        <Region minWidth="1.0" prefHeight="20.0" prefWidth="1.0" style="-fx-background-color: -c-border;" />
                         <Button fx:id="zoomOutBtn" mnemonicParsing="false" onAction="#onZoomOut" styleClass="sm-button, sm-button-icon">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-minus" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-minus" iconSize="18" />
                            </graphic>
                         </Button>
                         <Label fx:id="zoomLabel" alignment="CENTER" minWidth="52.0" styleClass="sm-text" text="100%" />
                         <Button fx:id="zoomInBtn" mnemonicParsing="false" onAction="#onZoomIn" styleClass="sm-button, sm-button-icon">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-plus" iconSize="18" />
                            </graphic>
                         </Button>
                         <Button mnemonicParsing="false" onAction="#onZoomFit" styleClass="sm-button" text="%components.screens.fit" />

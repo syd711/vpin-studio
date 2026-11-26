@@ -54,7 +54,7 @@
                               <Pane HBox.hgrow="ALWAYS" />
                               <Button fx:id="updateBtn" mnemonicParsing="false" onAction="#onUpdate" text="%tables.rom2altsound.update">
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-update" iconSize="18" />
                                  </graphic>
                                  <font>
                                     <Font size="14.0" />
@@ -105,7 +105,7 @@
                      <children>
                         <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                            <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                            </children>
                         </StackPane>
                         <Label fx:id="errorText" maxWidth="1.7976931348623157E308" styleClass="sm-alert-text" text="-" wrapText="true" HBox.hgrow="ALWAYS" />
@@ -152,7 +152,7 @@
                               <Spinner fx:id="maxSecsSpinner" editable="true" prefWidth="100.0" />
                               <Label>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="400.0" text="%tables.rom2altsound.max_secs_tooltip" wrapText="true" />
@@ -184,7 +184,7 @@
                                           <Spinner fx:id="loopMaxSecsSpinner" editable="true" prefWidth="100.0" />
                                           <Label>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="400.0" text="%tables.rom2altsound.loop_max_secs_tooltip" wrapText="true" />
@@ -198,7 +198,7 @@
                                           <Spinner fx:id="introLoopSecsSpinner" editable="true" prefWidth="100.0" />
                                           <Label>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="400.0" text="%tables.rom2altsound.intro_loop_secs_tooltip" wrapText="true" />

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -11,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class VpsVersionContainer extends VBox {
       String comment = item.getComment();
       if (comment != null && !comment.trim().isEmpty()) {
         Label title = new Label(comment);
-        title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + customStyle);
+        title.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 14px;-fx-font-weight : bold;" + customStyle);
         this.getChildren().add(title);
       }
 
@@ -48,7 +48,7 @@ public class VpsVersionContainer extends VBox {
         title.getStyleClass().add("default-text");
         title.setStyle(customStyle);
         if (comment == null || comment.trim().isEmpty()) {
-          title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + customStyle);
+          title.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 14px;-fx-font-weight : bold;" + customStyle);
         }
         this.getChildren().add(title);
         if (comment == null || comment.trim().isEmpty()) {
@@ -61,9 +61,9 @@ public class VpsVersionContainer extends VBox {
       HBox row = new HBox(6);
       Label titleLabel = new Label(Messages.get("vps.vps_version_container.version_label"));
       titleLabel.setPrefWidth(TITLE_WIDTH);
-      titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
+      titleLabel.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
       Label valueLabel = new Label(item.getVersion());
-      valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
+      valueLabel.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 12px;" + customStyle);
       row.getChildren().addAll(titleLabel, valueLabel);
 
       this.getChildren().add(row);
@@ -71,12 +71,12 @@ public class VpsVersionContainer extends VBox {
       row = new HBox(6);
       titleLabel = new Label(Messages.get("vps.vps_version_container.vps_update_label"));
       titleLabel.setPrefWidth(TITLE_WIDTH);
-      titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
+      titleLabel.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
       
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault());
       valueLabel = new Label(dateTimeFormatter.format(Instant.ofEpochMilli(item.getCreatedAt())));
 
-      valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
+      valueLabel.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 12px;" + customStyle);
       row.getChildren().addAll(titleLabel, valueLabel);
       this.getChildren().add(row);
 
@@ -90,7 +90,7 @@ public class VpsVersionContainer extends VBox {
 
         FontIcon icon = new FontIcon("mdi2o-open-in-new");
         icon.setIconSize(8);
-        icon.setIconColor(Paint.valueOf("#FFFFFF"));
+        ThemeColors.setIconColor(icon, ThemeColors.WHITE);
         button.setGraphic(icon);
         button.setStyle("-fx-font-size: 12px;");
         button.getStyleClass().add("external-component");

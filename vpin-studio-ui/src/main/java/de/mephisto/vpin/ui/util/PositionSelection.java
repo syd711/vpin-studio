@@ -26,7 +26,7 @@ public class PositionSelection {
   /** Whether aspect ratio has to be enforced */
   private Double aspectRatio = null;
   
-  private ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(Color.LIME);
+  private ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(Color.web(ThemeColors.SELECTION_HANDLE));
 
   /** The constrained area for mouse drag in caller coordinates */
   private int areaMinX = -1, areaMaxX = -1, areaMinY = -1, areaMaxY = -1;

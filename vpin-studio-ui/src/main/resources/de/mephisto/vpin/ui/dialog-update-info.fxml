@@ -13,7 +13,7 @@
    <center>
       <BorderPane>
          <center>
-            <BorderPane fx:id="center" style="-fx-background-color: #283335;" BorderPane.alignment="CENTER">
+            <BorderPane fx:id="center" style="-fx-background-color: -c-row-even;" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>

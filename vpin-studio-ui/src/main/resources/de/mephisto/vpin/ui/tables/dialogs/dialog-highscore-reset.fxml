@@ -71,7 +71,7 @@
                                     <Spinner fx:id="scoreSpinner" prefWidth="100.0" />
                                     <Label>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%tables.highscore_reset.the_input_is_limited_to_maximum_value_of" wrapText="true" />

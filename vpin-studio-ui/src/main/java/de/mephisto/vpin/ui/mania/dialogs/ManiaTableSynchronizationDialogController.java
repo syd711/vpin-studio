@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.mania.dialogs;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
@@ -15,7 +16,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -82,14 +82,14 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
       Label statusLabel = new Label();
       if (value.isDenied()) {
         statusIcon = WidgetFactory.createIcon("mdi2a-alert-circle-check-outline");
-        statusIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+        ThemeColors.setIconColor(statusIcon, ThemeColors.WHITE);
       }
       else if (!value.isValid()) {
         statusIcon = WidgetFactory.createExclamationIcon();
       }
       else if (value.getAccount() == null) {
         statusIcon = WidgetFactory.createExclamationIcon();
-        statusIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+        ThemeColors.setIconColor(statusIcon, ThemeColors.WHITE);
       }
 
       statusLabel.setGraphic(statusIcon);

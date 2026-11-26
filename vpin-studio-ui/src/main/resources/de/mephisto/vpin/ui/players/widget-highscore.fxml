@@ -25,14 +25,14 @@
          <center>
             <VBox fx:id="highscoreVBox" BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="tableLabel" text="%players.widget_highscore.loading" textFill="WHITE">
+                  <Label fx:id="tableLabel" text="%players.widget_highscore.loading" styleClass="c-text-white">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>
                   </Label>
                   <HBox alignment="CENTER_LEFT">
                      <children>
-                        <Label fx:id="positionLabel" text="#" textFill="WHITE">
+                        <Label fx:id="positionLabel" text="#" styleClass="c-text-white">
                            <HBox.margin>
                               <Insets right="12.0" />
                            </HBox.margin>
@@ -40,7 +40,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="nameLabel" text="..." textFill="WHITE">
+                        <Label fx:id="nameLabel" text="..." styleClass="c-text-white">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -49,8 +49,8 @@
                   </HBox>
                   <VBox alignment="CENTER_RIGHT">
                      <children>
-                        <Label fx:id="scoreLabel" text="..." textFill="WHITE" />
-                        <Label fx:id="changeDateLabel" text="..." textFill="WHITE">
+                        <Label fx:id="scoreLabel" text="..." styleClass="c-text-white" />
+                        <Label fx:id="changeDateLabel" text="..." styleClass="c-text-white">
                            <font>
                               <Font size="10.0" />
                            </font>

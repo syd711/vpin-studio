@@ -1,0 +1,205 @@
+/**
+ * Central color palette of the Studio UI. Every color of the UI stylesheets, FXML files and Java classes
+ * (via de.mephisto.vpin.ui.util.ThemeColors) is defined here, nowhere else. Use the -c-* tokens in CSS and
+ * inline styles, the c-text-* / c-icon-* / c-fill-* classes in FXML and ThemeColors constants in Java.
+ * Values must be literal hex colors (or another -c-* token), ThemeColors parses this file.
+ */
+.root, .context-menu, .tooltip, .combo-box-popup, .date-picker-popup, .popover {
+    /* Surfaces, dark to light (see UI-STYLEGUIDE.md, section 1) */
+    -c-black: #000000;
+    -c-darkest: #111111;                    /* window headers, legacy -fx-base-7 */
+    -c-feature-off: #151515;                /* unselected VPS feature badge */
+    -c-inset: #161616;                      /* inset boxes, logs, text inputs, progress track */
+    -c-footer: #1C1C1C;                     /* pinned panel footer, log group rows */
+    -c-inset-hover: #1E1E1E;                /* hovered row inside an inset box */
+    -c-card-background: #212529;            /* rendered highscore cards */
+    -c-panel: #222222;                      /* panels of a split view, page background */
+    -c-row-hover: #262626;                  /* hovered list row */
+    -c-separator: #272B2F;                  /* separators, selection panels */
+    -c-selection-panel-hover: #272B3F;      /* hovered / selected selection panel */
+    -c-tile: #2A2A2A;                       /* cards / tiles on the page background */
+    -c-panel-border: #2E2E2E;               /* border of a panel inside a panel */
+    -c-control: #333333;                    /* buttons, list-row hover, neutral pill */
+    -c-bar-button-border: #373737;
+    -c-selected: #3A3A3A;                   /* selected list row, dividers */
+    -c-control-hover: #3D3D3D;              /* button hover */
+    -c-border: #444444;                     /* button, chip and text-field borders */
+    -c-bar-button: #494949;
+    -c-monitor-border: #4A4A4A;             /* monitor outline in the screens map */
+    -c-border-strong: #5A5A5A;              /* hovered scroll thumb, selected filter pill */
+
+    /* Text and neutral icons */
+    -c-disabled: #7A7A7A;                   /* disabled / hidden entries */
+    -c-icon-disabled: #767272;              /* icons of disabled tables */
+    -c-icon-inactive: #898989;
+    -c-subtle: #9A9A9A;                     /* small labels, captions, timestamps */
+    -c-text-placeholder: #AAAAAA;
+    -c-muted: #BDBDBD;                      /* hints, secondary text, neutral icons */
+    -c-text-secondary: #CCCCCC;
+    -c-text-soft: #DDDDDD;
+    -c-text-light: #E0E0E0;                 /* log and script text */
+    -c-white: #FFFFFF;                      /* titles, values, body text */
+    -c-link: #7FB2FF;                       /* hyperlinks */
+
+    /* Legacy warm grays (formerly -fx-base-1 .. -fx-base-5) */
+    -c-warm-white: #FFF8F8;
+    -c-warm-gray-light: #C7C3C3;
+    -c-warm-gray: #B0ABAB;
+    -c-warm-gray-dark: #888585;
+    -c-warm-gray-darker: #605E5E;           /* window border */
+
+    /* Status colors (see UI-STYLEGUIDE.md, 'Accents and status') */
+    -c-ok: #5CC46A;                         /* OK / success / up to date */
+    -c-ok-bg: #1F3A26;                      /* OK pill background */
+    -c-ok-banner: #17231A;                  /* OK banner background */
+    -c-warn: #DD9646;                       /* warning, brand accent, primary action */
+    -c-warn-hover: #E8A55C;
+    -c-warn-bg: #3D2B17;                    /* warning pill background */
+    -c-warn-banner: #241D14;                /* warning banner background */
+    -c-on-warn: #1A1305;                    /* text on the accent button */
+    -c-error: #FF6B70;                      /* error / missing / invalid */
+    -c-error-bg: #3A1C1F;                   /* error pill background */
+    -c-error-banner: #34191B;               /* error banner / alert background */
+    -c-error-border: #6E2B30;
+    -c-error-hover: #4A2326;
+    -c-error-text: #E6C3C5;                 /* text inside an alert */
+    -c-error-text-light: #F3D6D7;
+    -c-error-icon: #E5484D;
+    -c-error-dim: #B04A50;                  /* monitor outside of the screen setup */
+    -c-info: #8C8CE0;                       /* info / selection / frontend */
+    -c-info-banner: #1C1D2B;                /* info banner background */
+    -c-info-border: #333344;                /* info banner border, selected achievement row */
+
+    /* Achievements palettes (rarity, rank medals, striped rows) */
+    -c-row-even: #283335;
+    -c-row-odd: #303733;
+    -c-rarity-common: #EDEDED;
+    -c-rarity-rare: #5AA9FF;
+    -c-rarity-epic: #C77DFF;
+    -c-medal-gold: #E3B930;
+    -c-medal-gold-dark: #8A6E12;
+    -c-medal-silver: #C9C9C9;
+    -c-medal-bronze: #D9925A;
+    -c-medal-bronze-dark: #8A5326;
+
+    /* Legacy accents (older views, not part of the style guide palette) */
+    -c-primary: #333366;                    /* submit buttons, legacy selection */
+    -c-primary-hover-border: #4D4DB3;
+    -c-highlight: #6666FF;                  /* edit mode, drop hints */
+    -c-highlight-translucent: #6666FFAA;    /* selected table rows */
+    -c-highlight-faint: #6666FF55;
+    -c-bar-button-hover: #5858D3;
+    -c-edit-button: #5555FF;
+    -c-edit-button-hover: #7777FF;
+    -c-focus-border: #5080FF;
+    -c-link-base: #3399FF;
+    -c-danger: #FF3333;                     /* delete actions, invalid values */
+    -c-danger-dark: #CC3333;
+    -c-danger-darker: #990000;
+    -c-danger-border: #663333;
+    -c-installer-hover: #FF0033;
+    -c-delete-soft: #F08080;
+    -c-recording: #FF2222;
+    -c-recording-bg: #FF223344;
+    -c-success: #33CC00;
+    -c-success-light: #66FF66;
+    -c-success-dark: #03A905;
+    -c-success-darker: #11AA11;
+    -c-green: #338800;
+    -c-green-hover: #339900;
+    -c-green-border: #33AA00;
+    -c-feature: #338033;                    /* selected VPS feature badge */
+    -c-toggle-selected: #116611;
+    -c-toggle-selected-border: #44AA44;
+    -c-update: #CCFF66;                     /* update available */
+    -c-outdated: #FFCC66;
+    -c-orange: #FF9933;
+    -c-orange-bright: #FF9900;
+    -c-amber: #FF9800;
+    -c-orange-named: #FFA500;
+    -c-yellow-light: #FFFF66;
+    -c-folder: #CC9933;
+    -c-cyan: #00C4EC;
+    -c-teal: #008080;
+    -c-wol: #B2DFEE;                        /* wake on LAN button */
+    -c-wol-hover: #80C7D7;
+    -c-selection-handle: #00FF00;           /* drag handles of position selections */
+    -c-debug: #008000;
+
+    /* Translucent row tints */
+    -c-media-button-hover: #28333566;
+    -c-row-hover-faint: #33333311;
+    -c-row-odd-tint: #93F9B911;
+    -c-row-even-tint: #1DBBDD11;
+
+    /* VPS link and format badges */
+    -c-vps-blue: #3182CE;
+    -c-vps-orange: #DD6B20;
+    -c-vps-red: #E53E3E;
+    -c-vps-gray: #718096;
+    -c-vps-youtube: #FF4E45;
+
+    /* Script editor syntax highlighting */
+    -c-syntax-keyword: #800080;
+    -c-syntax-paren: #B22222;
+    -c-syntax-bracket: #006400;
+    -c-syntax-string: #0000FF;
+    -c-editor-caret-line: #E2E9EC;
+
+    /* Aliases */
+    -c-row-selected: -c-info-border;
+    -c-rarity-uncommon: -c-ok;
+    -c-rarity-legendary: -c-warn;
+    -c-medal-silver-dark: -c-disabled;
+}
+
+
+/**
+ * Colors
+ */
+
+* {
+   -fx-base-1: -c-warm-white;
+   -fx-base-2: -c-warm-gray-light;
+   -fx-base-3: -c-warm-gray;
+   -fx-base-4: -c-warm-gray-dark;
+   -fx-base-5: -c-warm-gray-darker;
+   -fx-base-6: -c-panel;
+   -fx-base-7: -c-darkest;
+   -fx-info-background: -c-primary;
+
+   -fx-font-1: -c-warm-white;
+   -fx-font-2: -c-warm-gray;
+   -fx-font-hover: -c-info-border;
+
+   -fx-primary-color: -c-primary;
+   -fx-secondary-color: -c-darkest;
+   -fx-green: -c-success;
+}
+
+/**
+ * FXML color classes, replace the textFill / iconColor / fill attributes. They come first in the cascade,
+ * so like the former FXML attributes they lose against every other matching rule.
+ */
+.c-text-danger { -fx-text-fill: -c-danger; }
+.c-text-muted { -fx-text-fill: -c-muted; }
+.c-text-orange-named { -fx-text-fill: -c-orange-named; }
+.c-text-warm-gray { -fx-text-fill: -c-warm-gray; }
+.c-text-white { -fx-text-fill: -c-white; }
+.c-icon-danger { -fx-icon-color: -c-danger; }
+.c-icon-disabled { -fx-icon-color: -c-disabled; }
+.c-icon-error { -fx-icon-color: -c-error; }
+.c-icon-error-text { -fx-icon-color: -c-error-text; }
+.c-icon-error-text-light { -fx-icon-color: -c-error-text-light; }
+.c-icon-icon-inactive { -fx-icon-color: -c-icon-inactive; }
+.c-icon-link { -fx-icon-color: -c-link; }
+.c-icon-muted { -fx-icon-color: -c-muted; }
+.c-icon-on-warn { -fx-icon-color: -c-on-warn; }
+.c-icon-panel { -fx-icon-color: -c-panel; }
+.c-icon-subtle { -fx-icon-color: -c-subtle; }
+.c-icon-success-dark { -fx-icon-color: -c-success-dark; }
+.c-icon-success-light { -fx-icon-color: -c-success-light; }
+.c-icon-warm-gray-light { -fx-icon-color: -c-warm-gray-light; }
+.c-icon-warn { -fx-icon-color: -c-warn; }
+.c-icon-white { -fx-icon-color: -c-white; }
+.c-fill-white { -fx-fill: -c-white; }

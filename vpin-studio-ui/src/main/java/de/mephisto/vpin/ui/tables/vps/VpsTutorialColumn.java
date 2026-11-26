@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.vps;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.vps.model.*;
@@ -12,7 +13,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Paint;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,17 +57,17 @@ public class VpsTutorialColumn extends HBox {
 
             if (tutorialFile.getAuthors().contains("Kongedam")) {
               FontIcon icon = WidgetFactory.createIcon("mdi2a-alpha-k-box-outline");
-              icon.setIconColor(Paint.valueOf(WidgetFactory.UPDATE_COLOR));
+              ThemeColors.setIconColor(icon, ThemeColors.UPDATE);
               icon.setIconSize(iconSize);
               String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + vpsTable.getId() + ".mp4";
               boolean check = HttpUtils.check(videoUrl);
               if (check) {
                 btn.setTooltip(new Tooltip(Messages.get("dialog.vps_tutorial_kongedam")));
-                icon.setIconColor(Paint.valueOf(WidgetFactory.OK_COLOR));
+                ThemeColors.setIconColor(icon, ThemeColors.SUCCESS_LIGHT);
               }
               else {
                 btn.setTooltip(new Tooltip(Messages.get("dialog.vps_tutorial_not_uploaded")));
-                icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+                ThemeColors.setIconColor(icon, ThemeColors.DANGER);
               }
               btn.setGraphic(icon);
             }

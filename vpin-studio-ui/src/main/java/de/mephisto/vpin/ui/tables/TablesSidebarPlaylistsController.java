@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -207,7 +208,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
     gameCheckbox.setSelected(isFullSelectionInPlaylist(playlist));
     boolean disabled = !linkedToEmu || !isPlaylistSelectable(playlist);
     gameCheckbox.setDisable(disabled);
-    gameCheckbox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
+    gameCheckbox.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.WHITE + ";");
 
     HBox favLists = new HBox(12);
     favLists.setPadding(new Insets(0, 0, 0, 49));

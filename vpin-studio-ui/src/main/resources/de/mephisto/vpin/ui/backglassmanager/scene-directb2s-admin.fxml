@@ -24,7 +24,7 @@
     <top>
         <ToolBar prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <items>
-                <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+                <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -32,15 +32,15 @@
                         <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
                     </tooltip>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                     </graphic>
                 </Button>
-                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                     </graphic>
                     <tooltip>
                         <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
@@ -54,21 +54,21 @@
                                 <Font size="14.0" />
                             </font>
                         </TextField>
-                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                                <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                             </graphic>
                         </Button>
                     </children>
                 </StackPane>
                 <Separator layoutX="1116.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <ComboBox fx:id="emulatorCombo" prefWidth="190.0" />
-            <Button fx:id="emulatorBtn" mnemonicParsing="false" onAction="#onEmulatorManager" textFill="WHITE">
+            <Button fx:id="emulatorBtn" mnemonicParsing="false" onAction="#onEmulatorManager" styleClass="c-text-white">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-controller" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-controller" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />
@@ -83,34 +83,34 @@
 
                 <Separator layoutX="394.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
 
-                <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" textFill="WHITE">
+                <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" styleClass="c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                     </graphic>
                     <tooltip>
                         <Tooltip text="%backglass.directb2s_admin.upload_a_new_backglass" />
                     </tooltip>
                 </Button>
-            <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
+            <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2s-square-edit-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-square-edit-outline" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="%backglass.directb2s_admin.rename_the_backglass_including_versions" />
                </tooltip>
             </Button>
                 <Separator layoutX="533.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                <SplitMenuButton fx:id="resBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onResEdit" text="%backglass.directb2s_admin.res_editor" textFill="WHITE">
+                <SplitMenuButton fx:id="resBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onResEdit" text="%backglass.directb2s_admin.res_editor" styleClass="c-text-white">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#onResBulkEdit" text="%backglass.directb2s_admin.res_bulk_edit">
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-screenshot" iconSize="14" />
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-monitor-screenshot" iconSize="14" />
                             </graphic>
                         </MenuItem>
                     </items>
@@ -118,27 +118,27 @@
                         <Font size="14.0" />
                     </font>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-edit-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2i-image-edit-outline" iconSize="18" />
                     </graphic>
                     <tooltip>
                         <Tooltip text="%backglass.directb2s_admin.open_res_editor" />
                     </tooltip>
                 </SplitMenuButton>
-                <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="%backglass.directb2s_admin.dmd_position" textFill="WHITE">
+                <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="%backglass.directb2s_admin.dmd_position" styleClass="c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-target-variant" iconSize="18" />
                     </graphic>
                     <tooltip>
                         <Tooltip text="%backglass.directb2s_admin.adjust_dmd_position" />
                     </tooltip>
                 </Button>
                 <Separator layoutX="856.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onVpsOpen" styleClass="link-component" textFill="WHITE">
+                <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onVpsOpen" styleClass="link-component, c-text-white">
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />
                     </graphic>
                     <font>
                         <Font size="14.0" />
@@ -149,7 +149,7 @@
                 </Button>
                 <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="folder-component">
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="18" />
                     </graphic>
                     <tooltip>
                         <Tooltip text="%backglass.directb2s_admin.open_ini_file" />
@@ -168,9 +168,9 @@
                     <children>
                   <BorderPane>
                      <center>
-                              <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                              <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                                   <children>
-                                      <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;">
+                                      <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: -c-tile;">
                                           <columns>
                                               <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.status" />
                                               <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.backglass" />
@@ -190,7 +190,7 @@
                      <bottom>
                             <BorderPane BorderPane.alignment="CENTER">
                                 <top>
-                                    <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
+                                    <Label fx:id="labelCount" styleClass="c-text-white" BorderPane.alignment="TOP_RIGHT">
                                     <BorderPane.margin>
                                             <Insets bottom="3.0" />
                                     </BorderPane.margin>
@@ -203,7 +203,7 @@
                                              <children>
                                                 <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                                                    <children>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                                                    </children>
                                                 </StackPane>
                                                 <VBox spacing="2.0" HBox.hgrow="ALWAYS">
@@ -216,7 +216,7 @@
                                                    <children>
                                                       <Button mnemonicParsing="false" onAction="#onValidationSettings" styleClass="sm-alert-button">
                                                          <graphic>
-                                                            <FontIcon iconColor="#F3D6D7" iconLiteral="mdi2c-cog" iconSize="16" />
+                                                            <FontIcon styleClass="c-icon-error-text-light" iconLiteral="mdi2c-cog" iconSize="16" />
                                                          </graphic>
                                                          <tooltip>
                                                             <Tooltip text="%backglass.directb2s_admin.open_validators_settings" />

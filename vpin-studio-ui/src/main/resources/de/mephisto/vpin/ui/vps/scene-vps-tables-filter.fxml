@@ -37,7 +37,7 @@
          <right>
             <Button mnemonicParsing="false" onAction="#toggle" BorderPane.alignment="CENTER">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="12" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2w-window-close" iconSize="12" />
                </graphic>
             </Button>
          </right>
@@ -64,9 +64,9 @@
                         <StackPane alignment="CENTER_LEFT">
                            <children>
                               <DatePicker fx:id="lastUpdateDate" maxWidth="204.0" styleClass="preference-datepicker" />
-                              <Button fx:id="clearDateBtn" mnemonicParsing="false" onAction="#onClearDate" styleClass="ghost-icon-button" textFill="WHITE" visible="false">
+                              <Button fx:id="clearDateBtn" mnemonicParsing="false" onAction="#onClearDate" styleClass="ghost-icon-button, c-text-white" visible="false">
                                  <graphic>
-                                    <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                                  </graphic>
                                  <StackPane.margin>
                                     <Insets right="20" />

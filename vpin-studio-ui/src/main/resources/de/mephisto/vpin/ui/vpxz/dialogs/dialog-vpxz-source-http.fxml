@@ -56,7 +56,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE">
+                  <Label text="%backglass.directb2s_sidebar.name" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -65,7 +65,7 @@
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
-                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_http.http_s_server_url" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_http.http_s_server_url" styleClass="c-text-white" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -80,12 +80,12 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_http.login" textFill="WHITE" GridPane.rowIndex="5">
+                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_http.login" styleClass="c-text-white" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="82.0" text="%backups.backup_source_http.password" textFill="WHITE" GridPane.rowIndex="6">
+                  <Label layoutX="10.0" layoutY="82.0" text="%backups.backup_source_http.password" styleClass="c-text-white" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -95,22 +95,22 @@
                         <Font size="14.0" />
                      </font>
                   </PasswordField>
-                  <Label layoutX="10.0" layoutY="148.0" text="%backups.backup_source_http.basic_authentication" textFill="WHITE" GridPane.rowIndex="4">
+                  <Label layoutX="10.0" layoutY="148.0" text="%backups.backup_source_http.basic_authentication" styleClass="c-text-white" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox fx:id="basicAuthCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <CheckBox fx:id="basicAuthCheckbox" mnemonicParsing="false" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="148.0" text="%backups.backup_source_folder.enabled" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="148.0" text="%backups.backup_source_folder.enabled" styleClass="c-text-white" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox fx:id="enabledCheckbox" layoutX="178.0" layoutY="148.0" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <CheckBox fx:id="enabledCheckbox" layoutX="178.0" layoutY="148.0" mnemonicParsing="false" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>

@@ -1,7 +1,7 @@
 .preference-section {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-text-fill: #9A9A9A;
+    -fx-text-fill: -c-subtle;
     -fx-padding: 14 12 4 12;
     -fx-max-width: 10000px;
 }
@@ -36,7 +36,7 @@
 .preference-button {
     -fx-font-size: 14px;
     -fx-font-weight: normal;
-    -fx-text-fill: white;
+    -fx-text-fill: -c-white;
     -fx-background-color: transparent;
     -fx-background-radius: 4;
     -fx-border-style: none;
@@ -49,10 +49,10 @@
 }
 
 .preference-button:hover {
-    -fx-background-color: #333333;
+    -fx-background-color: -c-control;
 }
 
 .preference-button-selected, .preference-button-selected:hover {
-    -fx-background-color: #3D2B17;
+    -fx-background-color: -c-warn-bg;
     -fx-font-weight: bold;
 }

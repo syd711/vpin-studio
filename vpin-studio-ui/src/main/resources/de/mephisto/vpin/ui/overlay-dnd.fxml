@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #111111;" styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DnDOverlayController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: -c-darkest;" styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DnDOverlayController">
    <center>
       <VBox fx:id="dropZone" alignment="CENTER" styleClass="dnd-dashed-border" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -22,12 +22,12 @@
                         <ImageView fx:id="tableWheelImage" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
                         <VBox>
                            <children>
-                              <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="59.0" text="%overlay_dnd.selected_table" textFill="WHITE">
+                              <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="59.0" text="%overlay_dnd.selected_table" styleClass="c-text-white">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="tableLabel" layoutX="10.0" layoutY="45.0" text="-" textFill="WHITE">
+                              <Label fx:id="tableLabel" layoutX="10.0" layoutY="45.0" text="-" styleClass="c-text-white">
                                  <font>
                                     <Font size="24.0" />
                                  </font>
@@ -38,7 +38,7 @@
                   </HBox>
                </center>
                <top>
-                  <Label fx:id="messageLabel" text="%overlay_dnd.drop_tables_and_assets_here" textFill="WHITE" BorderPane.alignment="CENTER">
+                  <Label fx:id="messageLabel" text="%overlay_dnd.drop_tables_and_assets_here" styleClass="c-text-white" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="48.0" />
                      </font>

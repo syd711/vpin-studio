@@ -50,7 +50,7 @@
                   <VBox BorderPane.alignment="CENTER">
                      <children>
                         <Label layoutX="36.0" layoutY="36.0" styleClass="preference-description" text="%backups.tables_backup.the_selected_table_s_will_be_archived_and" />
-                        <Label fx:id="titleLabel1" styleClass="default-headline" text="%backups.tables_backup.backup_target" textFill="WHITE">
+                        <Label fx:id="titleLabel1" styleClass="default-headline, c-text-white" text="%backups.tables_backup.backup_target">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -73,7 +73,7 @@
                               <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="286.0" GridPane.columnIndex="1" />
                               <Label styleClass="default-text" text="%backups.tables_backup.backup_target_2" />
                               <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%backups.tables_backup.overwrite_settings" GridPane.rowIndex="1" />
-                              <CheckBox fx:id="overwriteCheckbox" mnemonicParsing="false" text="%backups.tables_backup.overwrite_existing_backup_files" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <CheckBox fx:id="overwriteCheckbox" mnemonicParsing="false" text="%backups.tables_backup.overwrite_existing_backup_files" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -95,14 +95,14 @@
                                           <Insets bottom="6.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <CheckBox fx:id="vpxCheckBox" disable="true" mnemonicParsing="false" selected="true" text="%backups.backup_restore.table_file" textFill="WHITE">
+                                    <CheckBox fx:id="vpxCheckBox" disable="true" mnemonicParsing="false" selected="true" text="%backups.backup_restore.table_file" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
                                     <HBox spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="directb2sCheckBox" mnemonicParsing="false" text="%backups.backup_restore.directb2s_files" textFill="WHITE">
+                                          <CheckBox fx:id="directb2sCheckBox" mnemonicParsing="false" text="%backups.backup_restore.directb2s_files" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -112,7 +112,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="%backups.backup_restore.vpin_studio_supports_multiple_backglass_files_for_one" wrapText="true" />
@@ -120,32 +120,32 @@
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <CheckBox fx:id="povCheckBox" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="%backups.backup_restore.pov_file" textFill="WHITE">
+                                    <CheckBox fx:id="povCheckBox" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="%backups.backup_restore.pov_file" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="resCheckBox" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="%backups.backup_restore.res_file" textFill="WHITE">
+                                    <CheckBox fx:id="resCheckBox" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="%backups.backup_restore.res_file" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="iniCheckBox" layoutX="10.0" layoutY="90.0" mnemonicParsing="false" text="%backups.backup_restore.ini_file" textFill="WHITE">
+                                    <CheckBox fx:id="iniCheckBox" layoutX="10.0" layoutY="90.0" mnemonicParsing="false" text="%backups.backup_restore.ini_file" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vbsCheckBox" layoutX="10.0" layoutY="110.0" mnemonicParsing="false" text="%backups.backup_restore.vbs_file" textFill="WHITE">
+                                    <CheckBox fx:id="vbsCheckBox" layoutX="10.0" layoutY="110.0" mnemonicParsing="false" text="%backups.backup_restore.vbs_file" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="dmdCheckBox" layoutX="10.0" layoutY="130.0" mnemonicParsing="false" text="%backups.backup_restore.dmd_files" textFill="WHITE">
+                                    <CheckBox fx:id="dmdCheckBox" layoutX="10.0" layoutY="130.0" mnemonicParsing="false" text="%backups.backup_restore.dmd_files" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="musicCheckBox" layoutX="10.0" layoutY="150.0" mnemonicParsing="false" text="%backups.backup_restore.music" textFill="WHITE">
+                                    <CheckBox fx:id="musicCheckBox" layoutX="10.0" layoutY="150.0" mnemonicParsing="false" text="%backups.backup_restore.music" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -162,24 +162,24 @@
                                           <Insets bottom="6.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <CheckBox fx:id="romCheckBox" mnemonicParsing="false" text="%backups.backup_restore.rom" textFill="WHITE">
+                                    <CheckBox fx:id="romCheckBox" mnemonicParsing="false" text="%backups.backup_restore.rom" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="nvRamCheckBox" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" text="%backups.backup_restore.nvram" textFill="WHITE">
+                                    <CheckBox fx:id="nvRamCheckBox" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" text="%backups.backup_restore.nvram" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="altSoundCheckBox" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="%backups.backup_restore.alt_sound" textFill="WHITE">
+                                    <CheckBox fx:id="altSoundCheckBox" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="%backups.backup_restore.alt_sound" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="altColorCheckBox" mnemonicParsing="false" text="%backups.backup_restore.alt_color" textFill="WHITE">
+                                          <CheckBox fx:id="altColorCheckBox" mnemonicParsing="false" text="%backups.backup_restore.alt_color" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -189,7 +189,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="%backups.tables_backup.the_backups_of_this_asset_type_will_be" wrapText="true" />
@@ -209,12 +209,12 @@
                                           <Insets bottom="6.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <CheckBox fx:id="popperMediaCheckBox" mnemonicParsing="false" text="%backups.backup_restore.screen_media_files" textFill="WHITE">
+                                    <CheckBox fx:id="popperMediaCheckBox" mnemonicParsing="false" text="%backups.backup_restore.screen_media_files" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="pupPackCheckBox" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" text="%backups.backup_restore.pup_pack" textFill="WHITE">
+                                    <CheckBox fx:id="pupPackCheckBox" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" text="%backups.backup_restore.pup_pack" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -233,7 +233,7 @@
                                     </Label>
                                     <HBox spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="highscoreCheckBox" mnemonicParsing="false" text="%backups.backup_restore.highscore_data" textFill="WHITE">
+                                          <CheckBox fx:id="highscoreCheckBox" mnemonicParsing="false" text="%backups.backup_restore.highscore_data" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -243,7 +243,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="%backups.backup_restore.if_the_nvram_file_is_included_this_represents" wrapText="true" />
@@ -253,7 +253,7 @@
                                     </HBox>
                                     <HBox spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="registryDataCheckBox" mnemonicParsing="false" text="%backups.backup_restore.windows_registry_entries" textFill="WHITE">
+                                          <CheckBox fx:id="registryDataCheckBox" mnemonicParsing="false" text="%backups.backup_restore.windows_registry_entries" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -263,7 +263,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="%backups.backup_restore.this_might_include_the_dmd_position_for_tables" wrapText="true" />
@@ -273,7 +273,7 @@
                                     </HBox>
                                     <HBox spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="b2sSettingsCheckbox" mnemonicParsing="false" text="%backups.backup_restore.b2stablesettings" textFill="WHITE">
+                                          <CheckBox fx:id="b2sSettingsCheckbox" mnemonicParsing="false" text="%backups.backup_restore.b2stablesettings" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -283,7 +283,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="%backups.backup_restore.restores_the_b2stablesettings_xml_entry_if_available" wrapText="true" />
@@ -293,7 +293,7 @@
                                     </HBox>
                                     <HBox layoutX="10.0" layoutY="86.0" spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="studioDataCheckBox" mnemonicParsing="false" text="%backups.backup_restore.vpin_studio_data" textFill="WHITE">
+                                          <CheckBox fx:id="studioDataCheckBox" mnemonicParsing="false" text="%backups.backup_restore.vpin_studio_data" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -303,7 +303,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="%backups.backup_restore.this_contains_additional_table_data_and_comments" wrapText="true" />
@@ -313,7 +313,7 @@
                                     </HBox>
                                     <HBox layoutX="10.0" layoutY="109.0" spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="dmdDataCheckBox" mnemonicParsing="false" text="%backups.backup_restore.dmddevice_ini_entry" textFill="WHITE">
+                                          <CheckBox fx:id="dmdDataCheckBox" mnemonicParsing="false" text="%backups.backup_restore.dmddevice_ini_entry" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -323,7 +323,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="%backups.backup_restore.this_contains_the_dmd_position_if_stored_there" wrapText="true" />
@@ -343,7 +343,7 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                            <children>
-                              <CheckBox fx:id="removeFromPlaylistCheckbox" mnemonicParsing="false" text="%backups.tables_backup.remove_table_from_all_playlists" textFill="WHITE">
+                              <CheckBox fx:id="removeFromPlaylistCheckbox" mnemonicParsing="false" text="%backups.tables_backup.remove_table_from_all_playlists" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -354,7 +354,7 @@
                   </VBox>
                </center>
                <top>
-                  <Label fx:id="titleLabel" styleClass="default-headline" text="%backups.tables_backup.title" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                  <Label fx:id="titleLabel" styleClass="default-headline, c-text-white" text="%backups.tables_backup.title" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -375,7 +375,7 @@
                      <children>
                         <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                            <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                            </children>
                         </StackPane>
                         <VBox spacing="2.0" HBox.hgrow="ALWAYS">

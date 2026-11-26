@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -55,7 +56,7 @@ public class VpsGameCellContainer extends HBox {
 
     Label title = new Label(name);
     title.setTooltip(new Tooltip(name));
-    title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + customStyles);
+    title.setStyle("-fx-text-fill: " + ThemeColors.WHITE + ";-fx-font-size : 14px;-fx-font-weight : bold;" + customStyles);
     column.getChildren().add(title);
 
     if (games.isEmpty()) {

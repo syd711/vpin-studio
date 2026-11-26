@@ -45,14 +45,14 @@
     -fx-min-width: 280px;
     -fx-pref-width: 280px;
     -fx-max-width: 280px;
-    -fx-background-color: #222222;
+    -fx-background-color: -c-panel;
     -fx-background-insets: 0;
     -fx-background-radius: 6;
     -fx-padding: 0 6 10 10;
 }
 
 .pref-nav:focused {
-    -fx-background-color: #222222;
+    -fx-background-color: -c-panel;
     -fx-background-insets: 0;
 }
 
@@ -62,13 +62,13 @@
 .header-button {
     -fx-background-color: -fx-base-7;
     -fx-border-style: hidden hidden hidden hidden;
-    -fx-text-fill: #DDDDDD;
+    -fx-text-fill: -c-text-soft;
 }
 
 .header-button:hover {
-    -fx-background-color: #333366;
+    -fx-background-color: -c-primary;
     -fx-border-style: hidden hidden hidden hidden;
-    -fx-text-fill: #fff8f8;
+    -fx-text-fill: -c-warm-white;
     -fx-cursor: hand;
 }
 
@@ -79,9 +79,9 @@
     -fx-min-width: 230px;
     -fx-pref-width: 230px;
     -fx-max-width: 230px;
-    -fx-background-color: #222222;
+    -fx-background-color: -c-panel;
     -fx-background-radius: 6;
-    -fx-border-color: #3A3A3A;
+    -fx-border-color: -c-selected;
     -fx-border-radius: 6;
     -fx-padding: 0 10 10 10;
 }
@@ -95,14 +95,14 @@
 
 .nav-header {
     -fx-padding: 16 6 16 6;
-    -fx-border-color: transparent transparent #3A3A3A transparent;
+    -fx-border-color: transparent transparent -c-selected transparent;
     -fx-border-width: 0 0 1 0;
 }
 
 .nav-section-caption {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-text-fill: #9A9A9A;
+    -fx-text-fill: -c-subtle;
     -fx-padding: 14 12 4 12;
 }
 
@@ -122,23 +122,23 @@
 
 .nav-item .label {
     -fx-font-size: 14px;
-    -fx-text-fill: white;
+    -fx-text-fill: -c-white;
 }
 
 .nav-item .ikonli-font-icon {
-    -fx-icon-color: #BDBDBD;
+    -fx-icon-color: -c-muted;
 }
 
 .nav-item:hover {
-    -fx-background-color: #333333;
+    -fx-background-color: -c-control;
 }
 
 .nav-item:hover .ikonli-font-icon {
-    -fx-icon-color: white;
+    -fx-icon-color: -c-white;
 }
 
 .nav-item-selected, .nav-item-selected:hover {
-    -fx-background-color: #3D2B17;
+    -fx-background-color: -c-warn-bg;
 }
 
 .nav-item-selected .label {
@@ -147,14 +147,14 @@
 
 .nav-item-selected .ikonli-font-icon, .nav-item-selected:hover .ikonli-font-icon,
 .nav-item .ikonli-font-icon.nav-icon-update {
-    -fx-icon-color: #DD9646;
+    -fx-icon-color: -c-warn;
 }
 
 .nav-item .label.nav-badge {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-text-fill: #DD9646;
-    -fx-background-color: #3D2B17;
+    -fx-text-fill: -c-warn;
+    -fx-background-color: -c-warn-bg;
     -fx-background-radius: 11;
     -fx-min-width: 22px;
     -fx-min-height: 22px;
@@ -163,12 +163,12 @@
 }
 
 .nav-item-selected .label.nav-badge {
-    -fx-background-color: #241D14;
+    -fx-background-color: -c-warn-banner;
 }
 
 .nav-footer {
     -fx-padding: 10 0 0 0;
-    -fx-border-color: #3A3A3A transparent transparent transparent;
+    -fx-border-color: -c-selected transparent transparent transparent;
     -fx-border-width: 1 0 0 0;
 }
 
@@ -177,6 +177,6 @@
  */
 .navigation-panel {
     -fx-width: 300px;
-    -fx-background-color: #272b2f;
+    -fx-background-color: -c-separator;
     -fx-background-radius: 6;
 }

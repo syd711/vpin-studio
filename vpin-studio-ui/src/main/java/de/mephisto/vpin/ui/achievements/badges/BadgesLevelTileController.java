@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.achievements.badges;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.restclient.achievements.LevelDefinition;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
 import javafx.fxml.FXML;
@@ -52,7 +53,7 @@ public class BadgesLevelTileController {
       if (current) {
         row.setStyle("-fx-background-color: " + ROW_SELECTED + "; -fx-border-color: transparent transparent transparent " + ORANGE + "; -fx-border-width: 0 0 0 3;");
       }
-      String color = lv.level > p.level.level ? "#9A9A9A" : "white";
+      String color = lv.level > p.level.level ? ThemeColors.SUBTLE : ThemeColors.WHITE;
       row.getChildren().addAll(fixed(colored(String.valueOf(lv.level), color, 14, true), 44), grow(colored(lv.name, color, 14, current)),
           colored(number(lv.from), color, 12, false));
       levelRows.getChildren().add(row);

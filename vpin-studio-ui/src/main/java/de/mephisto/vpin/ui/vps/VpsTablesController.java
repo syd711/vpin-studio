@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
@@ -29,7 +30,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Paint;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -265,13 +265,13 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
         label.setGraphic(icon);
 
         if (comment.toLowerCase().contains("//error")) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+          ThemeColors.setIconColor(icon, ThemeColors.DANGER);
         }
         else if (comment.toLowerCase().contains("//todo")) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.TODO_COLOR));
+          ThemeColors.setIconColor(icon, ThemeColors.UPDATE);
         }
         else if (comment.toLowerCase().contains("//outdated")) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
+          ThemeColors.setIconColor(icon, ThemeColors.OUTDATED);
         }
 
         hBox.getChildren().add(label);

@@ -19,7 +19,7 @@
             <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
          </padding>
          <children>
-            <FontIcon iconColor="#9A9A9A" iconLiteral="mdi2i-information-outline" iconSize="16" />
+            <FontIcon styleClass="c-icon-subtle" iconLiteral="mdi2i-information-outline" iconSize="16" />
             <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                <children>
                   <Label styleClass="sm-hint" text="%components.emulators.emulator_batscript.for_vpx_emulators_these_values_are_generated_on" wrapText="true" />

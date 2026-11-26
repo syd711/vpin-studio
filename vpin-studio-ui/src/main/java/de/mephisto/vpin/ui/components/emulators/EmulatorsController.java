@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components.emulators;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
@@ -54,9 +55,9 @@ import static de.mephisto.vpin.ui.Studio.*;
 public class EmulatorsController implements Initializable, PreferenceChangeListener, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorsController.class);
 
-  private final static String COLOR_OK = "#5CC46A";
-  private final static String COLOR_DISABLED = "#7A7A7A";
-  private final static String COLOR_ERROR = "#FF6B70";
+  private final static String COLOR_OK = ThemeColors.OK;
+  private final static String COLOR_DISABLED = ThemeColors.DISABLED;
+  private final static String COLOR_ERROR = ThemeColors.ERROR;
 
   @FXML
   private BorderPane emulatorRoot;
@@ -444,7 +445,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     if (!valid) {
       FontIcon icon = new FontIcon("mdi2a-alert-circle");
       icon.setIconSize(16);
-      icon.setIconColor(javafx.scene.paint.Paint.valueOf(emu.isEnabled() ? COLOR_ERROR : COLOR_DISABLED));
+      ThemeColors.setIconColor(icon, emu.isEnabled() ? COLOR_ERROR : COLOR_DISABLED);
       status = icon;
     }
     else {
@@ -458,7 +459,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     }
 
     Label name = new Label(emu.getName());
-    name.setStyle("-fx-font-size: 14px; -fx-text-fill: " + (emu.isEnabled() ? "white" : COLOR_DISABLED) + ";" + (selected ? " -fx-font-weight: bold;" : ""));
+    name.setStyle("-fx-font-size: 14px; -fx-text-fill: " + (emu.isEnabled() ? ThemeColors.WHITE : COLOR_DISABLED) + ";" + (selected ? " -fx-font-weight: bold;" : ""));
     Label meta = new Label(getListMeta(emu));
     meta.getStyleClass().add("sm-small");
     VBox texts = new VBox(1, name, meta);

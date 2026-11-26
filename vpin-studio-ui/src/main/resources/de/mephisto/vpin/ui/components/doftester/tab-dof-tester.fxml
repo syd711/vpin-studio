@@ -25,9 +25,9 @@
                     <center>
                         <StackPane fx:id="loaderStack" BorderPane.alignment="CENTER">
                             <children>
-                                <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                                <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                                     <children>
-                                        <TableView fx:id="tableView" prefWidth="258.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                                        <TableView fx:id="tableView" prefWidth="258.0" style="-fx-background-color: -c-tile;" styleClass="base-component">
                                             <columns>
                                                 <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="%cards.highscore_cards.display_name" />
                                     <TableColumn fx:id="columnDOFMapping" minWidth="100.0" prefWidth="90.0" style="-fx-alignment: BASELINE_CENTER;" text="%components.doftester.dof_tester.dof_mapped" />
@@ -44,7 +44,7 @@
                             <children>
                                 <ToolBar fx:id="toolbar">
                                     <items>
-                                        <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+                                        <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="c-text-white">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -52,15 +52,15 @@
                                                 <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
                                             </tooltip>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
@@ -74,12 +74,12 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                 </TextField>
-                                                <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE" visible="false">
+                                                <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white" visible="false">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                     <graphic>
-                                                        <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                                                        <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                                                     </graphic>
                                                 </Button>
                                             </children>
@@ -87,9 +87,9 @@
 
                                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
 
-                                        <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
+                                        <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" styleClass="c-text-white">
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-edit" iconSize="18" />
                                             </graphic>
                                             <font>
                                                 <Font size="14.0" />
@@ -98,23 +98,23 @@
                                                 <Tooltip text="%cards.highscore_cards.open_table_in_table_overview" />
                                             </tooltip>
                                         </Button>
-                              <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScriptEdit" textFill="WHITE">
+                              <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScriptEdit" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%components.doftester.dof_tester.edit_script_with_the_linked_vbs_file_system" />
                                  </tooltip>
                               </Button>
-                              <Button fx:id="tableOpenBtn" mnemonicParsing="false" onAction="#onTableData" textFill="WHITE">
+                              <Button fx:id="tableOpenBtn" mnemonicParsing="false" onAction="#onTableData" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%components.doftester.dof_tester.edit_table_data_ctrl_o" />
@@ -124,7 +124,7 @@
                                 </ToolBar>
                                 <ToolBar prefHeight="40.0" prefWidth="200.0">
                                     <items>
-                                        <Label text="%cards.highscore_cards.emulator" textFill="WHITE">
+                                        <Label text="%cards.highscore_cards.emulator" styleClass="c-text-white">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>

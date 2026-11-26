@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -58,7 +59,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.commons.io.FilenameUtils;
@@ -1215,7 +1215,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     Label label = new Label(Messages.get("tables.table_asset_manager.no_preview_activated"));
-    label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+    label.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.BORDER + ";");
     serverAssetMediaPane.setCenter(label);
 
     this.serverAssetsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TableAsset>() {
@@ -1226,7 +1226,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         webPreviewBtn.setVisible(false);
 
         Label label = new Label(Messages.get("tables.table_asset_manager.no_preview_activated"));
-        label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+        label.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.BORDER + ";");
         serverAssetMediaPane.setCenter(label);
 
         onPreview();
@@ -1254,7 +1254,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           conversionMenu.setDisable(true);
 
           Label label = new Label(Messages.get("tables.table_asset_manager.no_media_selected"));
-          label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+          label.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.BORDER + ";");
           label.setUserData(null);
           mediaPane.setCenter(label);
           return;
@@ -1349,7 +1349,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
       this.getStyleClass().add("media-container");
       Label label = new Label(text);
-      label.setTextFill(Color.WHITE);
+      ThemeColors.setTextFill(label, ThemeColors.WHITE);
       this.setBottom(label);
       BorderPane.setAlignment(label, Pos.CENTER);
 
@@ -1394,11 +1394,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
 
       if (this.screen.equals(s)) {
-        borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
+        borderPane.setStyle("-fx-cursor: hand;-fx-background-color: " + ThemeColors.HIGHLIGHT);
         this.lastSelected = borderPane;
         return;
       }
-      borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
+      borderPane.setStyle("-fx-cursor: hand;-fx-background-color: " + ThemeColors.HIGHLIGHT);
       this.lastSelected = borderPane;
 
       this.screen = s;
@@ -1415,7 +1415,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     if (!borderPane.equals(lastSelected)) {
       if (hovered) {
-        borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
+        borderPane.setStyle("-fx-cursor: hand;-fx-background-color: " + ThemeColors.HIGHLIGHT);
       }
       else {
         borderPane.setStyle(null);

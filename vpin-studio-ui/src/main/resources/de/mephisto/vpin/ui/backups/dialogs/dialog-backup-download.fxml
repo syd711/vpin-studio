@@ -21,7 +21,7 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="titleLabel" text="%backups.backup_download.download" textFill="WHITE">
+                  <Label fx:id="titleLabel" text="%backups.backup_download.download" styleClass="c-text-white">
                      <font>
                         <Font size="18.0" />
                      </font>

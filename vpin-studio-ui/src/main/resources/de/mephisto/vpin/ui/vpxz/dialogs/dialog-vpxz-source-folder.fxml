@@ -53,7 +53,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE">
+                  <Label text="%backglass.directb2s_sidebar.name" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -62,7 +62,7 @@
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
-                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_folder.folder" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_folder.folder" styleClass="c-text-white" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -72,19 +72,19 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_folder.enabled" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_folder.enabled" styleClass="c-text-white" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" selected="true" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" selected="true" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
-                        <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backups.backup_download.select_folder" textFill="WHITE">
+                        <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backups.backup_download.select_folder" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -94,7 +94,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%vpxz.vpxz_source_folder.enter_the_folder_path_of_the_vpxz_folder" wrapText="true" />

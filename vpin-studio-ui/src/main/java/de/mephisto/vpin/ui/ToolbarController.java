@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
@@ -34,7 +35,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
@@ -149,10 +149,10 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
     VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
     if (vrSettings.isVrEnabled()) {
-      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.OK_DARK_COLOR));
+      ThemeColors.setIconColor(fontIcon, ThemeColors.SUCCESS_DARKER);
     }
     else {
-      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+      ThemeColors.setIconColor(fontIcon, ThemeColors.ICON_DISABLED);
     }
   }
 

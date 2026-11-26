@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util.tags;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.tagging.TaggingUtil;
@@ -145,7 +146,7 @@ public class TagField extends VBox implements AutoCompleteTextFieldChangeListene
     tagText.getStyleClass().add("default-text");
     Button removeButton = new Button();
     removeButton.getStyleClass().add("ghost-button-tiny");
-    removeButton.setStyle("-fx-font-color: #FFFFFF");
+    removeButton.setStyle("-fx-font-color: " + ThemeColors.WHITE);
 
     FontIcon icon = WidgetFactory.createIcon("mdi2w-window-close");
     removeButton.setGraphic(icon);

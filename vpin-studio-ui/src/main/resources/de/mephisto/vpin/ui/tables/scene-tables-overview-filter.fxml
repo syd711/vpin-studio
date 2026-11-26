@@ -38,7 +38,7 @@
                <right>
                   <Button mnemonicParsing="false" onAction="#toggle" BorderPane.alignment="CENTER">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="12" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2w-window-close" iconSize="12" />
                      </graphic>
                   </Button>
                </right>
@@ -86,7 +86,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%tables.tables_overview_filter.changing_this_filter_requires_a_full_validation_of" wrapText="true" />
@@ -206,7 +206,7 @@
                   </Label>
                   <VBox fx:id="statusSettings">
                      <children>
-                        <Label text="%tables.tables_overview_filter.table_status" textFill="WHITE">
+                        <Label text="%tables.tables_overview_filter.table_status" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -217,7 +217,7 @@
                         <ComboBox fx:id="statusCombo" prefHeight="30.0" />
                      </children>
                   </VBox>
-                  <Label layoutX="10.0" layoutY="655.0" text="%tables.table_data_tab_comments.comments" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="655.0" text="%tables.table_data_tab_comments.comments" styleClass="c-text-white">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -277,7 +277,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%tables.tables_overview_filter.based_on_launches_from_pinup_popper" wrapText="true" />

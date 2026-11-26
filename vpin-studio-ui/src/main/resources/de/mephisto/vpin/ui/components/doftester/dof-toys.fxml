@@ -25,7 +25,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="%components.doftester.dof_toys.open_settings" />
@@ -34,7 +34,7 @@
             <Separator orientation="VERTICAL" prefWidth="12.0" />
             <HBox alignment="CENTER_LEFT" spacing="3.0">
                <children>
-                  <Label text="%components.doftester.dof_toys.test_duration" textFill="WHITE">
+                  <Label text="%components.doftester.dof_toys.test_duration" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -43,7 +43,7 @@
                      </padding>
                   </Label>
                   <Spinner fx:id="durationSpinner" prefWidth="90.0" />
-                  <Label layoutX="10.0" layoutY="10.0" text="%components.doftester.dof_toys.ms" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="10.0" text="%components.doftester.dof_toys.ms" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

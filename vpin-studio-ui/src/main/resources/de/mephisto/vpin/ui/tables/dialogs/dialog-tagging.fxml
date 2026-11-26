@@ -44,7 +44,7 @@
             </Label>
             <VBox spacing="6.0">
                <children>
-                  <RadioButton fx:id="addRadio" mnemonicParsing="false" selected="true" text="%tables.tagging.add_tags" textFill="WHITE">
+                  <RadioButton fx:id="addRadio" mnemonicParsing="false" selected="true" text="%tables.tagging.add_tags" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -52,7 +52,7 @@
                         <ToggleGroup fx:id="radioGroup" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton lineSpacing="6.0" mnemonicParsing="false" text="%tables.tagging.remove_tags" textFill="WHITE" toggleGroup="$radioGroup">
+                  <RadioButton lineSpacing="6.0" mnemonicParsing="false" text="%tables.tagging.remove_tags" styleClass="c-text-white" toggleGroup="$radioGroup">
                      <font>
                         <Font size="14.0" />
                      </font>

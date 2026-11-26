@@ -50,7 +50,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%playlistmanager.add_tables.set_value_to_0_to_add_all_matching" wrapText="true" />
@@ -61,7 +61,7 @@
                   <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%playlistmanager.add_tables.max_tables" GridPane.rowIndex="1" />
                   <ComboBox fx:id="templateComboBox" prefWidth="320.0" GridPane.columnIndex="1" />
                   <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%playlistmanager.playlist_templates.shuffle_list" GridPane.rowIndex="2" />
-                  <CheckBox fx:id="shuffleCheckbox" mnemonicParsing="false" text="%playlistmanager.playlist_templates.shuffle_the_resulting_list" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <CheckBox fx:id="shuffleCheckbox" mnemonicParsing="false" text="%playlistmanager.playlist_templates.shuffle_the_resulting_list" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>

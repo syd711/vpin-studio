@@ -4,18 +4,18 @@
  * -sm-tab-strip / -sm-tab-content are looked up from the nearest .root or .subpanel ancestor.
  */
 .root {
-    -sm-tab-strip: #2A2A2A;
-    -sm-tab-content: #222222;
+    -sm-tab-strip: -c-tile;
+    -sm-tab-content: -c-panel;
 }
 
 .subpanel, .subpanel-tabbed {
-    -sm-tab-strip: #333333;
-    -sm-tab-content: #2A2A2A;
+    -sm-tab-strip: -c-control;
+    -sm-tab-content: -c-tile;
 }
 
-/* tab pane on a subpanel whose tab content is a #222222 page (System Manager) */
+/* tab pane on a subpanel whose tab content is a -c-panel page (System Manager) */
 .tab-pane.tabs-dark-content {
-    -sm-tab-content: #222222;
+    -sm-tab-content: -c-panel;
 }
 
 .tab-pane {
@@ -48,7 +48,7 @@
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:hover {
-    -fx-background-color: #3D3D3D;
+    -fx-background-color: -c-control-hover;
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:selected {
@@ -57,28 +57,28 @@
 
 .tab-pane > .tab-header-area > .headers-region > .tab .tab-label {
     -fx-alignment: CENTER;
-    -fx-text-fill: #BDBDBD;
+    -fx-text-fill: -c-muted;
     -fx-font-size: 14px;
     -fx-font-weight: normal;
     -fx-graphic-text-gap: 6;
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:hover .tab-label {
-    -fx-text-fill: white;
+    -fx-text-fill: -c-white;
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:selected .tab-label {
-    -fx-text-fill: white;
+    -fx-text-fill: -c-white;
     -fx-font-weight: bold;
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab .tab-label .ikonli-font-icon {
-    -fx-icon-color: #BDBDBD;
+    -fx-icon-color: -c-muted;
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:hover .tab-label .ikonli-font-icon,
 .tab-pane > .tab-header-area > .headers-region > .tab:selected .tab-label .ikonli-font-icon {
-    -fx-icon-color: white;
+    -fx-icon-color: -c-white;
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab .focus-indicator,
@@ -93,11 +93,11 @@
 }
 
 .tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button > .arrow {
-    -fx-background-color: #BDBDBD;
+    -fx-background-color: -c-muted;
 }
 
 .tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button:hover > .arrow {
-    -fx-background-color: white;
+    -fx-background-color: -c-white;
 }
 
 .tab-pane .sub-tab {

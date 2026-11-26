@@ -13,12 +13,12 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox minWidth="340.0" prefWidth="400.0" spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TableListTileController">
+<VBox minWidth="340.0" prefWidth="400.0" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TableListTileController">
    <fx:define>
       <ToggleGroup fx:id="filterGroup" />
    </fx:define>
    <children>
-      <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.tab.tables" />
+      <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%achievements.tab.tables" />
       <StackPane alignment="CENTER_RIGHT">
          <children>
             <TextField fx:id="searchField" prefHeight="30.0" promptText="%achievements.search_table">
@@ -26,12 +26,12 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE" visible="false">
+            <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white" visible="false">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                  <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                </graphic>
             </Button>
          </children>
@@ -45,7 +45,7 @@
             <ToggleButton fx:id="noMapBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" toggleGroup="$filterGroup" />
          </children>
       </FlowPane>
-      <ListView fx:id="tableList" style="-fx-background-color: #283335;" VBox.vgrow="ALWAYS" />
+      <ListView fx:id="tableList" style="-fx-background-color: -c-row-even;" VBox.vgrow="ALWAYS" />
    </children>
    <padding>
       <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />

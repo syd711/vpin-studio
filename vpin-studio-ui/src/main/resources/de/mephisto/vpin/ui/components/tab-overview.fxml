@@ -29,7 +29,7 @@
                      <children>
                         <StackPane maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" styleClass="sm-alert-icon">
                            <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="18" />
                            </children>
                         </StackPane>
                         <VBox spacing="6.0" HBox.hgrow="ALWAYS">
@@ -56,7 +56,7 @@
                            <children>
                               <Button mnemonicParsing="false" onAction="#onDismiss" styleClass="sm-alert-close">
                                  <graphic>
-                                    <FontIcon iconColor="#E6C3C5" iconLiteral="mdi2c-close" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-error-text" iconLiteral="mdi2c-close" iconSize="18" />
                                  </graphic>
                               </Button>
                               <Region VBox.vgrow="ALWAYS" />
@@ -76,14 +76,14 @@
                      <children>
                         <Label fx:id="statusLabel" styleClass="sm-pill, sm-pill-large, sm-pill-unknown" text="%components.components.loading_component_information">
                            <graphic>
-                              <FontIcon fx:id="statusIcon" iconColor="#BDBDBD" iconLiteral="mdi2c-check-bold" iconSize="16" />
+                              <FontIcon fx:id="statusIcon" styleClass="c-icon-muted" iconLiteral="mdi2c-check-bold" iconSize="16" />
                            </graphic>
                         </Label>
                         <Label fx:id="lastCheckedLabel" styleClass="sm-small" />
                         <Region HBox.hgrow="ALWAYS" />
                         <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onVersionRefresh" styleClass="sm-button" text="%components.overview.check_for_updates">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-refresh" iconSize="18" />
                            </graphic>
                         </Button>
                      </children>

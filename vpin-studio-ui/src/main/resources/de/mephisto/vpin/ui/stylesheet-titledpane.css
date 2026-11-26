@@ -3,24 +3,24 @@
  */
 
 .titled-pane {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: -c-white;
     -fx-background-insets: 0;
-    -fx-base : #111111;
+    -fx-base : -c-darkest;
 }
 
 .titled-pane .title {
     -fx-font-size: 14px;
-    -fx-background-color: #2a2a2a;
+    -fx-background-color: -c-tile;
     -fx-border-style: solid solid solid solid;
-    -fx-border-color: #333333;
+    -fx-border-color: -c-control;
     -fx-border-width: 1;
 }
 
 .titled-pane *.content {
-    -fx-background-color: #333333;
+    -fx-background-color: -c-control;
     -fx-background-insets: 0;
 }
 
 .accordion-container {
-    -fx-background-color: #333333;
+    -fx-background-color: -c-control;
 }

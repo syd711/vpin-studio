@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import java.util.List;
 
@@ -78,10 +79,10 @@ public class VpsUtil {
 
 
   public static String getFeatureColor(String abb) {
-    return "#338033";
+    return ThemeColors.FEATURE;
   }
   public static String getFeatureColor(String abb, boolean selected) {
-    return selected ? getFeatureColor(abb) : "#151515";
+    return selected ? getFeatureColor(abb) : ThemeColors.FEATURE_OFF;
   }
 
   public static String getIconClass(String abb) {
@@ -98,14 +99,14 @@ public class VpsUtil {
 
   public static String getColor(String abb) {
       return switch (abb) {
-          case "VPU" -> "#3182ce";
-          case "Dropbox" -> "#3182ce";
-          case "VPF" -> "#dd6b20";
-          case "Mega" -> "#e53e3e";
-          case "FP" -> "#718096";
-          case "VPX" -> "#718096";
-          case "YT" -> "#ff4e45";
-          default -> "#718096";
+          case "VPU" -> ThemeColors.VPS_BLUE;
+          case "Dropbox" -> ThemeColors.VPS_BLUE;
+          case "VPF" -> ThemeColors.VPS_ORANGE;
+          case "Mega" -> ThemeColors.VPS_RED;
+          case "FP" -> ThemeColors.VPS_GRAY;
+          case "VPX" -> ThemeColors.VPS_GRAY;
+          case "YT" -> ThemeColors.VPS_YOUTUBE;
+          default -> ThemeColors.VPS_GRAY;
       };
 
   }

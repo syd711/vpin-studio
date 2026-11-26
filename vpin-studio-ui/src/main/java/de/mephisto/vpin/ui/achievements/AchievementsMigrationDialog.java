@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.achievements;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
@@ -95,8 +96,8 @@ public class AchievementsMigrationDialog implements Initializable, DialogControl
     firebaseRadio.setToggleGroup(sources);
     localRadio.setToggleGroup(sources);
     firebaseRadio.setSelected(true);
-    firebaseRadio.setStyle(FONT_STYLE + " -fx-text-fill: white;");
-    localRadio.setStyle(FONT_STYLE + " -fx-text-fill: white;");
+    firebaseRadio.setStyle(FONT_STYLE + " -fx-text-fill: " + ThemeColors.WHITE + ";");
+    localRadio.setStyle(FONT_STYLE + " -fx-text-fill: " + ThemeColors.WHITE + ";");
     sources.selectedToggleProperty().addListener((obs, o, n) -> updateFields());
 
     pidField.setPromptText("e.g. ab12");

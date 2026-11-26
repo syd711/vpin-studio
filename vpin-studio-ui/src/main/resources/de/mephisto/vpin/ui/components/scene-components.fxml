@@ -47,7 +47,7 @@
                                        </BorderPane.margin>
                                        <children>
                                           <ProgressIndicator prefHeight="200.0" prefWidth="200.0" />
-                                          <Label fx:id="loaderLabel" text="%components.components.loading_component_information" textFill="WHITE">
+                                          <Label fx:id="loaderLabel" text="%components.components.loading_component_information" styleClass="c-text-white">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -63,7 +63,7 @@
                            <graphic>
                               <Label>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-update" iconSize="18" />
                                  </graphic>
                               </Label>
                            </graphic>
@@ -72,7 +72,7 @@
                            <graphic>
                               <Label>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-controller" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-controller" iconSize="18" />
                                  </graphic>
                               </Label>
                            </graphic>
@@ -81,7 +81,7 @@
                            <graphic>
                               <Label>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-monitor" iconSize="18" />
                                  </graphic>
                               </Label>
                            </graphic>
@@ -90,7 +90,7 @@
                            <graphic>
                               <Label>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2t-test-tube" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-test-tube" iconSize="18" />
                                  </graphic>
                               </Label>
                            </graphic>

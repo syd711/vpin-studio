@@ -103,7 +103,7 @@
                                           <Tooltip prefWidth="300.0" text="%bulk_importer.min_score_info" wrapText="true" />
                                        </tooltip>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                     </Label>
                                  </children>
@@ -187,7 +187,7 @@
                <items>
                   <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" styleClass="default-button">
                      <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%bulk_importer.remove_tooltip" />
@@ -195,7 +195,7 @@
                   </Button>
                   <Button fx:id="removeUnmatchedBtn" disable="true" mnemonicParsing="false" onAction="#onRemoveUnmatched" styleClass="default-button" text="%bulk_importer.remove_unmatched">
                      <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
+                        <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%bulk_importer.remove_unmatched_tooltip" />
@@ -213,7 +213,7 @@
                         <ToggleGroup fx:id="previewSizeGroup" />
                      </toggleGroup>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-size-select-small" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2i-image-size-select-small" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%bulk_importer.size_small" />
@@ -221,7 +221,7 @@
                   </ToggleButton>
                   <ToggleButton fx:id="sizeMediumBtn" mnemonicParsing="false" selected="true" toggleGroup="$previewSizeGroup">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-size-select-large" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2i-image-size-select-large" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%bulk_importer.size_medium" />
@@ -229,7 +229,7 @@
                   </ToggleButton>
                   <ToggleButton fx:id="sizeLargeBtn" mnemonicParsing="false" selected="false" toggleGroup="$previewSizeGroup">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-size-select-actual" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2i-image-size-select-actual" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%bulk_importer.size_large" />
@@ -237,7 +237,7 @@
                   </ToggleButton>
                </items>
             </ToolBar>
-            <TableView fx:id="tableView" minHeight="120.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tableView" minHeight="120.0" style="-fx-background-color: -c-tile;" styleClass="base-component" VBox.vgrow="ALWAYS">
       <columns>
          <TableColumn fx:id="columnSelect" maxWidth="44.0" minWidth="44.0" prefWidth="44.0" resizable="false" sortable="false" style="-fx-alignment: CENTER;" />
          <TableColumn fx:id="columnPreview" prefWidth="120.0" resizable="false" sortable="false" style="-fx-alignment: CENTER;" text="%bulk_importer.column_preview" />

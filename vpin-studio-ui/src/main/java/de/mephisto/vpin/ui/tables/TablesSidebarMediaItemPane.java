@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import de.mephisto.vpin.commons.utils.i18n.Messages;
@@ -14,7 +15,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 
 public class TablesSidebarMediaItemPane extends MediaPane {
 
@@ -31,7 +31,7 @@ public class TablesSidebarMediaItemPane extends MediaPane {
     this.getStyleClass().add("media-container");
 
     Label label = new Label(text);
-    label.setTextFill(Color.WHITE);
+    ThemeColors.setTextFill(label, ThemeColors.WHITE);
     BorderPane.setAlignment(label, Pos.CENTER);
     this.setBottom(label);
 
@@ -56,7 +56,7 @@ public class TablesSidebarMediaItemPane extends MediaPane {
     lefthbox.getChildren().add(btn_edit);
     btn_view = createButton("mdi2e-eye", null, null, e -> controller.onMediaViewClick(screen));
     lefthbox.getChildren().add(btn_view);
-    btn_delete = createButton("mdi2d-delete-outline", "#ff3333", null, e -> controller.onMediaDeleteClick(screen));
+    btn_delete = createButton("mdi2d-delete-outline", ThemeColors.DANGER, null, e -> controller.onMediaDeleteClick(screen));
     lefthbox.getChildren().add(btn_delete);
 
     if (hasDmdPos()) {
@@ -68,13 +68,13 @@ public class TablesSidebarMediaItemPane extends MediaPane {
 
   private Button createButton(String icon, String color, String styleClass, EventHandler<ActionEvent> eventHandler) {
     Button btn = new Button();
-    btn.setTextFill(color != null ? Color.valueOf(color) : Color.WHITE);
+    ThemeColors.setTextFill(btn, color != null ? color : ThemeColors.WHITE);
     btn.setOnAction(eventHandler);
     if (styleClass != null) {
       btn.getStyleClass().add(styleClass);
     }
     FontIcon font = new FontIcon(icon);
-    font.setIconColor(color != null ? Color.valueOf(color) : Color.WHITE);
+    ThemeColors.setIconColor(font, color != null ? color : ThemeColors.WHITE);
     btn.setGraphic(font);
     return btn;
   }

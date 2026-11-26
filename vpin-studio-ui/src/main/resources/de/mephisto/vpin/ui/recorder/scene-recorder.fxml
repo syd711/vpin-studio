@@ -26,7 +26,7 @@
    <center>
       <SplitPane dividerPositions="0.5">
          <items>
-            <BorderPane fx:id="root" style="-fx-border-color: #111111; -fx-border-style: solid; -fx-background-color: #222222;">
+            <BorderPane fx:id="root" style="-fx-border-color: -c-darkest; -fx-border-style: solid; -fx-background-color: -c-panel;">
                 <center>
                     <BorderPane BorderPane.alignment="CENTER">
                         <BorderPane.margin>
@@ -35,9 +35,9 @@
                         <center>
                             <StackPane fx:id="loaderStack">
                                 <children>
-                                    <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                                    <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                                         <children>
-                                            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                                            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: -c-tile;" styleClass="base-component">
                                                 <columns>
                                                     <TableColumn fx:id="columnSelection" maxWidth="40.0" minWidth="30.0" prefWidth="40.0" sortable="false" style="-fx-alignment: BASELINE_CENTER;">
                                                         <graphic>
@@ -54,7 +54,7 @@
                             </StackPane>
                         </center>
                         <bottom>
-                            <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
+                            <Label fx:id="labelCount" styleClass="c-text-white" BorderPane.alignment="CENTER_RIGHT">
                                 <BorderPane.margin>
                                     <Insets bottom="3.0" right="3.0" />
                                 </BorderPane.margin>
@@ -63,7 +63,7 @@
                     </BorderPane>
                 </center>
             </BorderPane>
-                <ScrollPane style="-fx-background-color: #222222;">
+                <ScrollPane style="-fx-background-color: -c-panel;">
                     <content>
                         <VBox fx:id="recordingOptions" styleClass="base-component">
                         <padding>
@@ -78,7 +78,7 @@
    <top>
         <ToolBar fx:id="toolbar" BorderPane.alignment="CENTER">
             <items>
-                <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+                <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" styleClass="c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -86,26 +86,26 @@
                         <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
                     </tooltip>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                     </graphic>
                 </Button>
-                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                     </graphic>
                     <tooltip>
                         <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
                     </tooltip>
                 </Button>
-            <Button fx:id="reloadBtn1" layoutX="52.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAutoSelect" textFill="WHITE">
+            <Button fx:id="reloadBtn1" layoutX="52.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAutoSelect" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18"/>
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-auto-fix" iconSize="18"/>
                </graphic>
                <tooltip>
                   <Tooltip text="%recorder.recorder.auto_select_all_mandatory_and_missing_video_screens" />
@@ -119,12 +119,12 @@
                                 <Font size="14.0" />
                             </font>
                         </TextField>
-                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE" visible="false">
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white" visible="false">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                                <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                             </graphic>
                         </Button>
                     </children>
@@ -133,30 +133,30 @@
                     <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="%recorder.recorder.all_vpx_tables" />
                 <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
                     <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
+                <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableEdit" styleClass="c-text-white">
                 <font>
                     <Font size="14.0" />
                 </font>
                 <graphic>
-                    <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                 </graphic>
                 <tooltip>
                     <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
                 </tooltip>
                 </Button>
-                <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+                <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="c-text-white">
                 <font>
                     <Font size="14.0" />
                 </font>
                 <graphic>
-                    <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-edit" iconSize="18" />
                 </graphic>
                 <tooltip>
                     <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
                 </tooltip>
                 </Button>
                 <Separator layoutX="474.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" text="%recorder.recorder.start" textFill="#ff3333">
+                <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" text="%recorder.recorder.start" styleClass="c-text-danger">
                 <font>
                     <Font size="14.0" />
                 </font>
@@ -164,28 +164,28 @@
                     <Tooltip text="%recorder.recorder.start_recording_of_this_screen" />
                 </tooltip>
                 <graphic>
-                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-record" iconSize="18" />
+                    <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2r-record" iconSize="18" />
                 </graphic>
                 </Button>
                 <Separator layoutX="478.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+                <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="c-text-danger">
                 <font>
                     <Font size="14.0" />
                 </font>
                 <graphic>
-                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+                    <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2s-stop" iconSize="18" />
                 </graphic>
                 <tooltip>
                     <Tooltip text="%competitions.competitions_iscored.kill_all_emulator_and_frontend_processes_ctrl_k" />
                 </tooltip>
                 </Button>
                 <Separator layoutX="729.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="%components.components.screens" textFill="WHITE">
+                <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="%components.components.screens" styleClass="c-text-white">
                 <font>
                     <Font size="14.0" />
                 </font>
                 <graphic>
-                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-edit" iconSize="18" />
+                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-monitor-edit" iconSize="18" />
                 </graphic>
                 </MenuButton>
                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

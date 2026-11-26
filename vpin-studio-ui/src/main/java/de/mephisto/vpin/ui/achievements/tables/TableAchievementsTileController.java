@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.achievements.tables;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.achievements.AchievementInfo;
 import de.mephisto.vpin.restclient.achievements.TableAchievementsDetails;
@@ -62,20 +63,20 @@ public class TableAchievementsTileController implements Initializable {
     StackPane state = new StackPane();
     state.setMinSize(22, 22);
     state.setMaxSize(22, 22);
-    state.setStyle("-fx-background-color: " + (a.unlocked ? "#1F3A26" : "#222222") + ";");
-    state.getChildren().add(icon(a.unlocked ? "mdi2c-check-bold" : "mdi2l-lock", a.unlocked ? GREEN : "#9A9A9A", 13));
+    state.setStyle("-fx-background-color: " + (a.unlocked ? ThemeColors.OK_BG : ThemeColors.PANEL) + ";");
+    state.getChildren().add(icon(a.unlocked ? "mdi2c-check-bold" : "mdi2l-lock", a.unlocked ? GREEN : ThemeColors.SUBTLE, 13));
     VBox titleBox = new VBox(2);
     HBox.setHgrow(titleBox, Priority.ALWAYS);
     titleBox.setMaxWidth(Double.MAX_VALUE);
     Label title = a.unlocked ? bold(a.displayTitle) : colored(a.displayTitle, MUTED, 14, false);
     titleBox.getChildren().add(title);
     if (a.legacy) {
-      titleBox.getChildren().add(colored(Messages.get("achievements.legacy"), "#9A9A9A", 11, false));
+      titleBox.getChildren().add(colored(Messages.get("achievements.legacy"), ThemeColors.SUBTLE, 11, false));
     }
     else if (!a.unlocked && a.progressTarget > 0 && a.progressCurrent > 0) {
       HBox prog = new HBox(6);
       prog.setAlignment(Pos.CENTER_LEFT);
-      prog.getChildren().addAll(progress(a.getProgressPct(), BLUE, 4), colored(a.progressCurrent + " / " + a.progressTarget, "#9A9A9A", 11, false));
+      prog.getChildren().addAll(progress(a.getProgressPct(), BLUE, 4), colored(a.progressCurrent + " / " + a.progressTarget, ThemeColors.SUBTLE, 11, false));
       titleBox.getChildren().add(prog);
     }
     Label when = muted(a.unlocked ? dateTime(a.unlockedAt) : "—");

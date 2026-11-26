@@ -30,7 +30,7 @@
                      <children>
                         <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                            <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                            </children>
                         </StackPane>
                         <VBox spacing="2.0" HBox.hgrow="ALWAYS">
@@ -43,7 +43,7 @@
                            <children>
                               <Button mnemonicParsing="false" onAction="#onDismiss" styleClass="sm-alert-close">
                                  <graphic>
-                                    <FontIcon iconColor="#E6C3C5" iconLiteral="mdi2c-close" iconSize="16" />
+                                    <FontIcon styleClass="c-icon-error-text" iconLiteral="mdi2c-close" iconSize="16" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%backglass.directb2s_admin.dismiss" />
@@ -63,7 +63,7 @@
             </VBox>
               <VBox fx:id="dataBox">
                   <children>
-                  <Label text="%tables.tables_sidebar_altcolor.alt_color_data" textFill="WHITE">
+                  <Label text="%tables.tables_sidebar_altcolor.alt_color_data" styleClass="c-text-white">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -86,62 +86,62 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label fx:id="lastModifiedLabel" layoutX="175.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label fx:id="lastModifiedLabel" layoutX="175.0" layoutY="76.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="%backups.backups_sidebar.last_modified" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="45.0" text="%backups.backups_sidebar.last_modified" styleClass="c-text-white" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_altcolor.type" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_altcolor.type" styleClass="c-text-white" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="typeLabel" layoutX="175.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="typeLabel" layoutX="175.0" layoutY="45.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_altcolor.file_s" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_altcolor.file_s" styleClass="c-text-white" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="filesLabel" layoutX="175.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <Label fx:id="filesLabel" layoutX="175.0" layoutY="45.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="76.0" text="%tables.tables_sidebar_altcolor.backups" textFill="WHITE" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="76.0" text="%tables.tables_sidebar_altcolor.backups" styleClass="c-text-white" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="backupsLabel" layoutX="124.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <Label fx:id="backupsLabel" layoutX="124.0" layoutY="76.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="%backglass.directb2s_sidebar.name" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="45.0" text="%backglass.directb2s_sidebar.name" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="nameLabel" layoutX="124.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label fx:id="nameLabel" layoutX="124.0" layoutY="45.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="137.0" text="%backups.backup_source_folder.folder" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="137.0" text="%backups.backup_source_folder.folder" styleClass="c-text-white" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="folderLabel" layoutX="123.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <Label fx:id="folderLabel" layoutX="123.0" layoutY="76.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -158,7 +158,7 @@
               </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label text="%tables.tables_sidebar_altcolor.no_alt_color_files_found" textFill="WHITE">
+                  <Label text="%tables.tables_sidebar_altcolor.no_alt_color_files_found" styleClass="c-text-white">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -179,12 +179,12 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" textFill="WHITE">
+            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -193,21 +193,21 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
             <Separator layoutX="100.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="restoreBtn" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" textFill="WHITE">
+            <Button fx:id="restoreBtn" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                </graphic>
             </Button>
         </items>

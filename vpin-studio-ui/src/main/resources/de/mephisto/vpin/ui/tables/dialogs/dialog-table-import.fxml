@@ -41,7 +41,7 @@
          <center>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="text1Description" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%tables.table_import.the_list_shows_the_tables_for_the_selected" textFill="WHITE">
+                  <Label fx:id="text1Description" layoutX="10.0" layoutY="10.0" styleClass="preference-description, c-text-white" text="%tables.table_import.the_list_shows_the_tables_for_the_selected">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -49,7 +49,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="text2Description" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="%tables.table_import.imported_to_frontend_yet" textFill="WHITE">
+                  <Label fx:id="text2Description" layoutX="10.0" layoutY="30.0" styleClass="preference-description, c-text-white" text="%tables.table_import.imported_to_frontend_yet">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -59,7 +59,7 @@
                   </Label>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label styleClass="default-text" text="%cards.highscore_cards.emulator" textFill="WHITE">
+                        <Label styleClass="default-text, c-text-white" text="%cards.highscore_cards.emulator">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>

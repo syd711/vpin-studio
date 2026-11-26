@@ -34,7 +34,7 @@
                         <Font size="10.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye-outline" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%cards.template_editor_othermedia.toggle_other_media_visibility" />
@@ -45,7 +45,7 @@
                         <Font size="10.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
@@ -64,7 +64,7 @@
 
                   <Label text="%cards.template_editor_othermedia.add_an_additional_image_layer_containing_a_media" prefWidth="200" wrapText="true">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.4" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.4" />
                      </graphic>
                      <VBox.margin>
                         <Insets top="6.0" />
@@ -73,7 +73,7 @@
 
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label text="%cards.template_editor_othermedia.media_asset" textFill="WHITE">
+                        <Label text="%cards.template_editor_othermedia.media_asset" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -83,7 +83,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%cards.template_editor_othermedia.select_the_displayed_media_asset" wrapText="true" />
@@ -104,14 +104,14 @@
 
                   <HBox alignment="BASELINE_LEFT" spacing="6.0">
                      <children>
-                        <CheckBox fx:id="otherMediaKeepARCheckBox" mnemonicParsing="false" text="%cards.template_editor_manufacturer.keep_aspect_ratio" textFill="WHITE">
+                        <CheckBox fx:id="otherMediaKeepARCheckBox" mnemonicParsing="false" text="%cards.template_editor_manufacturer.keep_aspect_ratio" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
                         <Label>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%cards.template_editor_manufacturer.when_checked_the_aspect_ratio_of_the_image" />

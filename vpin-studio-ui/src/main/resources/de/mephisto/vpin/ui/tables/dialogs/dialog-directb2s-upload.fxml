@@ -86,7 +86,7 @@
                <children>
                   <VBox fx:id="uploadReplaceBox" prefWidth="350.0" styleClass="selection-panel">
                      <children>
-                        <RadioButton fx:id="uploadAndReplaceRadio" mnemonicParsing="false" text="%tables.directb2s_upload.upload_and_replace" textFill="WHITE" wrapText="true">
+                        <RadioButton fx:id="uploadAndReplaceRadio" mnemonicParsing="false" text="%tables.directb2s_upload.upload_and_replace" styleClass="c-text-white" wrapText="true">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
@@ -94,7 +94,7 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </RadioButton>
-                        <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description" text="%tables.directb2s_upload.the_new_backglass_will_replace_the_existing_one" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description, c-text-white" text="%tables.directb2s_upload.the_new_backglass_will_replace_the_existing_one" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -105,7 +105,7 @@
                   </VBox>
                   <VBox fx:id="uploadAppendBox" prefWidth="350.0" styleClass="selection-panel">
                      <children>
-                        <RadioButton fx:id="uploadAndAppendRadio" mnemonicParsing="false" text="%tables.directb2s_upload.upload_and_append" textFill="WHITE" wrapText="true">
+                        <RadioButton fx:id="uploadAndAppendRadio" mnemonicParsing="false" text="%tables.directb2s_upload.upload_and_append" styleClass="c-text-white" wrapText="true">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -113,8 +113,8 @@
                               <Insets />
                            </VBox.margin>
                         </RadioButton>
-                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description" text="%tables.directb2s_upload.the_new_backglass_will_be_appended_to_the" textFill="WHITE" wrapText="true" />
-                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="checkbox-description" text="%tables.directb2s_upload.you_can_select_the_active_version_in_the" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description, c-text-white" text="%tables.directb2s_upload.the_new_backglass_will_be_appended_to_the" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="checkbox-description, c-text-white" text="%tables.directb2s_upload.you_can_select_the_active_version_in_the" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -39,7 +40,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Paint;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -461,7 +461,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       if (model.getGameId() > 0) {
         FontIcon checkIcon = WidgetFactory.createCheckIcon(getIconColor(value));
         if (value.isEnabled()) {
-          checkIcon.setIconColor(Paint.valueOf(WidgetFactory.DEFAULT_COLOR));
+          ThemeColors.setIconColor(checkIcon, ThemeColors.WHITE);
         }
         return checkIcon;
       }
@@ -472,7 +472,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       int nbVersions = value.getVersions().size();
       if (nbVersions > 1) {
         String iconname = BackglassManagerControllerUtils.getBackglassIconLiteral(value.getFileName(), nbVersions);
-        return WidgetFactory.createIcon(iconname, value.isEnabled() ? null : WidgetFactory.DISABLED_COLOR);
+        return WidgetFactory.createIcon(iconname, value.isEnabled() ? null : ThemeColors.ICON_DISABLED);
       }
       else {
         return new Label("");
@@ -710,7 +710,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   //------------------------------------------------
 
   private String getIconColor(DirectB2S value) {
-    return value.isEnabled() ? null : WidgetFactory.DISABLED_COLOR;
+    return value.isEnabled() ? null : ThemeColors.ICON_DISABLED;
   }
 
   private String getLabelCss(DirectB2S value) {

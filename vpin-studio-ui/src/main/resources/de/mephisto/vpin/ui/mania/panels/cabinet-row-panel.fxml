@@ -17,20 +17,20 @@
         <children>
             <VBox alignment="CENTER_LEFT" spacing="6.0">
                <children>
-                  <Label fx:id="nameLabel" styleClass="default-title" text="-" textFill="WHITE" wrapText="true" />
+                  <Label fx:id="nameLabel" styleClass="default-title, c-text-white" text="-" wrapText="true" />
                   <HBox spacing="6.0">
                      <children>
-                        <Label fx:id="statusLabel" styleClass="default-headline" text="%mania.cabinet_row_panel.online" textFill="WHITE">
+                        <Label fx:id="statusLabel" styleClass="default-headline, c-text-white" text="%mania.cabinet_row_panel.online">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-checkbox-blank-circle" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-checkbox-blank-circle" iconSize="18" />
                            </graphic>
                         </Label>
                      </children>
                   </HBox>
-                  <Label fx:id="activeGameLabel" text="%mania.cabinet_row_panel.playing" textFill="WHITE">
+                  <Label fx:id="activeGameLabel" text="%mania.cabinet_row_panel.playing" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

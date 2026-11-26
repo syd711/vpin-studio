@@ -34,7 +34,7 @@
                         <Font size="10.0" />
                     </font>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye-outline" />
                     </graphic>
                     <tooltip>
                         <Tooltip text="%cards.template_editor_manufacturer.toggle_manufacturer_logo_visibility" />
@@ -45,7 +45,7 @@
                            <Font size="10.0" />
                        </font>
                        <graphic>
-                           <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
+                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                        </graphic>
                        <tooltip>
                            <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
@@ -64,14 +64,14 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                   <children>
-                    <CheckBox fx:id="manufacturerLogoUseHistoricalCheckBox" mnemonicParsing="false" text="%cards.template_editor_manufacturer.use_historical_logo" textFill="WHITE">
+                    <CheckBox fx:id="manufacturerLogoUseHistoricalCheckBox" mnemonicParsing="false" text="%cards.template_editor_manufacturer.use_historical_logo" styleClass="c-text-white">
                         <font>
                           <Font size="14.0" />
                         </font>
                     </CheckBox>
                     <Label>
                         <graphic>
-                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                         </graphic>
                         <tooltip>
                           <Tooltip text="%cards.template_editor_manufacturer.the_manufacturer_logo_evolved_over_years_when_this" />
@@ -87,14 +87,14 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                   <children>
-                    <CheckBox fx:id="manufacturerLogoKeepARCheckBox" mnemonicParsing="false" text="%cards.template_editor_manufacturer.keep_aspect_ratio" textFill="WHITE">
+                    <CheckBox fx:id="manufacturerLogoKeepARCheckBox" mnemonicParsing="false" text="%cards.template_editor_manufacturer.keep_aspect_ratio" styleClass="c-text-white">
                         <font>
                           <Font size="14.0" />
                         </font>
                     </CheckBox>
                     <Label>
                         <graphic>
-                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                         </graphic>
                         <tooltip>
                           <Tooltip text="%cards.template_editor_manufacturer.when_checked_the_aspect_ratio_of_the_image" />

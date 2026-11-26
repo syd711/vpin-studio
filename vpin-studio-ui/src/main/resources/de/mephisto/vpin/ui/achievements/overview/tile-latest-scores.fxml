@@ -5,9 +5,9 @@
 <?import javafx.scene.layout.VBox?>
 
 <!-- fixed width: widget (600) + horizontal padding (32), the score items of the widget have a fixed size -->
-<VBox maxHeight="Infinity" maxWidth="632.0" minWidth="632.0" prefWidth="632.0" spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewLatestScoresTileController">
+<VBox maxHeight="Infinity" maxWidth="632.0" minWidth="632.0" prefWidth="632.0" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewLatestScoresTileController">
    <children>
-      <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="%widgets.widget_latest_scores.latest_highscores" />
+      <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%widgets.widget_latest_scores.latest_highscores" />
       <!-- the widget title is hidden by the controller -->
       <fx:include fx:id="latestScores" source="/de/mephisto/vpin/commons/fx/widgets/widget-latest-scores.fxml" VBox.vgrow="ALWAYS" />
    </children>

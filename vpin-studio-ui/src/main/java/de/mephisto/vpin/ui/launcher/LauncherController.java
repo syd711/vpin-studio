@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.launcher;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
@@ -29,7 +30,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.stage.Stage;
@@ -427,7 +427,7 @@ public class LauncherController implements Initializable {
         if (connection.getDiscovered()) {
           FontIcon discoveredIcon = new FontIcon("mdi2a-antenna");
           discoveredIcon.setIconSize(18);
-          discoveredIcon.setIconColor(Paint.valueOf(WidgetFactory.OK_COLOR)); // Green for discovered
+          ThemeColors.setIconColor(discoveredIcon, ThemeColors.SUCCESS_LIGHT); // Green for discovered
           Tooltip discoveredTooltip = new Tooltip(Messages.get("dialog.connection_discovered_on_local_network"));
           Tooltip.install(discoveredIcon, discoveredTooltip); // Attach tooltip to the icon
           statusBox.getChildren().add(discoveredIcon);
@@ -439,7 +439,7 @@ public class LauncherController implements Initializable {
           Button wolButton = new Button();
           FontIcon wolIcon = new FontIcon("mdi2w-wifi-arrow-right");
           wolIcon.setIconSize(18);
-          wolIcon.setIconColor(Paint.valueOf("#008080")); // Teal for WOL
+          ThemeColors.setIconColor(wolIcon, ThemeColors.TEAL); // Teal for WOL
           wolButton.setGraphic(wolIcon);
           wolButton.getStyleClass().add("wol-button");
           stage.getScene().getStylesheets().add(getClass().getResource("scene-launcher.css").toExternalForm());
@@ -487,7 +487,7 @@ public class LauncherController implements Initializable {
         // Add delete icon
         FontIcon deleteIcon = new FontIcon("mdi2d-delete-outline");
         deleteIcon.setIconSize(16);
-        deleteIcon.setIconColor(Paint.valueOf("#F08080")); // Red for delete
+        ThemeColors.setIconColor(deleteIcon, ThemeColors.DELETE_SOFT); // Red for delete
 
         Button deleteButton = new Button();
         deleteButton.setGraphic(deleteIcon);

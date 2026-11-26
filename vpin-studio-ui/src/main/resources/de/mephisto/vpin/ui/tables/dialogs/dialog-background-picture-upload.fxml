@@ -38,7 +38,7 @@
                   </HBox>
                </center>
                <top>
-                  <Label fx:id="titleLabel" text="%tables.background_picture_upload.default_picture" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                  <Label fx:id="titleLabel" text="%tables.background_picture_upload.default_picture" styleClass="c-text-white" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font size="14.0" />
                      </font>

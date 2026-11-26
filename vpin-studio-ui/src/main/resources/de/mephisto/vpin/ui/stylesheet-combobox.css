@@ -11,57 +11,57 @@
 }
 
 .combo-box-popup .list-cell {
-    -fx-background-color: #FFFFFF;
-    -fx-text-fill: #000000;
+    -fx-background-color: -c-white;
+    -fx-text-fill: -c-black;
 }
 
 #tableVersionsCombo .combo-box-popup .list-view .list-cell:odd {
-    -fx-background-color: #2a2a2a;
+    -fx-background-color: -c-tile;
 }
 
 #tableVersionsCombo .combo-box-popup .list-view .list-cell:even {
-    -fx-background-color: #222222;
+    -fx-background-color: -c-panel;
 }
 
 #tableVersionsCombo .combo-box-popup .list-view .list-cell:filled:hover{
-    -fx-background-color: #6666FFAA;
-    -fx-text-fill: white;
+    -fx-background-color: -c-highlight-translucent;
+    -fx-text-fill: -c-white;
 }
 
 #tableVersionsCombo .combo-box-popup .list-view .list-cell:selected{
-    -fx-background-color: #333366;
-    -fx-text-fill: white;
+    -fx-background-color: -c-primary;
+    -fx-text-fill: -c-white;
 }
 
 
 
 .combo-box .list-cell:hover {
-    -fx-text-fill: #FFFFFF;
-    -fx-background-color: #333366;
+    -fx-text-fill: -c-white;
+    -fx-background-color: -c-primary;
 }
 
 .combo-box-popup .list-view .list-cell:filled:hover{
-    -fx-background-color: #333366;
-    -fx-text-fill: white;
+    -fx-background-color: -c-primary;
+    -fx-text-fill: -c-white;
 }
 
 /* combo boxes, date pickers and color pickers: same dark box as the text inputs */
 .combo-box-base {
     -fx-font-size: 14px;
-    -fx-background-color: #161616;
+    -fx-background-color: -c-inset;
     -fx-background-insets: 0;
     -fx-background-radius: 4;
-    -fx-border-color: #444444;
+    -fx-border-color: -c-border;
     -fx-border-radius: 4;
 }
 
 .combo-box-base:hover {
-    -fx-background-color: #1C1C1C;
+    -fx-background-color: -c-footer;
 }
 
 .combo-box-base:focused,
 .combo-box-base:showing {
-    -fx-border-color: #7A7A7A;
+    -fx-border-color: -c-disabled;
 }
 
 .combo-box-base:disabled {
@@ -70,12 +70,12 @@
 
 .combo-box > .list-cell,
 .combo-box > .list-cell:hover {
-    -fx-text-fill: white;
+    -fx-text-fill: -c-white;
     -fx-background-color: transparent;
 }
 
 .color-picker > .color-picker-label {
-    -fx-text-fill: white;
+    -fx-text-fill: -c-white;
 }
 
 /* the editor of an editable combo box / date picker: the combo box draws the box */
@@ -91,27 +91,27 @@
 }
 
 .combo-box-base > .arrow-button > .arrow {
-    -fx-background-color: #BDBDBD;
+    -fx-background-color: -c-muted;
 }
 
 .combo-box-base:hover > .arrow-button > .arrow {
-    -fx-background-color: white;
+    -fx-background-color: -c-white;
 }
 
 .combo-box-popup > .list-view {
-    -fx-background-color: #161616;
+    -fx-background-color: -c-inset;
     -fx-background-insets: 0;
-    -fx-border-color: #444444;
-    -fx-control-inner-background: #161616;
+    -fx-border-color: -c-border;
+    -fx-control-inner-background: -c-inset;
 }
 
 .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
-    -fx-background-color: #161616;
-    -fx-text-fill: white;
+    -fx-background-color: -c-inset;
+    -fx-text-fill: -c-white;
 }
 
 .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover,
 .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected {
-    -fx-background-color: #333366;
-    -fx-text-fill: white;
+    -fx-background-color: -c-primary;
+    -fx-text-fill: -c-white;
 }

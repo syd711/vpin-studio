@@ -6,7 +6,7 @@
    -fx-background-color: transparent;
 }
 
-/* scroll bars: flat, no arrow buttons, transparent track, rounded #444444 thumb */
+/* scroll bars: flat, no arrow buttons, transparent track, rounded -c-border thumb */
 .scroll-bar {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
@@ -39,17 +39,17 @@
 }
 
 .scroll-bar > .thumb {
-    -fx-background-color: #444444;
+    -fx-background-color: -c-border;
     -fx-background-insets: 2;
     -fx-background-radius: 1em;
 }
 
 .scroll-bar > .thumb:hover {
-    -fx-background-color: #5A5A5A;
+    -fx-background-color: -c-border-strong;
 }
 
 .scroll-bar > .thumb:pressed {
-    -fx-background-color: #7A7A7A;
+    -fx-background-color: -c-disabled;
 }
 
 .scroll-pane > .corner,

@@ -79,24 +79,24 @@
                               <Label styleClass="default-text" text="%tables.patch_upload.patch_file" />
                               <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%competitions.discord_competition_edit.table" GridPane.rowIndex="2" />
                               <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="49.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label fx:id="titleLabel11" text="%tables.patch_upload.readme_txt" textFill="WHITE" GridPane.rowIndex="3">
+                              <Label fx:id="titleLabel11" text="%tables.patch_upload.readme_txt" styleClass="c-text-white" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <children>
-                                    <Label fx:id="readmeLabel" text="-" textFill="WHITE">
+                                    <Label fx:id="readmeLabel" text="-" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Button fx:id="readmeBtn" mnemonicParsing="false" onAction="#onReadme" styleClass="text-button" text="%tables.patch_upload.view_readme" textFill="WHITE">
+                                    <Button fx:id="readmeBtn" mnemonicParsing="false" onAction="#onReadme" styleClass="text-button, c-text-white" text="%tables.patch_upload.view_readme">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                                        </graphic>
                                     </Button>
                                  </children>
@@ -126,7 +126,7 @@
                <children>
                   <VBox fx:id="uploadCloneBox" prefWidth="430.0" styleClass="selection-panel">
                      <children>
-                        <RadioButton fx:id="patchAndCloneRadio" mnemonicParsing="false" text="%tables.patch_upload.patch_and_clone" textFill="WHITE" wrapText="true">
+                        <RadioButton fx:id="patchAndCloneRadio" mnemonicParsing="false" text="%tables.patch_upload.patch_and_clone" styleClass="c-text-white" wrapText="true">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
@@ -134,7 +134,7 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </RadioButton>
-                        <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description" text="%tables.patch_upload.the_game_file_will_be_patched_and_patched" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description, c-text-white" text="%tables.patch_upload.the_game_file_will_be_patched_and_patched" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -145,7 +145,7 @@
                   </VBox>
                   <VBox fx:id="uploadReplaceBox" prefWidth="430.0" styleClass="selection-panel">
                      <children>
-                        <RadioButton fx:id="patchAndReplaceRadio" mnemonicParsing="false" text="%tables.patch_upload.patch_and_replace" textFill="WHITE" wrapText="true">
+                        <RadioButton fx:id="patchAndReplaceRadio" mnemonicParsing="false" text="%tables.patch_upload.patch_and_replace" styleClass="c-text-white" wrapText="true">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -153,8 +153,8 @@
                               <Insets />
                            </VBox.margin>
                         </RadioButton>
-                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description" text="%tables.patch_upload.the_game_file_will_be_patched_the_existing" textFill="WHITE" wrapText="true" />
-                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="checkbox-description" text="%tables.patch_upload.attention_choosing_the_wrong_table_for_the_patch" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description, c-text-white" text="%tables.patch_upload.the_game_file_will_be_patched_the_existing" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="checkbox-description, c-text-white" text="%tables.patch_upload.attention_choosing_the_wrong_table_for_the_patch" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

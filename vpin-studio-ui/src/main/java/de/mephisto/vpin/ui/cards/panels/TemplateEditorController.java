@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards.panels;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.cards.*;
@@ -598,7 +599,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       }).thenAcceptLater((defaultMediaItem) -> {
         if (defaultMediaItem == null) {
           Label label = new Label(Messages.get("dialog.no_media_found"));
-          label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+          label.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.BORDER + ";");
           label.setUserData(null);
           mediaPane.setCenter(label);
         }
@@ -616,11 +617,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     nagBarLabel.setVisible(gameRepresentation.isPresent());
     if (gameRepresentation.isPresent()) {
       if (cardTemplate.isTemplate()) {
-        nagBar.setStyle("-fx-background-color: #333366;");
+        nagBar.setStyle("-fx-background-color: " + ThemeColors.PRIMARY + ";");
         nagBarLabel.setText(Messages.get("cards.template_editor.editing_design_for", gameRepresentation.get().getGameDisplayName(), cardTemplate.getName()));
       }
       else {
-        nagBar.setStyle("-fx-background-color: #116611;");
+        nagBar.setStyle("-fx-background-color: " + ThemeColors.TOGGLE_SELECTED + ";");
         Optional<CardTemplate> parent = this.templateCombo.getItems().stream().filter(t -> t.getId().equals(cardTemplate.getParentId())).findFirst();
         if (parent.isEmpty()) {
           parent = this.templateCombo.getItems().stream().filter(t -> t.isDefault()).findFirst();
@@ -830,7 +831,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage(Messages.get("cards.template_editor.loading_media"));
 
-      previewStack.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
+      previewStack.setBackground(new Background(new BackgroundFill(Paint.valueOf(ThemeColors.BLACK), null, null)));
       previewPanel.setBackground(Background.EMPTY);
       previewOverlayPanel.setBackground(Background.EMPTY);
 

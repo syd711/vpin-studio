@@ -23,7 +23,7 @@ public class PositionResizer {
   private int minSize = 8;
 
   /** The color of the box */
-  private ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(Color.LIME);
+  private ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(Color.web(ThemeColors.SELECTION_HANDLE));
 
   // Display elements, oi screen coordinates 
   private Group overlay;

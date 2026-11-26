@@ -16,99 +16,99 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-title, c-text-white" text="%pref.backglass.3rd_party_preferences" wrapText="true" />
                   <Label styleClass="preference-subtitle" text="%components.components.vpin_mame" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="%pref.mame.this_section_configures_the_default_options_set_for" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description, c-text-white" text="%pref.mame.this_section_configures_the_default_options_set_for" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.mame.these_settings_can_be_customized_for_every_table" textFill="WHITE" wrapText="true">
+                  <Label styleClass="preference-description, c-text-white" text="%pref.mame.these_settings_can_be_customized_for_every_table" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
                   <VBox>
                      <children>
-                        <CheckBox fx:id="skipPinballStartupTest" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.mame.skip_pinball_startup_test" textFill="WHITE">
+                        <CheckBox fx:id="skipPinballStartupTest" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.mame.skip_pinball_startup_test">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label styleClass="checkbox-description" text="%pref.mame.skips_the_inital_rom_test_after_startup_this" textFill="WHITE" wrapText="true">
+                        <Label styleClass="checkbox-description, c-text-white" text="%pref.mame.skips_the_inital_rom_test_after_startup_this" wrapText="true">
                            <VBox.margin>
                               <Insets bottom="6.0" />
                            </VBox.margin>
                         </Label>
-                        <CheckBox fx:id="useSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.mame.use_sound" textFill="WHITE">
+                        <CheckBox fx:id="useSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.mame.use_sound">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="36.0" styleClass="checkbox-description" text="%pref.mame.if_enabled_the_original_sound_from_the_table" textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="useSamples" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.mame.use_samples" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="36.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.if_enabled_the_original_sound_from_the_table" wrapText="true" />
+                        <CheckBox fx:id="useSamples" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.mame.use_samples">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="97.0" styleClass="checkbox-description" text="%pref.mame.toggles_pre_recorded_samples_used_by_some_machines" textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="compactDisplay" layoutX="10.0" layoutY="124.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.mame.compact_display" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="97.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.toggles_pre_recorded_samples_used_by_some_machines" wrapText="true" />
+                        <CheckBox fx:id="compactDisplay" layoutX="10.0" layoutY="124.0" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.mame.compact_display">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="156.0" styleClass="checkbox-description" text="%pref.mame.smallest_window_output_with_no_empty_space_inbetween" textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="doubleDisplaySize" layoutX="10.0" layoutY="177.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.mame.double_display_size" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="156.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.smallest_window_output_with_no_empty_space_inbetween" wrapText="true" />
+                        <CheckBox fx:id="doubleDisplaySize" layoutX="10.0" layoutY="177.0" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.mame.double_display_size">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="209.0" styleClass="checkbox-description" text="%pref.mame.doubles_every_dmd_pixel_in_x_and_y" textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="ignoreRomCrcError" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.mame.ignore_rom_crc_errors" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="209.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.doubles_every_dmd_pixel_in_x_and_y" wrapText="true" />
+                        <CheckBox fx:id="ignoreRomCrcError" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.mame.ignore_rom_crc_errors">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="152.0" styleClass="checkbox-description" text="%pref.mame.will_ignore_wrong_broken_or_modified_roms_and" textFill="WHITE" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="355.0" styleClass="checkbox-description" text="%pref.mame.useful_when_mods_are_used_that_are_not" textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="cabinetMode" layoutX="10.0" layoutY="106.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.mame.cabinet_mode" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="152.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.will_ignore_wrong_broken_or_modified_roms_and" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="355.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.useful_when_mods_are_used_that_are_not" wrapText="true" />
+                        <CheckBox fx:id="cabinetMode" layoutX="10.0" layoutY="106.0" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.mame.cabinet_mode">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="206.0" styleClass="checkbox-description" text="%pref.mame.if_set_the_initial_disclaimer_screen_is_not" textFill="WHITE" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="436.0" styleClass="checkbox-description" text="%pref.mame.and_the_output_window_can_be_positioned_more" textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="showDmd" layoutX="10.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.mame.show_dmd_display_window" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="206.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.if_set_the_initial_disclaimer_screen_is_not" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="436.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.and_the_output_window_can_be_positioned_more" wrapText="true" />
+                        <CheckBox fx:id="showDmd" layoutX="10.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.mame.show_dmd_display_window">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="260.0" styleClass="checkbox-description" text="%pref.mame.toggles_the_visibility_of_the_dmd_window" textFill="WHITE" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="496.0" styleClass="checkbox-description" text="%pref.mame.if_set_the_dmd_should_be_visible_an" textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="useExternalDmd" layoutX="10.0" layoutY="170.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.mame.use_external_dmd_dll" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="260.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.toggles_the_visibility_of_the_dmd_window" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="496.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.if_set_the_dmd_should_be_visible_an" wrapText="true" />
+                        <CheckBox fx:id="useExternalDmd" layoutX="10.0" layoutY="170.0" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.mame.use_external_dmd_dll">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="315.0" styleClass="checkbox-description" text="%pref.mame.allows_to_display_external_dmds_e_g_flexdmd" textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="colorizeDmd" layoutX="10.0" layoutY="202.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.mame.colorize_dmd_4_colors" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="315.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.allows_to_display_external_dmds_e_g_flexdmd" wrapText="true" />
+                        <CheckBox fx:id="colorizeDmd" layoutX="10.0" layoutY="202.0" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.mame.colorize_dmd_4_colors">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="638.0" styleClass="checkbox-description" text="%pref.mame.enables_basic_dmd_colorization_by_vpin_mame" textFill="WHITE" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="369.0" styleClass="checkbox-description" text="%pref.mame.this_flag_must_also_be_checked_for_other" textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="forceStereo" layoutX="10.0" layoutY="703.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.mame.force_stereo" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="638.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.enables_basic_dmd_colorization_by_vpin_mame" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="369.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.this_flag_must_also_be_checked_for_other" wrapText="true" />
+                        <CheckBox fx:id="forceStereo" layoutX="10.0" layoutY="703.0" mnemonicParsing="false" styleClass="preference-checkbox, c-text-white" text="%pref.mame.force_stereo">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="741.0" styleClass="checkbox-description" text="%pref.mame.relevant_for_7_1_systems_if_checked_it" textFill="WHITE" wrapText="true" />
-                        <Label styleClass="default-text" text="%pref.mame.sound_mode" textFill="WHITE" wrapText="true">
+                        <Label layoutX="10.0" layoutY="741.0" styleClass="checkbox-description, c-text-white" text="%pref.mame.relevant_for_7_1_systems_if_checked_it" wrapText="true" />
+                        <Label styleClass="default-text, c-text-white" text="%pref.mame.sound_mode" wrapText="true">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -116,7 +116,7 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="531.0" styleClass="preference-description" text="%pref.mame.this_can_enable_the_use_of_alternative_external" textFill="WHITE" wrapText="true">
+                        <Label layoutX="10.0" layoutY="531.0" styleClass="preference-description, c-text-white" text="%pref.mame.this_can_enable_the_use_of_alternative_external" wrapText="true">
                            <VBox.margin>
                               <Insets top="3.0" />
                            </VBox.margin></Label>

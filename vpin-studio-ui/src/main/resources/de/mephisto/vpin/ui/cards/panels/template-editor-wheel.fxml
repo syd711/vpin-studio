@@ -28,7 +28,7 @@
                              <Font size="10.0" />
                          </font>
                          <graphic>
-                             <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                             <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye-outline" />
                          </graphic>
                          <tooltip>
                              <Tooltip text="%cards.template_editor_wheel.toggle_wheel_visibility" />
@@ -39,7 +39,7 @@
                              <Font size="10.0" />
                          </font>
                          <graphic>
-                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
+                             <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                          </graphic>
                          <tooltip>
                              <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
@@ -60,7 +60,7 @@
                   <children>
                       <VBox spacing="3.0">
                         <children>
-                            <Label text="%cards.template_editor_wheel.position_x" textFill="WHITE">
+                            <Label text="%cards.template_editor_wheel.position_x" styleClass="c-text-white">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -70,7 +70,7 @@
                       </VBox>
                       <VBox spacing="3.0">
                         <children>
-                            <Label text="%cards.template_editor_wheel.position_y" textFill="WHITE">
+                            <Label text="%cards.template_editor_wheel.position_y" styleClass="c-text-white">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -83,7 +83,7 @@
 
                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                     <children>
-                      <Label text="%cards.template_editor_wheel.wheel_size" textFill="WHITE">
+                      <Label text="%cards.template_editor_wheel.wheel_size" styleClass="c-text-white">
                           <font>
                             <Font size="14.0" />
                           </font>

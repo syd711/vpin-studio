@@ -43,7 +43,7 @@
                                             <graphic>
                                                 <Label fx:id="maniaIconLabel">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-multiple"
+                                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-account-multiple"
                                                                   iconSize="18"/>
                                                     </graphic>
                                                 </Label>
@@ -54,7 +54,7 @@
                                             <graphic>
                                                 <Label fx:id="maniaOpenIconLabel">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link"
+                                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link"
                                                                   iconSize="18"/>
                                                     </graphic>
                                                     <tooltip>
@@ -73,20 +73,20 @@
                                         prefHeight="24.0" prefWidth="24.0" styleClass="header-button"
                                         stylesheets="@stylesheet.css">
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-minimize" iconSize="16"/>
+                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2w-window-minimize" iconSize="16"/>
                                     </graphic>
                                 </Button>
                                 <Button fx:id="maximizeBtn" mnemonicParsing="false" onAction="#onMaximize"
                                         prefHeight="24.0" prefWidth="24.0" styleClass="header-button"
                                         stylesheets="@stylesheet.css">
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-maximize" iconSize="16"/>
+                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2w-window-maximize" iconSize="16"/>
                                     </graphic>
                                 </Button>
                                 <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="24.0"
                                         prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="16"/>
+                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2w-window-close" iconSize="16"/>
                                     </graphic>
                                 </Button>
                             </children>
@@ -100,7 +100,7 @@
         </BorderPane>
     </right>
     <left>
-        <Label fx:id="titleLabel" text="%launcher.installer.vpin_studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+        <Label fx:id="titleLabel" text="%launcher.installer.vpin_studio" styleClass="c-text-white" BorderPane.alignment="TOP_LEFT">
             <font>
                 <Font name="Impact" size="18.0"/>
             </font>

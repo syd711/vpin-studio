@@ -68,15 +68,15 @@
                      <right>
                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="connectBtn" mnemonicParsing="false" onAction="#onConnect" text="%launcher.launcher.connect" textFill="WHITE">
+                              <Button fx:id="connectBtn" mnemonicParsing="false" onAction="#onConnect" text="%launcher.launcher.connect" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="bi-box-arrow-up-right" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="bi-box-arrow-up-right" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="newConnectionBtn" mnemonicParsing="false" onAction="#onNewConnection" text="%launcher.launcher.new_connection" textFill="WHITE">
+                              <Button fx:id="newConnectionBtn" mnemonicParsing="false" onAction="#onNewConnection" text="%launcher.launcher.new_connection" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -89,12 +89,12 @@
                                     <Insets left="3.0" right="3.0" />
                                  </HBox.margin>
                               </Separator>
-                              <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onConnectionRefresh" textFill="WHITE">
+                              <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onConnectionRefresh" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-refresh" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%launcher.launcher.refresh_server_connections">
@@ -110,12 +110,12 @@
                      <left>
                         <HBox fx:id="installContainer" alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="%launcher.installer.install_service" textFill="WHITE">
+                              <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="%launcher.installer.install_service" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="bi-gear" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="bi-gear" iconSize="18" />
                                  </graphic>
                               </Button>
                               <Hyperlink fx:id="helpBtn" onAction="#onHelp" text="%launcher.launcher.help">
@@ -123,7 +123,7 @@
                                     <Insets top="2.0" />
                                  </HBox.margin>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                               </Hyperlink>
                            </children>

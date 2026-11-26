@@ -32,7 +32,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="%pref.webhook_config_panel.endpoint_url" textFill="WHITE" wrapText="true">
+                  <Label text="%pref.webhook_config_panel.endpoint_url" styleClass="c-text-white" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -49,12 +49,12 @@
                         <CheckBox fx:id="deleteCheckbox" layoutX="100.0" layoutY="15.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%backups.backups.delete" />
                      </children>
                   </HBox>
-                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.event_types" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.event_types" styleClass="c-text-white" wrapText="true" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.custom_parameters" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.custom_parameters" styleClass="c-text-white" wrapText="true" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>

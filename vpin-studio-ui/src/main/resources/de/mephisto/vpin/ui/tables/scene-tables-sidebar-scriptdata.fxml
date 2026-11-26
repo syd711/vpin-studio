@@ -35,7 +35,7 @@
                   <children>
                   <VBox>
                      <children>
-                        <Label text="%tables.tables_sidebar_scriptdata.table_file_data" textFill="WHITE">
+                        <Label text="%tables.tables_sidebar_scriptdata.table_file_data" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -55,42 +55,42 @@
                               <RowConstraints fx:id="vbsRow" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                 <children>
-                                    <Label styleClass="default-text" text="%tables.tables_sidebar_scriptdata.table_filename" textFill="WHITE">
+                                    <Label styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.table_filename">
                                         <font>
                                             <Font name="System Bold" size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%tables.tables_sidebar_mame.nvoffset" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label layoutX="10.0" layoutY="45.0" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_mame.nvoffset" GridPane.rowIndex="3">
                                         <font>
                                             <Font name="System Bold" size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="labelFilename" layoutX="130.0" layoutY="12.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                                    <Label fx:id="labelFilename" layoutX="130.0" layoutY="12.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%backups.backups_sidebar.last_modified" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label layoutX="10.0" layoutY="45.0" styleClass="default-text, c-text-white" text="%backups.backups_sidebar.last_modified" GridPane.rowIndex="2">
                                         <font>
                                             <Font name="System Bold" size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="labelLastModified" layoutX="188.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <Label fx:id="labelLastModified" layoutX="188.0" layoutY="45.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%backglass.directb2s_sidebar.file_size" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label layoutX="10.0" layoutY="45.0" styleClass="default-text, c-text-white" text="%backglass.directb2s_sidebar.file_size" GridPane.rowIndex="1">
                                         <font>
                                             <Font name="System Bold" size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="labelFilesize" layoutX="187.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <Label fx:id="labelFilesize" layoutX="187.0" layoutY="45.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -105,7 +105,7 @@
                                           <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_scriptdata.in_visual_pinball_x_vpx_the_nvoffset_field" wrapText="true" />
                                        </tooltip>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                     </Label>
                                  </children>
@@ -114,7 +114,7 @@
                                  <children>
                                     <Button fx:id="openTablesFolderBtn" mnemonicParsing="false" onAction="#onTablesFolderOpen" styleClass="external-component">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%tables.table_data_tab_scoredata.open_the_tables_folder_of_vpx" />
@@ -125,7 +125,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_scriptdata.the_rom_name_usually_also_defines_the_folder" wrapText="true" />
@@ -133,22 +133,22 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="%tables.tables_sidebar_scriptdata.pup_pack_name" textFill="WHITE" GridPane.rowIndex="4">
+                              <Label layoutX="10.0" layoutY="116.0" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.pup_pack_name" GridPane.rowIndex="4">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="labelPupPackName" layoutX="136.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <Label fx:id="labelPupPackName" layoutX="136.0" layoutY="116.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="labelVbsTitle" styleClass="default-text" text="%tables.tables_sidebar_scriptdata.vbs_file" textFill="WHITE" GridPane.rowIndex="5">
+                              <Label fx:id="labelVbsTitle" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.vbs_file" GridPane.rowIndex="5">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="labelVbsFile" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <Label fx:id="labelVbsFile" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -157,7 +157,7 @@
                                  <children>
                                     <Button mnemonicParsing="false" onAction="#onVbsSettings">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%competitions.discord_competition_edit.server_settings" />
@@ -170,7 +170,7 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                             </GridPane>
-                        <Label layoutX="10.0" layoutY="10.0" text="%tables.tables_sidebar_scriptdata.vpx_table_info" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="10.0" text="%tables.tables_sidebar_scriptdata.vpx_table_info" styleClass="c-text-white">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -197,77 +197,77 @@
                               <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label alignment="TOP_LEFT" styleClass="default-text" text="%tables.tables_sidebar_scriptdata.table_name" textFill="WHITE" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+                              <Label alignment="TOP_LEFT" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.table_name" GridPane.halignment="LEFT" GridPane.valignment="TOP">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%tables.tables_sidebar_scriptdata.author_website" textFill="WHITE" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="15.0" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.author_website" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%tables.tables_sidebar_scriptdata.author_name" textFill="WHITE" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="45.0" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.author_name" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="TOP">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%tables.tables_sidebar_scriptdata.table_blurb" textFill="WHITE" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="TOP">
+                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="15.0" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.table_blurb" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="TOP">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="106.0" styleClass="default-text" text="%tables.tables_sidebar_scriptdata.table_rules" textFill="WHITE" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="TOP">
+                              <Label layoutX="10.0" layoutY="106.0" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.table_rules" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="TOP">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="137.0" styleClass="default-text" text="%tables.table_data.table_version" textFill="WHITE" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="TOP">
+                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="137.0" styleClass="default-text, c-text-white" text="%tables.table_data.table_version" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="TOP">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="168.0" styleClass="default-text" text="%tables.tables_sidebar_scriptdata.author_email" textFill="WHITE" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="TOP">
+                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="168.0" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.author_email" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="TOP">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="198.0" styleClass="default-text" text="%tables.tables_sidebar_scriptdata.release_date" textFill="WHITE" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="TOP">
+                              <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="198.0" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.release_date" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="TOP">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label alignment="TOP_LEFT" contentDisplay="TOP" layoutX="10.0" layoutY="228.0" styleClass="default-text" text="%tables.tables_sidebar_scriptdata.table_description" textFill="WHITE" GridPane.halignment="LEFT" GridPane.rowIndex="8" GridPane.valignment="TOP">
+                              <Label alignment="TOP_LEFT" contentDisplay="TOP" layoutX="10.0" layoutY="228.0" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.table_description" GridPane.halignment="LEFT" GridPane.rowIndex="8" GridPane.valignment="TOP">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="tableNameLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+                              <Label fx:id="tableNameLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="authorWebsiteLabel" layoutX="178.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                              <Label fx:id="authorWebsiteLabel" layoutX="178.0" layoutY="15.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="authorNameLabel" layoutX="178.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                              <Label fx:id="authorNameLabel" layoutX="178.0" layoutY="45.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="tableVersionLabel" layoutX="178.0" layoutY="137.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="TOP">
+                              <Label fx:id="tableVersionLabel" layoutX="178.0" layoutY="137.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="authorEmailLabel" layoutX="178.0" layoutY="168.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="TOP">
+                              <Label fx:id="authorEmailLabel" layoutX="178.0" layoutY="168.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="releaseDateLabel" layoutX="178.0" layoutY="198.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="TOP">
+                              <Label fx:id="releaseDateLabel" layoutX="178.0" layoutY="198.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -286,7 +286,7 @@
                                  <children>
                                     <Button fx:id="openTableRulesBtn" mnemonicParsing="false" onAction="#onShowTableRules" styleClass="external-component">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%tables.table_data_tab_scoredata.open_the_tables_folder_of_vpx" />
@@ -298,7 +298,7 @@
                                  <children>
                                     <Button fx:id="openTableDescriptionBtn" mnemonicParsing="false" onAction="#onShowTableDescription" styleClass="external-component">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%tables.table_data_tab_scoredata.open_the_tables_folder_of_vpx" />
@@ -311,16 +311,16 @@
                                     <Insets right="6.0" />
                                  </GridPane.margin>
                               </TextArea>
-                              <Label alignment="TOP_LEFT" contentDisplay="TOP" layoutX="10.0" layoutY="424.0" styleClass="default-text" text="%tables.tables_sidebar_scriptdata.screenshot" textFill="WHITE" GridPane.rowIndex="9">
+                              <Label alignment="TOP_LEFT" contentDisplay="TOP" layoutX="10.0" layoutY="424.0" styleClass="default-text, c-text-white" text="%tables.tables_sidebar_scriptdata.screenshot" GridPane.rowIndex="9">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
                               <VBox spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
                                  <children>
-                                    <Button fx:id="screenshotBtn" mnemonicParsing="false" onAction="#onScreenshot" textFill="WHITE">
+                                    <Button fx:id="screenshotBtn" mnemonicParsing="false" onAction="#onScreenshot" styleClass="c-text-white">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-refresh" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="%tables.table_data_tab_scoredata.open_the_tables_folder_of_vpx" />
@@ -328,7 +328,7 @@
                                     </Button>
                                     <Button fx:id="viewScreenshotBtn" mnemonicParsing="false" onAction="#onScreenshotView">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" iconSize="18" />
                                        </graphic>
                                     </Button>
                                  </children>
@@ -365,7 +365,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </Button>
             <Separator layoutX="630.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -373,7 +373,7 @@
               <items>
                 <MenuItem fx:id="editInternalBtn" mnemonicParsing="false" onAction="#onEditInternal" text="%tables.tables_sidebar_scriptdata.edit_script_internal_editor">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
                      </graphic>
                   </MenuItem>
               </items>
@@ -381,7 +381,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tables.tables_sidebar_highscores.open_the_table_script_for_the_selected_table" />
@@ -395,15 +395,15 @@
                   <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_scriptdata.make_sure_that_you_have_linked_a_text" wrapText="true" />
                </tooltip>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                </graphic>
             </Label>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onScan" text="%tables.tables_sidebar_highscores.scan" textFill="WHITE">
+            <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onScan" text="%tables.tables_sidebar_highscores.scan" styleClass="c-text-white">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#onScanAll" text="%tables.tables_overview.scan_all">
                      <graphic>
-                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2m-map-search">
+                        <FontIcon styleClass="c-fill-white, c-icon-white" iconLiteral="mdi2m-map-search">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -412,7 +412,7 @@
                   </MenuItem>
               </items>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tables.tables_sidebar_highscores.open_the_table_script_for_the_selected_table" />
@@ -422,12 +422,12 @@
                </font>
             </SplitMenuButton>
             <Separator layoutX="120.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="vpSaveEditBtn" layoutX="136.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="external-component" text="%tables.tables_sidebar_highscores.vpreg_stg" textFill="WHITE">
+            <Button fx:id="vpSaveEditBtn" layoutX="136.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="external-component, c-text-white" text="%tables.tables_sidebar_highscores.vpreg_stg">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tables.tables_sidebar_highscores.open_the_table_script_for_the_selected_table" />

@@ -21,7 +21,7 @@
                <children>
                   <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_tutorial.1_login_to_the_discord_developer_portal" wrapText="true" />
                   <Label styleClass="preference-description" text="%pref.bot_tutorial.login_or_register_at_the_discord_developer_portal" wrapText="true" />
-                  <Hyperlink text="%pref.bot_tutorial.https_discord_com_developers_applications" textFill="WHITE">
+                  <Hyperlink text="%pref.bot_tutorial.https_discord_com_developers_applications" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

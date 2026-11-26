@@ -17,9 +17,9 @@
 
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.playlistmanager.PlaylistTableController">
    <center>
-      <StackPane fx:id="tableStack" style="-fx-background-color: #222222;" BorderPane.alignment="CENTER">
+      <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;" BorderPane.alignment="CENTER">
          <children>
-            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: -c-tile;" styleClass="base-component">
                <columns>
                   <TableColumn fx:id="columnName" minWidth="100.0" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />
                   <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="200.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.emulator" />
@@ -40,12 +40,12 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                        <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
                      </graphic>
                   </Button>
                </children>
@@ -53,7 +53,7 @@
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <ComboBox fx:id="allEmulatorsCombo" prefWidth="150.0" promptText="%playlistmanager.playlist_table.all_emulators" />
             <Separator fx:id="emulatorsSeparator" layoutX="214.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="addBtn" layoutX="400.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAdd" textFill="WHITE">
+            <Button fx:id="addBtn" layoutX="400.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAdd" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -61,10 +61,10 @@
                   <Tooltip text="%playlistmanager.playlist_table.rebuild_the_playlist_from_a_template" />
                </tooltip>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-check" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-playlist-check" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" textFill="WHITE">
+            <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -72,7 +72,7 @@
                   <Tooltip text="%playlistmanager.playlist_table.remove_from_playlist" />
                </tooltip>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-minus" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-playlist-minus" iconSize="18" />
                </graphic>
             </Button>
          </items>

@@ -23,21 +23,21 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-title, c-text-white" text="%pref.backglass.3rd_party_preferences" wrapText="true" />
                   <Label styleClass="preference-subtitle" text="%pref.dmd.dmd_device_settings" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.dmd.settings_for_the_dmddevice_ini_file_are_configured" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.dmd.select_the_vpx_emulator_the_dmddevice_ini_file" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description, c-text-white" text="%pref.dmd.settings_for_the_dmddevice_ini_file_are_configured" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description, c-text-white" text="%pref.dmd.select_the_vpx_emulator_the_dmddevice_ini_file" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label styleClass="default-text" text="%pref.dmd.vpx_emulator" textFill="WHITE" wrapText="true">
+                        <Label styleClass="default-text, c-text-white" text="%pref.dmd.vpx_emulator" wrapText="true">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -52,13 +52,13 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="126.0" styleClass="preference-subtitle" text="%pref.dmd.network_settings" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="126.0" styleClass="preference-subtitle, c-text-white" text="%pref.dmd.network_settings" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="190.0" styleClass="preference-description" text="%pref.dmd.dmd_extensions_allow_receiving_frames_through_the_network" textFill="WHITE" wrapText="true" />
-                  <Label styleClass="preference-description" text="%pref.dmd.the_frames_are_sent_in_binary_data_through" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="190.0" styleClass="preference-description, c-text-white" text="%pref.dmd.dmd_extensions_allow_receiving_frames_through_the_network" wrapText="true" />
+                  <Label styleClass="preference-description, c-text-white" text="%pref.dmd.the_frames_are_sent_in_binary_data_through" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -96,7 +96,7 @@
 
                         <Label styleClass="sm-field-error" fx:id="networkStreamErrorLabel" text="%pref.dmd.invalid_url_press_update_to_set_the_vpin" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <graphic>
-                              <FontIcon iconColor="#FF6B70" iconLiteral="mdi2a-alert-circle-outline" iconSize="16" />
+                              <FontIcon styleClass="c-icon-error" iconLiteral="mdi2a-alert-circle-outline" iconSize="16" />
                            </graphic>
                            <font>
                               <Font size="14.0" />
@@ -111,7 +111,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="220.0" styleClass="preference-subtitle" text="%pref.dmd.virtual_dmd_settings" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="220.0" styleClass="preference-subtitle, c-text-white" text="%pref.dmd.virtual_dmd_settings" wrapText="true" />
                   <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" />

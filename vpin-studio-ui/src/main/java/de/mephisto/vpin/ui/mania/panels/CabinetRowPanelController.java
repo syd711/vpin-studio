@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.mania.panels;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -15,7 +16,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +89,7 @@ public class CabinetRowPanelController implements Initializable {
         if (status.getStatus() != null && status.getStatus().equals(CabinetOnlineStatus.online)) {
           statusLabel.setText(Messages.get("mania.cabinet_row_panel.online"));
           FontIcon icon = WidgetFactory.createIcon("mdi2c-checkbox-blank-circle");
-          icon.setIconColor(Paint.valueOf(WidgetFactory.OK_COLOR));
+          ThemeColors.setIconColor(icon, ThemeColors.SUCCESS_LIGHT);
           statusLabel.setGraphic(icon);
           statusLabel.setStyle(WidgetFactory.OK_STYLE);
           activeGameLabel.setVisible(true);
@@ -103,7 +103,7 @@ public class CabinetRowPanelController implements Initializable {
         else {
           statusLabel.setText(Messages.get("mania.cabinet_row_panel.offline"));
           FontIcon icon = WidgetFactory.createIcon("mdi2c-checkbox-blank-circle-outline");
-          icon.setIconColor(Paint.valueOf("#FFFFFF"));
+          ThemeColors.setIconColor(icon, ThemeColors.WHITE);
           statusLabel.setGraphic(icon);
           statusLabel.setStyle(WidgetFactory.DEFAULT_TEXT_STYLE);
           activeGameLabel.setVisible(false);

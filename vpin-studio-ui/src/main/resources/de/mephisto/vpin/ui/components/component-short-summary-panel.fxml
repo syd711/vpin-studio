@@ -42,12 +42,12 @@
          <children>
             <Hyperlink fx:id="link" maxWidth="Infinity" onAction="#onLink" styleClass="sm-link" text="-" HBox.hgrow="ALWAYS">
                <graphic>
-                  <FontIcon iconColor="#7FB2FF" iconLiteral="mdi2o-open-in-new" iconSize="14" />
+                  <FontIcon styleClass="c-icon-link" iconLiteral="mdi2o-open-in-new" iconSize="14" />
                </graphic>
             </Hyperlink>
             <Button fx:id="manageBtn" contentDisplay="RIGHT" minWidth="-Infinity" mnemonicParsing="false" onAction="#onManage" styleClass="sm-button" text="%components.overview.manage">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-chevron-right" iconSize="16" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-chevron-right" iconSize="16" />
                </graphic>
             </Button>
          </children>

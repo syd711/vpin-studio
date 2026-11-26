@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.apng.ApngImageLoaderFactory;
@@ -516,7 +517,7 @@ public class Studio extends Application {
       }
     }
 
-    Scene scene = new Scene(root, imgWidth, imgHeight, Paint.valueOf("#212529")); // Set solid background color
+    Scene scene = new Scene(root, imgWidth, imgHeight, Paint.valueOf(ThemeColors.CARD_BACKGROUND)); // Set solid background color
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
     Stage stage = new Stage(StageStyle.TRANSPARENT);

@@ -13,7 +13,7 @@
         <Label fx:id="descriptionLabel" styleClass="default-text" text="-" wrapText="true" />
         <HBox alignment="CENTER">
             <children>
-                <Label fx:id="valueLabel" text="-" textFill="WHITE">
+                <Label fx:id="valueLabel" text="-" styleClass="c-text-white">
                     <font>
                         <Font size="72.0" />
                     </font>

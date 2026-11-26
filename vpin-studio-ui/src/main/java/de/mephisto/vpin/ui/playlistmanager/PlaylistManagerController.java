@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -52,7 +53,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private final static Logger LOG = LoggerFactory.getLogger(PlaylistManagerController.class);
 
   private static final DataFormat JAVA_FORMAT = new DataFormat("application/x-java-serialized-object");
-  private static final String DROP_HINT_STYLE = "-fx-border-color: #6666FF; -fx-border-width: 2 0 2 0; -fx-padding: 3 3 1 3";
+  private static final String DROP_HINT_STYLE = "-fx-border-color: " + ThemeColors.HIGHLIGHT + "; -fx-border-width: 2 0 2 0; -fx-padding: 3 3 1 3";
 
   private final Debouncer debouncer = new Debouncer();
 

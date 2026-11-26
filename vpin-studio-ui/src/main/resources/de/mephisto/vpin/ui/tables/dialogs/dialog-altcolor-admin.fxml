@@ -25,21 +25,21 @@
                <top>
                   <ToolBar prefWidth="400.0" BorderPane.alignment="CENTER">
                     <items>
-                        <Button fx:id="restoreBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" textFill="WHITE">
+                        <Button fx:id="restoreBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-arrow-up-outline" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-archive-arrow-up-outline" />
                            </graphic>
                         </Button>
                         <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
+                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                              <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                            </graphic>
                         </Button>
                     </items>
@@ -59,7 +59,7 @@
                   <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="scoreLabel1" text="%tables.altcolor_admin.restoring_will_automatically_create_a_backup_of_the" textFill="WHITE">
+                  <Label fx:id="scoreLabel1" text="%tables.altcolor_admin.restoring_will_automatically_create_a_backup_of_the" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

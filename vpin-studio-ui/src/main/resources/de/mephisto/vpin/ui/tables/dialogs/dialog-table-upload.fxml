@@ -76,7 +76,7 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label fx:id="titleLabel" text="%tables.table_upload.table_file_archive" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label fx:id="titleLabel" text="%tables.table_upload.table_file_archive" styleClass="c-text-white" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -90,7 +90,7 @@
                                           </TextField>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="titleLabel1" layoutX="10.0" layoutY="49.0" text="%tables.table_upload.upload_to_emulator" textFill="WHITE">
+                                    <Label fx:id="titleLabel1" layoutX="10.0" layoutY="49.0" text="%tables.table_upload.upload_to_emulator" styleClass="c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -98,7 +98,7 @@
                                     <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="266.0" GridPane.columnIndex="1" />
                                     <HBox fx:id="autoFillCheckbox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <children>
-                                          <CheckBox fx:id="autofillCheckbox" mnemonicParsing="false" selected="true" text="%tables.table_upload.auto_match_vps_entry_and_fill_database" textFill="WHITE">
+                                          <CheckBox fx:id="autofillCheckbox" mnemonicParsing="false" selected="true" text="%tables.table_upload.auto_match_vps_entry_and_fill_database" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -111,17 +111,17 @@
                                                 <Tooltip prefWidth="300.0" text="%tables.table_upload.the_matching_entry_of_the_virtual_pinball_spreadsheet" wrapText="true" />
                                              </tooltip>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="titleLabel2" layoutX="10.0" layoutY="49.0" text="%tables.table_upload.auto_fill" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label fx:id="titleLabel2" layoutX="10.0" layoutY="49.0" text="%tables.table_upload.auto_fill" styleClass="c-text-white" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="titleLabel21" layoutX="10.0" layoutY="83.0" text="%tables.music_upload.target_folder" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label fx:id="titleLabel21" layoutX="10.0" layoutY="83.0" text="%tables.music_upload.target_folder" styleClass="c-text-white" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -133,7 +133,7 @@
                                        <children>
                                           <HBox alignment="CENTER_LEFT" spacing="6.0">
                                              <children>
-                                                <CheckBox fx:id="subfolderCheckbox" mnemonicParsing="false" text="%tables.table_upload.upload_to_separate_subfolder" textFill="WHITE">
+                                                <CheckBox fx:id="subfolderCheckbox" mnemonicParsing="false" text="%tables.table_upload.upload_to_separate_subfolder" styleClass="c-text-white">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -146,7 +146,7 @@
                                                       <Tooltip prefWidth="300.0" text="%tables.table_upload.this_will_upload_the_vpx_into_a_subfolder" wrapText="true" />
                                                    </tooltip>
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                 </Label>
                                              </children>
@@ -170,39 +170,39 @@
                                           <Insets right="102.0" />
                                        </padding>
                                     </VBox>
-                                    <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="115.0" text="%tables.table_upload.resolved_table_file" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="115.0" text="%tables.table_upload.resolved_table_file" styleClass="c-text-white" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="181.0" maxWidth="400.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                    <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="181.0" maxWidth="400.0" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backglass.res_generator.select_file" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                    <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backglass.res_generator.select_file" styleClass="c-text-white" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <Label fx:id="titleLabel11" text="%tables.patch_upload.readme_txt" textFill="WHITE" GridPane.rowIndex="5">
+                                    <Label fx:id="titleLabel11" text="%tables.patch_upload.readme_txt" styleClass="c-text-white" GridPane.rowIndex="5">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
                                     <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                        <children>
-                                          <Label fx:id="readmeLabel" text="-" textFill="WHITE">
+                                          <Label fx:id="readmeLabel" text="-" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Button fx:id="readmeBtn" mnemonicParsing="false" onAction="#onReadme" styleClass="text-button" text="%tables.patch_upload.view_readme" textFill="WHITE">
+                                          <Button fx:id="readmeBtn" mnemonicParsing="false" onAction="#onReadme" styleClass="text-button, c-text-white" text="%tables.patch_upload.view_readme">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
+                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                                              </graphic>
                                           </Button>
                                        </children>
@@ -213,12 +213,12 @@
                         </VBox>
                         <VBox fx:id="assetsView" prefWidth="470.0">
                            <children>
-                              <Label styleClass="default-headline" text="%tables.table_upload.additional_assets" textFill="WHITE" wrapText="true">
+                              <Label styleClass="default-headline, c-text-white" text="%tables.table_upload.additional_assets" wrapText="true">
                                  <VBox.margin>
                                     <Insets top="12.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label styleClass="preference-description" text="%tables.table_upload.the_following_additional_assets_have_been_found" textFill="WHITE" wrapText="true" />
+                              <Label styleClass="preference-description, c-text-white" text="%tables.table_upload.the_following_additional_assets_have_been_found" wrapText="true" />
                               <ScrollPane hbarPolicy="NEVER" maxHeight="150.0">
                                  <VBox.margin>
                                     <Insets top="12.0" />
@@ -226,67 +226,67 @@
                                  <content>
                                     <VBox fx:id="assetsBox" spacing="6.0">
                                        <children>
-                                          <Label fx:id="assetAltSoundLabel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%tables.table_upload.alt_sound" textFill="WHITE">
+                                          <Label fx:id="assetAltSoundLabel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%tables.table_upload.alt_sound" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetAltColorLabel" layoutX="10.0" layoutY="38.0" mnemonicParsing="false" text="%tables.table_upload.alt_color" textFill="WHITE">
+                                          <Label fx:id="assetAltColorLabel" layoutX="10.0" layoutY="38.0" mnemonicParsing="false" text="%tables.table_upload.alt_color" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetBackglassLabel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%tables.table_upload.backglass" textFill="WHITE">
+                                          <Label fx:id="assetBackglassLabel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%tables.table_upload.backglass" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetCfgLabel" layoutX="10.0" layoutY="91.0" mnemonicParsing="false" text="%tables.table_upload.cfg_file" textFill="WHITE">
+                                          <Label fx:id="assetCfgLabel" layoutX="10.0" layoutY="91.0" mnemonicParsing="false" text="%tables.table_upload.cfg_file" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetDmdLabel" layoutX="10.0" layoutY="64.0" mnemonicParsing="false" text="%tables.table_upload.dmd" textFill="WHITE">
+                                          <Label fx:id="assetDmdLabel" layoutX="10.0" layoutY="64.0" mnemonicParsing="false" text="%tables.table_upload.dmd" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetIniLabel" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="%tables.table_upload.ini_file" textFill="WHITE">
+                                          <Label fx:id="assetIniLabel" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="%tables.table_upload.ini_file" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetMusicLabel" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="%tables.table_upload.music_pack" textFill="WHITE">
+                                          <Label fx:id="assetMusicLabel" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="%tables.table_upload.music_pack" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetMediaLabel" mnemonicParsing="false" text="%tables.table_upload.media_pack_for_popper_screens" textFill="WHITE">
+                                          <Label fx:id="assetMediaLabel" mnemonicParsing="false" text="%tables.table_upload.media_pack_for_popper_screens" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetNvRamLabel" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="%tables.table_upload.nv_file" textFill="WHITE">
+                                          <Label fx:id="assetNvRamLabel" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="%tables.table_upload.nv_file" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetPupPackLabel" mnemonicParsing="false" text="%tables.table_upload.pup_pack" textFill="WHITE">
+                                          <Label fx:id="assetPupPackLabel" mnemonicParsing="false" text="%tables.table_upload.pup_pack" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetPovLabel" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%tables.table_upload.pov_file" textFill="WHITE">
+                                          <Label fx:id="assetPovLabel" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%tables.table_upload.pov_file" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetResLabel" layoutX="10.0" layoutY="302.0" mnemonicParsing="false" text="%tables.table_upload.res_file" textFill="WHITE">
+                                          <Label fx:id="assetResLabel" layoutX="10.0" layoutY="302.0" mnemonicParsing="false" text="%tables.table_upload.res_file" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="assetRomLabel" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="%tables.table_upload.rom" textFill="WHITE">
+                                          <Label fx:id="assetRomLabel" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="%tables.table_upload.rom" styleClass="c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -295,12 +295,12 @@
                                     </VBox>
                                  </content>
                               </ScrollPane>
-                              <Button fx:id="assetFilterBtn" mnemonicParsing="false" onAction="#onAssetFilter" text="%tables.table_upload.filter_selection" textFill="WHITE">
+                              <Button fx:id="assetFilterBtn" mnemonicParsing="false" onAction="#onAssetFilter" text="%tables.table_upload.filter_selection" styleClass="c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-outline" iconSize="18" />
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-filter-outline" iconSize="18" />
                                  </graphic>
                                  <VBox.margin>
                                     <Insets top="6.0" />
@@ -317,12 +317,12 @@
                      <children>
                         <VBox fx:id="uploadImportBox" prefWidth="400.0" styleClass="selection-panel">
                            <children>
-                              <RadioButton fx:id="uploadAndImportRadio" mnemonicParsing="false" selected="true" text="%tables.table_upload.upload_and_import_to_frontend" textFill="WHITE" wrapText="true">
+                              <RadioButton fx:id="uploadAndImportRadio" mnemonicParsing="false" selected="true" text="%tables.table_upload.upload_and_import_to_frontend" styleClass="c-text-white" wrapText="true">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </RadioButton>
-                              <Label fx:id="uploadAndImportDescription" styleClass="checkbox-description" text="%tables.table_upload.the_uploaded_table_will_be_visible_as_new" textFill="WHITE" wrapText="true" />
+                              <Label fx:id="uploadAndImportDescription" styleClass="checkbox-description, c-text-white" text="%tables.table_upload.the_uploaded_table_will_be_visible_as_new" wrapText="true" />
                            </children>
                            <HBox.margin>
                               <Insets />
@@ -333,7 +333,7 @@
                         </VBox>
                         <VBox fx:id="uploadReplaceBox" prefWidth="400.0" styleClass="selection-panel">
                            <children>
-                              <RadioButton fx:id="uploadAndReplaceRadio" mnemonicParsing="false" text="%tables.directb2s_upload.upload_and_replace" textFill="WHITE" wrapText="true">
+                              <RadioButton fx:id="uploadAndReplaceRadio" mnemonicParsing="false" text="%tables.directb2s_upload.upload_and_replace" styleClass="c-text-white" wrapText="true">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -341,25 +341,16 @@
                                     <Insets />
                                  </VBox.margin>
                               </RadioButton>
-                              <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description" text="%tables.table_upload.the_uploaded_table_will_replace_the_selected_table" textFill="WHITE" wrapText="true" />
+                              <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description, c-text-white" text="%tables.table_upload.the_uploaded_table_will_replace_the_selected_table" wrapText="true" />
                               <VBox>
                                  <children>
-                                    <CheckBox fx:id="keepNamesCheckbox" mnemonicParsing="false" text="%tables.table_upload.keep_existing_table_filename_when_replacing_table" textFill="WHITE" wrapText="true">
+                                    <CheckBox fx:id="keepNamesCheckbox" mnemonicParsing="false" text="%tables.table_upload.keep_existing_table_filename_when_replacing_table" styleClass="c-text-white" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <Label styleClass="checkbox-description" text="%tables.table_upload.if_enabled_the_existing_table_filename_is_kept" textFill="WHITE" wrapText="true" />
-                                    <CheckBox fx:id="keepDisplayNamesCheckbox" mnemonicParsing="false" text="%tables.table_upload.keep_existing_display_name_when_replacing_table" textFill="WHITE" wrapText="true">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <Label styleClass="checkbox-description" text="%tables.table_upload.if_enabled_the_existing_display_name_of_the" textFill="WHITE" wrapText="true" />
-                                    <CheckBox fx:id="backupTableOnOverwriteCheckbox" layoutX="10.0" layoutY="58.0" mnemonicParsing="false" text="%tables.table_upload.create_backup_from_existing_table" textFill="WHITE" wrapText="true">
+                                    <Label styleClass="checkbox-description, c-text-white" text="%tables.table_upload.if_enabled_the_existing_table_filename_is_kept" wrapText="true" />
+                                    <CheckBox fx:id="keepDisplayNamesCheckbox" mnemonicParsing="false" text="%tables.table_upload.keep_existing_display_name_when_replacing_table" styleClass="c-text-white" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -367,7 +358,16 @@
                                           <Insets top="6.0" />
                                        </VBox.margin>
                                     </CheckBox>
-                                    <Label layoutX="10.0" layoutY="78.0" styleClass="checkbox-description" text="%tables.table_upload.if_enabled_the_existing_table_file_will_be" textFill="WHITE" wrapText="true" />
+                                    <Label styleClass="checkbox-description, c-text-white" text="%tables.table_upload.if_enabled_the_existing_display_name_of_the" wrapText="true" />
+                                    <CheckBox fx:id="backupTableOnOverwriteCheckbox" layoutX="10.0" layoutY="58.0" mnemonicParsing="false" text="%tables.table_upload.create_backup_from_existing_table" styleClass="c-text-white" wrapText="true">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
+                                    <Label layoutX="10.0" layoutY="78.0" styleClass="checkbox-description, c-text-white" text="%tables.table_upload.if_enabled_the_existing_table_file_will_be" wrapText="true" />
                                  </children>
                                  <VBox.margin>
                                     <Insets left="26.0" top="6.0" />
@@ -380,7 +380,7 @@
                         </VBox>
                         <VBox fx:id="uploadCloneBox" prefWidth="400.0" styleClass="selection-panel">
                            <children>
-                              <RadioButton fx:id="uploadAndCloneRadio" mnemonicParsing="false" text="%tables.table_upload.upload_and_clone" textFill="WHITE" wrapText="true">
+                              <RadioButton fx:id="uploadAndCloneRadio" mnemonicParsing="false" text="%tables.table_upload.upload_and_clone" styleClass="c-text-white" wrapText="true">
                                  <VBox.margin>
                                     <Insets />
                                  </VBox.margin>
@@ -388,7 +388,7 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </RadioButton>
-                              <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description" text="%tables.table_upload.the_uploaded_table_will_be_imported_into_frontend" textFill="WHITE" wrapText="true" />
+                              <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description, c-text-white" text="%tables.table_upload.the_uploaded_table_will_be_imported_into_frontend" wrapText="true" />
                            </children>
                            <padding>
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

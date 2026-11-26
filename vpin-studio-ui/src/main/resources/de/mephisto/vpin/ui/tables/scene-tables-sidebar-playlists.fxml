@@ -28,7 +28,7 @@
                      <children>
                         <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                            <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
                            </children>
                         </StackPane>
                         <VBox spacing="2.0" HBox.hgrow="ALWAYS">
@@ -41,7 +41,7 @@
                            <children>
                               <Button fx:id="dismissLink" mnemonicParsing="false" onAction="#onDismiss" styleClass="sm-alert-close">
                                  <graphic>
-                                    <FontIcon iconColor="#E6C3C5" iconLiteral="mdi2c-close" iconSize="16" />
+                                    <FontIcon styleClass="c-icon-error-text" iconLiteral="mdi2c-close" iconSize="16" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%backglass.directb2s_admin.dismiss" />
@@ -69,14 +69,14 @@
             </VBox>
             <VBox fx:id="dataRoot">
                <children>
-                  <Label fx:id="dialogTitleLabel" styleClass="default-title" text="%tables.table_asset_manager.playlists" textFill="WHITE">
+                  <Label fx:id="dialogTitleLabel" styleClass="default-title, c-text-white" text="%tables.table_asset_manager.playlists">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
                   <Label fx:id="dialogCommentLabel" text="%tables.tables_sidebar_playlists.changes_in_this_tab_will_be_stored_immediately" wrapText="true">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-rhombus-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-alert-rhombus-outline" iconSize="18" />
                      </graphic>
                      <VBox.margin>
                         <Insets top="6.0" />
@@ -104,9 +104,9 @@
    <top>
       <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="playlistManagerBtn" layoutX="26.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" text="%tables.tables_sidebar_playlists.playlist_manager" textFill="WHITE">
+            <Button fx:id="playlistManagerBtn" layoutX="26.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" text="%tables.tables_sidebar_playlists.playlist_manager" styleClass="c-text-white">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-edit" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-playlist-edit" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />
@@ -116,9 +116,9 @@
                </tooltip>
             </Button>
             <Separator fx:id="playlistManagerSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" text="%tables.tables_sidebar_playlists.edit_playlist_assets" textFill="WHITE">
+            <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" text="%tables.tables_sidebar_playlists.edit_playlist_assets" styleClass="c-text-white">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
+                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />

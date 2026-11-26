@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.dropins;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.commons.utils.localsettings.LocalSettingsChangeListener;
@@ -35,7 +36,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -123,8 +123,8 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     Button resetBtn = new Button();
     HBox.setMargin(resetBtn, new Insets(0, 3, 3, 0));
     resetBtn.getStyleClass().add("ghost-icon-button");
-    resetBtn.setTextFill(Paint.valueOf("#FFFFFF"));
-    resetBtn.setGraphic(WidgetFactory.createIcon("mdi2c-close-thick", "#FFFFFF"));
+    ThemeColors.setTextFill(resetBtn, ThemeColors.WHITE);
+    resetBtn.setGraphic(WidgetFactory.createIcon("mdi2c-close-thick", ThemeColors.WHITE));
     resetBtn.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -159,8 +159,8 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     Button btn = new Button(Messages.get("tables.table_delete.delete_all"));
     HBox.setMargin(btn, new Insets(3, 3, 3, 3));
     btn.getStyleClass().add("default-text");
-    btn.setTextFill(Paint.valueOf("#ff3333"));
-    btn.setGraphic(WidgetFactory.createIcon("mdi2d-delete-outline", "#ff3333"));
+    ThemeColors.setTextFill(btn, ThemeColors.DANGER);
+    btn.setGraphic(WidgetFactory.createIcon("mdi2d-delete-outline", ThemeColors.DANGER));
     btn.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -199,7 +199,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     this.dropInsBtn.getItems().addFirst(item);
 
     Label placeholder = new Label(Messages.get("dropins.drop_in_manager.no_drop_in_files_found"));
-    placeholder.setStyle("-fx-text-fill: #AAAAAA; -fx-font-size: 13px;");
+    placeholder.setStyle("-fx-text-fill: " + ThemeColors.TEXT_PLACEHOLDER + "; -fx-font-size: 13px;");
     fileListView = new ListView<>();
     fileListView.setPlaceholder(placeholder);
     fileListView.setPrefHeight(50);

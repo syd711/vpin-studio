@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.editors;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
@@ -28,7 +29,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -591,7 +591,7 @@ public class AltSound2EditorController implements Initializable {
 
     FilenameCell() {
       playIcon.setIconSize(14);
-      playIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+      ThemeColors.setIconColor(playIcon, ThemeColors.WHITE);
       playBtn.setGraphic(playIcon);
       playBtn.getStyleClass().add("ghost-button-tiny");
       box.setAlignment(Pos.CENTER_LEFT);

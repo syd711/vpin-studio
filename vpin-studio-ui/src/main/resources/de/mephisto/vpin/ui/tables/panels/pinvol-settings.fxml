@@ -50,7 +50,7 @@
                   <Insets />
                </VBox.margin>
             </GridPane>
-            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSave" text="%tables.pinvol_settings.save_settings" textFill="WHITE">
+            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSave" text="%tables.pinvol_settings.save_settings" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -93,7 +93,7 @@
                   <Spinner fx:id="tableVolRearSpinner" layoutX="164.0" layoutY="180.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onDefaults" text="%tables.pinvol_settings.apply_defaults" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onDefaults" text="%tables.pinvol_settings.apply_defaults" styleClass="c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -103,7 +103,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%tables.pinvol_settings.uses_the_average_values_of_all_tables" wrapText="true" />

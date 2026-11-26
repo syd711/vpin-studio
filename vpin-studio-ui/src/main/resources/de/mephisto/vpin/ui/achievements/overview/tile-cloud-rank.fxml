@@ -4,11 +4,11 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="Infinity" spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewCloudRankTileController">
+<VBox maxHeight="Infinity" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewCloudRankTileController">
    <children>
-      <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.cloud_rank" />
-      <Label fx:id="rankLabel" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Monospaced';" text="—" />
-      <Label fx:id="detailLabel" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" wrapText="true" />
+      <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%achievements.cloud_rank" />
+      <Label fx:id="rankLabel" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: -c-white; -fx-font-family: 'Monospaced';" text="—" />
+      <Label fx:id="detailLabel" style="-fx-font-size: 14px; -fx-text-fill: -c-muted;" wrapText="true" />
       <VBox fx:id="registerBox" managed="false" visible="false" />
    </children>
    <padding>

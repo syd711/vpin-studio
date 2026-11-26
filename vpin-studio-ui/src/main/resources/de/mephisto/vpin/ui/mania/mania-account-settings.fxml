@@ -20,14 +20,14 @@
          <content>
             <VBox>
                <children>
-                  <Label styleClass="preference-title" text="%mania.mania_account_settings.cabinet_settings" textFill="WHITE" />
+                  <Label styleClass="preference-title, c-text-white" text="%mania.mania_account_settings.cabinet_settings" />
                   <VBox fx:id="preferencesPanel">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>
                      <children>
                         <Label layoutX="10.0" layoutY="64.0" styleClass="preference-subtitle" text="%mania.mania_account_settings.cabinet_data" />
-                        <Label styleClass="preference-description" text="%mania.mania_account_settings.meta_information_about_your_registered_cabinet" textFill="WHITE">
+                        <Label styleClass="preference-description, c-text-white" text="%mania.mania_account_settings.meta_information_about_your_registered_cabinet">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
@@ -48,7 +48,7 @@
                                  <children>
                                     <Button mnemonicParsing="false" onAction="#onIdCopy">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
                                        </graphic>
                                        <font>
                                           <Font size="14.0" />
@@ -66,12 +66,12 @@
                            </VBox.margin>
                         </GridPane>
                         <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%mania.mania_account_settings.cabinet_deletion" />
-                        <Label layoutX="10.0" layoutY="213.0" styleClass="preference-description" text="%mania.mania_account_settings.this_will_delete_your_all_you_cabinet_data" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="213.0" styleClass="preference-description, c-text-white" text="%mania.mania_account_settings.this_will_delete_your_all_you_cabinet_data">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-description" text="%mania.mania_account_settings.on_vpin_mania_net" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-description, c-text-white" text="%mania.mania_account_settings.on_vpin_mania_net" />
                         <Button mnemonicParsing="false" onAction="#onAccountDelete" styleClass="sm-danger-button" text="%mania.mania_account_settings.delete_cabinet">
                            <font>
                               <Font size="14.0" />

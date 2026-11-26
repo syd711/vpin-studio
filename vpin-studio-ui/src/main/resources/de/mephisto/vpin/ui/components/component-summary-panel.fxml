@@ -35,7 +35,7 @@
                         <Label fx:id="installedVersionLabel" styleClass="sm-text" text="-" wrapText="true" />
                      </children>
                   </VBox>
-                  <FontIcon iconColor="#7A7A7A" iconLiteral="mdi2a-arrow-right" iconSize="18" GridPane.columnIndex="1" />
+                  <FontIcon styleClass="c-icon-disabled" iconLiteral="mdi2a-arrow-right" iconSize="18" GridPane.columnIndex="1" />
                   <VBox spacing="4.0" GridPane.columnIndex="2">
                      <children>
                         <Label styleClass="sm-small" text="%components.tab.latest_release" />
@@ -108,7 +108,7 @@
                   <Label styleClass="sm-hint" text="%components.tab.source" GridPane.rowIndex="1" />
                   <Hyperlink fx:id="githubLink" onAction="#onHyperlink" styleClass="sm-link" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <graphic>
-                        <FontIcon iconColor="#7FB2FF" iconLiteral="mdi2o-open-in-new" iconSize="14" />
+                        <FontIcon styleClass="c-icon-link" iconLiteral="mdi2o-open-in-new" iconSize="14" />
                      </graphic>
                   </Hyperlink>
                </children>

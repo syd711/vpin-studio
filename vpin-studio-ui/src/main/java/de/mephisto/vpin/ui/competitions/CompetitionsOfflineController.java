@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.competitions;
 
+import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -282,7 +283,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       Label label = new Label(value.getName());
 
       if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
+        label.setStyle("-fx-font-color: " + ThemeColors.SUCCESS + ";-fx-text-fill:" + ThemeColors.SUCCESS + ";");
       }
       return new SimpleObjectProperty(label);
     });
@@ -296,7 +297,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
         label = new Label(game.getGameDisplayName());
       }
       if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
+        label.setStyle("-fx-font-color: " + ThemeColors.SUCCESS + ";-fx-text-fill:" + ThemeColors.SUCCESS + ";");
       }
 
       HBox hBox = new HBox(6);
@@ -328,7 +329,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       }
       Label label = new Label(status);
       if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
+        label.setStyle("-fx-font-color: " + ThemeColors.SUCCESS + ";-fx-text-fill:" + ThemeColors.SUCCESS + ";");
       }
       return new SimpleObjectProperty(label);
     });
@@ -337,7 +338,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getStartDate().atZone(ZoneId.systemDefault())));
       if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
+        label.setStyle("-fx-font-color: " + ThemeColors.SUCCESS + ";-fx-text-fill:" + ThemeColors.SUCCESS + ";");
       }
       return new SimpleObjectProperty(label);
     });
@@ -346,7 +347,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getEndDate().atZone(ZoneId.systemDefault())));
       if (value.isActive()) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
+        label.setStyle("-fx-font-color: " + ThemeColors.SUCCESS + ";-fx-text-fill:" + ThemeColors.SUCCESS + ";");
       }
       return new SimpleObjectProperty(label);
     });

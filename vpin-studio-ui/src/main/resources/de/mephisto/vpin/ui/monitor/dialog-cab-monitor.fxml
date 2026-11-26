@@ -28,41 +28,41 @@
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <items>
                   <ComboBox fx:id="monitoringModeCombo" prefWidth="200.0" />
-                <Button mnemonicParsing="false" onAction="#zoomIn" textFill="WHITE">
+                <Button mnemonicParsing="false" onAction="#zoomIn" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-magnify-plus" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-magnify-plus" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#zoomOut" textFill="WHITE">
+                  <Button layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#zoomOut" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-magnify-minus" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-magnify-minus" iconSize="18" />
                      </graphic>
                   </Button>
                   <Separator layoutX="297.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScreenshot" textFill="WHITE">
+                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScreenshot" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-camera-plus-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-camera-plus-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%monitor.cab_monitor.take_and_download_screenshots" />
                      </tooltip>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="%components.components.screens" textFill="WHITE">
+                  <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="%components.components.screens" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-edit" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-monitor-edit" iconSize="18" />
                      </graphic>
                   </MenuButton>
                   <Separator fx:id="playfieldRotationSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -76,12 +76,12 @@
                         </ComboBox>
                      </children>
                   </HBox>
-                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClearCache" textFill="WHITE">
+                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClearCache" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-refresh" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%monitor.cab_monitor.reload_screen_positioning" />
