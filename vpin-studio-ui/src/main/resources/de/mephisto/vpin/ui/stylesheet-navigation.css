@@ -1,0 +1,182 @@
+.window-header {
+    -fx-background-color: -fx-base-7;
+    -fx-border-radius: 6px 6px 0 0;
+    -fx-background-radius: 6px 6px 0 0;
+}
+
+.window-header:maximized {
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+.dialog-header {
+    -fx-background-color: -fx-base-7;
+    -fx-border-radius: 6px 6px 0 0;
+    -fx-background-radius: 6px 6px 0 0;
+}
+
+.main-toolbar {
+    -fx-background-color: -fx-base-6;
+    -fx-border-radius: 12 12 12 12;
+    -fx-base : -fx-base-7;
+}
+
+/**
+ * Breadcrumb
+ */
+.breadcrumb {
+    -fx-font-weight: bold;
+    -fx-font-color: -fx-base-1;
+    -fx-text-fill: -fx-base-1;
+    -fx-font-size : 24px;
+}
+
+
+/**
+ * Preferences
+ */
+/* Preference navigation, same look as the main navigation sidebar (nav-*) */
+.pref-nav, .pref-nav > .viewport {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.pref-nav {
+    -fx-min-width: 280px;
+    -fx-pref-width: 280px;
+    -fx-max-width: 280px;
+    -fx-background-color: #222222;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-padding: 0 6 10 10;
+}
+
+.pref-nav:focused {
+    -fx-background-color: #222222;
+    -fx-background-insets: 0;
+}
+
+/**
+ * Window Toolbar
+ */
+.header-button {
+    -fx-background-color: -fx-base-7;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #DDDDDD;
+}
+
+.header-button:hover {
+    -fx-background-color: #333366;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+/**
+ * Navigation sidebar (see UI-STYLEGUIDE.md, section 6)
+ */
+.nav-sidebar {
+    -fx-min-width: 230px;
+    -fx-pref-width: 230px;
+    -fx-max-width: 230px;
+    -fx-background-color: #222222;
+    -fx-background-radius: 6;
+    -fx-border-color: #3A3A3A;
+    -fx-border-radius: 6;
+    -fx-padding: 0 10 10 10;
+}
+
+.nav-sidebar-collapsed {
+    -fx-min-width: 64px;
+    -fx-pref-width: 64px;
+    -fx-max-width: 64px;
+    -fx-padding: 0 8 10 8;
+}
+
+.nav-header {
+    -fx-padding: 16 6 16 6;
+    -fx-border-color: transparent transparent #3A3A3A transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.nav-section-caption {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #9A9A9A;
+    -fx-padding: 14 12 4 12;
+}
+
+.nav-sidebar-collapsed .nav-section-caption {
+    -fx-padding: 8 0 0 0;
+}
+
+.nav-item {
+    -fx-padding: 9 12 9 12;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.nav-sidebar-collapsed .nav-item {
+    -fx-padding: 9 0 9 0;
+}
+
+.nav-item .label {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+.nav-item .ikonli-font-icon {
+    -fx-icon-color: #BDBDBD;
+}
+
+.nav-item:hover {
+    -fx-background-color: #333333;
+}
+
+.nav-item:hover .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.nav-item-selected, .nav-item-selected:hover {
+    -fx-background-color: #3D2B17;
+}
+
+.nav-item-selected .label {
+    -fx-font-weight: bold;
+}
+
+.nav-item-selected .ikonli-font-icon, .nav-item-selected:hover .ikonli-font-icon,
+.nav-item .ikonli-font-icon.nav-icon-update {
+    -fx-icon-color: #DD9646;
+}
+
+.nav-item .label.nav-badge {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #DD9646;
+    -fx-background-color: #3D2B17;
+    -fx-background-radius: 11;
+    -fx-min-width: 22px;
+    -fx-min-height: 22px;
+    -fx-alignment: center;
+    -fx-padding: 0 5 0 5;
+}
+
+.nav-item-selected .label.nav-badge {
+    -fx-background-color: #241D14;
+}
+
+.nav-footer {
+    -fx-padding: 10 0 0 0;
+    -fx-border-color: #3A3A3A transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+/**
+ * Navigation
+ */
+.navigation-panel {
+    -fx-width: 300px;
+    -fx-background-color: #272b2f;
+    -fx-background-radius: 6;
+}

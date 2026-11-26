@@ -1,15 +1,16 @@
 package de.mephisto.vpin.ui;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.achievements.AchievementsController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.components.ComponentsController;
@@ -18,20 +19,21 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import de.mephisto.vpin.ui.achievements.AchievementsController;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -45,26 +47,41 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
-import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class NavigationController implements Initializable, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
-  private final Debouncer debouncer = new Debouncer();
-  public static final int DEBOUNCE_MS = 200;
 
-  private final static FontIcon updateIcon = WidgetFactory.createUpdateStar();
+  private static final String COLLAPSED_KEY = "navigationCollapsed";
+  private static final String SELECTED_CLASS = "nav-item-selected";
+  private static final String CAPTION_KEY = "caption";
+  private static final String TOOLTIP_KEY = "navTooltip";
 
   @FXML
-  private BorderPane avatarPane;
+  private VBox sidebar;
+
+  @FXML
+  private HBox headerBox;
+
+  @FXML
+  private VBox headerText;
+
+  @FXML
+  private ImageView avatarView;
+
+  @FXML
+  private Label systemLabel;
+
+  @FXML
+  private VBox itemList;
+
+  @FXML
+  private VBox footer;
 
   @FXML
   private Pane tablesBtn;
 
   @FXML
   private Pane dashboardBtn;
-
-  @FXML
-  private Pane systemManagerOverlay;
 
   @FXML
   private Pane playersBtn;
@@ -79,17 +96,28 @@ public class NavigationController implements Initializable, StudioEventListener,
   private Pane cardsBtn;
 
   @FXML
-  private StackPane systemManagerStack;
+  private Pane collapseBtn;
 
-  private static BorderPane staticAvatarPane;
+  @FXML
+  private FontIcon collapseIcon;
+
+  @FXML
+  private FontIcon systemManagerIcon;
+
+  @FXML
+  private Label updateBadge;
+
+  private static ImageView staticAvatarView;
+  private static Label staticSystemLabel;
 
   private static NavigationView activeNavigation;
 
   private final static Map<NavigationItem, NavigationView> navigationItemMap = new HashMap<>();
 
-  private final List<Pane> buttons = new ArrayList();
-
   private NavigationView highscoreCardsNavigationView;
+
+  private boolean collapsed = false;
+  private int updateCount = 0;
 
   // Add a public no-args constructor
   public NavigationController() {
@@ -152,6 +180,84 @@ public class NavigationController implements Initializable, StudioEventListener,
     navigateTo(NavigationItem.SystemManager);
   }
 
+  @FXML
+  private void onSettingsClick() {
+    PreferencesController.open();
+  }
+
+  @FXML
+  private void onCollapseClick() {
+    setCollapsed(!collapsed);
+    LocalUISettings.saveProperty(COLLAPSED_KEY, String.valueOf(collapsed));
+  }
+
+  /**
+   * The collapsed sidebar only shows the icons, the labels are available as tooltips.
+   */
+  private void setCollapsed(boolean collapsed) {
+    this.collapsed = collapsed;
+    sidebar.getStyleClass().remove("nav-sidebar-collapsed");
+    if (collapsed) {
+      sidebar.getStyleClass().add("nav-sidebar-collapsed");
+    }
+
+    headerText.setVisible(!collapsed);
+    headerText.setManaged(!collapsed);
+    headerBox.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
+
+    for (Node node : getEntries()) {
+      if (node instanceof Label) {
+        // section captions turn into small gaps between the groups
+        ((Label) node).setText(collapsed ? "" : (String) node.getProperties().get(CAPTION_KEY));
+      }
+      else if (node instanceof HBox) {
+        HBox item = (HBox) node;
+        item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
+        Tooltip tooltip = (Tooltip) item.getProperties().get(TOOLTIP_KEY);
+        if (tooltip != null) {
+          Tooltip.uninstall(item, tooltip);
+          if (collapsed) {
+            Tooltip.install(item, tooltip);
+          }
+        }
+        for (Node child : item.getChildren()) {
+          if (child instanceof FontIcon || child == updateBadge) {
+            continue;
+          }
+          child.setVisible(!collapsed);
+          child.setManaged(!collapsed);
+        }
+      }
+    }
+
+    collapseIcon.setIconLiteral(collapsed ? "mdi2c-chevron-double-right" : "mdi2c-chevron-double-left");
+    getItemLabel(collapseBtn).ifPresent(l -> l.setText(Messages.get(collapsed ? "navigation.expand" : "navigation.collapse")));
+    refreshUpdateIndicator();
+  }
+
+  private List<Node> getEntries() {
+    List<Node> nodes = new ArrayList<>(itemList.getChildren());
+    nodes.addAll(footer.getChildren());
+    return nodes;
+  }
+
+  private Optional<Label> getItemLabel(Pane item) {
+    return item.getChildren().stream().filter(c -> c instanceof Label && c != updateBadge).map(c -> (Label) c).findFirst();
+  }
+
+  private void refreshUpdateIndicator() {
+    updateBadge.setText(String.valueOf(updateCount));
+    boolean showBadge = updateCount > 0 && !collapsed;
+    updateBadge.setVisible(showBadge);
+    updateBadge.setManaged(showBadge);
+
+    // no room for the badge in the collapsed mode, the icon turns orange instead
+    systemManagerIcon.getStyleClass().remove("nav-icon-update");
+    if (updateCount > 0 && collapsed) {
+      systemManagerIcon.getStyleClass().add("nav-icon-update");
+    }
+  }
+
   public static void navigateTo(NavigationItem item) {
     navigateTo(item, null);
   }
@@ -163,7 +269,7 @@ public class NavigationController implements Initializable, StudioEventListener,
   public static void navigateTo(NavigationItem item, NavigationOptions options) {
     NavigationView navigationView = navigationItemMap.get(item);
     if (activeNavigation != null) {
-      activeNavigation.getNavigationButton().getStyleClass().remove("navigation-button-selected");
+      activeNavigation.getNavigationButton().getStyleClass().remove(SELECTED_CLASS);
       if (activeNavigation.getController() != null) {
         activeNavigation.getController().onViewDeactivated();
       }
@@ -171,8 +277,8 @@ public class NavigationController implements Initializable, StudioEventListener,
 
     activeNavigation = navigationView;
 
-    if (!activeNavigation.getNavigationButton().getStyleClass().contains("navigation-button-selected")) {
-      activeNavigation.getNavigationButton().getStyleClass().add("navigation-button-selected");
+    if (!activeNavigation.getNavigationButton().getStyleClass().contains(SELECTED_CLASS)) {
+      activeNavigation.getNavigationButton().getStyleClass().add(SELECTED_CLASS);
     }
 
     if (Studio.stage != null && Studio.stage.getScene() != null) {
@@ -210,9 +316,6 @@ public class NavigationController implements Initializable, StudioEventListener,
       av = ServerFX.class.getResourceAsStream("avatar-default.png");
     }
     Image image = new Image(av);
-    ImageView avatar = new ImageView(image);
-    avatar.setFitWidth(100);
-    avatar.setFitHeight(100);
 
     PreferenceEntryRepresentation systemNameEntry = client.getPreferenceService().getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;
@@ -221,8 +324,11 @@ public class NavigationController implements Initializable, StudioEventListener,
     }
 
     try {
-      if (staticAvatarPane != null && staticAvatarPane.isVisible()) {
-        staticAvatarPane.setCenter(avatar);
+      if (staticAvatarView != null) {
+        staticAvatarView.setImage(image);
+      }
+      if (staticSystemLabel != null) {
+        staticSystemLabel.setText(name);
       }
     }
     catch (Exception e) {
@@ -260,14 +366,19 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @Override
   public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
-    JFXFuture.supplyAsync(() -> Studio.client.getComponentService().getComponents()).thenAcceptLater(components -> {
-      systemManagerOverlay.getChildren().remove(updateIcon);
+    loadUpdateCount();
+  }
+
+  private void loadUpdateCount() {
+    JFXFuture.supplyAsync(() -> client.getComponentService().getComponents()).thenAcceptLater(components -> {
+      int count = 0;
       for (ComponentRepresentation component : components) {
         if (component.isVersionDiff()) {
-          systemManagerOverlay.getChildren().add(updateIcon);
-          break;
+          count++;
         }
       }
+      updateCount = count;
+      refreshUpdateIndicator();
     });
   }
 
@@ -286,24 +397,31 @@ public class NavigationController implements Initializable, StudioEventListener,
   public void initialize(URL url, ResourceBundle resourceBundle) {
     cardsBtn.managedProperty().bindBidirectional(cardsBtn.visibleProperty());
 
-    staticAvatarPane = this.avatarPane;
+    avatarView.setClip(new Circle(20, 20, 20));
+    staticAvatarView = this.avatarView;
+    staticSystemLabel = this.systemLabel;
     refreshAvatar();
 
-    tablesBtn.getStyleClass().add("navigation-button-selected");
+    tablesBtn.getStyleClass().add(SELECTED_CLASS);
 
     EventManager.getInstance().addListener(this);
     client.getPreferenceService().addListener(this);
 
     cardsBtn.setVisible(Features.MEDIA_ENABLED);
 
-    this.buttons.add(tablesBtn);
-    this.buttons.add(dashboardBtn);
-    this.buttons.add(cardsBtn);
-
-    this.buttons.add(competitionsBtn);
-    this.buttons.add(playersBtn);
-
-    this.buttons.add(systemManagerBtn);
+    for (Node node : getEntries()) {
+      if (node instanceof Label) {
+        node.getProperties().put(CAPTION_KEY, ((Label) node).getText());
+      }
+      else if (node instanceof HBox) {
+        HBox item = (HBox) node;
+        getItemLabel(item).ifPresent(label -> {
+          Tooltip tooltip = new Tooltip();
+          tooltip.textProperty().bind(label.textProperty());
+          item.getProperties().put(TOOLTIP_KEY, tooltip);
+        });
+      }
+    }
 
     navigationItemMap.put(NavigationItem.Tables, new NavigationView(NavigationItem.Tables, TablesController.class, tablesBtn, "scene-tables.fxml"));
     navigationItemMap.put(NavigationItem.Achievements, new NavigationView(NavigationItem.Achievements, AchievementsController.class, dashboardBtn, "scene-achievements.fxml"));
@@ -316,36 +434,7 @@ public class NavigationController implements Initializable, StudioEventListener,
 
     navigationItemMap.put(NavigationItem.SystemManager, new NavigationView(NavigationItem.SystemManager, ComponentsController.class, systemManagerBtn, "scene-components.fxml"));
 
-    Studio.stage.heightProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        debouncer.debounce("height", () -> {
-          Platform.runLater(() -> {
-            boolean scaleDown = newValue.intValue() < 900;
-            String style = scaleDown ? "navigation-button-small" : "navigation-button";
-            systemManagerStack.getStyleClass().removeAll();
-            systemManagerStack.getStyleClass().add(style);
-            for (Pane button : buttons) {
-              setLabelStyle(button, scaleDown ? "-fx-font-size: 12px" : "-fx-font-size: 14px");
-              setFontIconSize(button, scaleDown ? 20 : 28);
-              button.getStyleClass().remove("navigation-button-small");
-              button.getStyleClass().remove("navigation-button");
-              button.getStyleClass().add(style);
-            }
-          });
-        }, DEBOUNCE_MS);
-      }
-
-      private void setLabelStyle(Pane button, String style) {
-        button.getChildren().stream().filter(c -> c instanceof Label).forEach(c -> c.setStyle(style));
-        button.getChildren().stream().filter(c -> c instanceof Pane).forEach(c -> setLabelStyle((Pane) c, style));
-      }
-
-      private void setFontIconSize(Pane button, int size) {
-        button.getChildren().stream().filter(c -> c instanceof FontIcon).forEach(c -> ((FontIcon) c).setIconSize(size));
-        button.getChildren().stream().filter(c -> c instanceof ImageView).forEach(c -> ((ImageView) c).setFitHeight(size));
-        button.getChildren().stream().filter(c -> c instanceof Pane).forEach(c -> setFontIconSize((Pane) c, size));
-      }
-    });
+    setCollapsed(LocalUISettings.getBoolean(COLLAPSED_KEY));
+    loadUpdateCount();
   }
 }

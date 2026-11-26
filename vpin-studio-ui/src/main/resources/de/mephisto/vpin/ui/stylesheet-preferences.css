@@ -1,0 +1,58 @@
+.preference-section {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #9A9A9A;
+    -fx-padding: 14 12 4 12;
+    -fx-max-width: 10000px;
+}
+
+.preference-title {
+    -fx-font-weight: bold;
+    -fx-font-color: -fx-base-1;
+    -fx-text-fill: -fx-base-1;
+    -fx-font-size : 22px;
+    -fx-pref-width: 450;
+}
+
+.preference-subtitle {
+    -fx-padding: 12 0 0 0;
+    -fx-font-weight: bold;
+    -fx-font-color: -fx-font-1;
+    -fx-text-fill: -fx-font-1;
+    -fx-font-size : 18px;
+}
+
+.preference-description {
+    -fx-font-color: -fx-font-2;
+    -fx-text-fill: -fx-font-2;
+    -fx-font-size : 15px;
+}
+
+.preference-label {
+    -fx-font-color: -fx-font-1;
+    -fx-font-size : 14px;
+}
+
+.preference-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-background-radius: 4;
+    -fx-border-style: none;
+    -fx-padding: 9 12 9 12;
+    -fx-max-width: 10000px;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.preference-button:hover {
+    -fx-background-color: #333333;
+}
+
+.preference-button-selected, .preference-button-selected:hover {
+    -fx-background-color: #3D2B17;
+    -fx-font-weight: bold;
+}

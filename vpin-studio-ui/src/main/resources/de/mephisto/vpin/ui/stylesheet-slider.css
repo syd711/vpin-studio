@@ -1,0 +1,41 @@
+/* sliders: dark inset track, light round thumb */
+.slider > .track {
+    -fx-background-color: #161616;
+    -fx-background-insets: 0;
+    -fx-background-radius: 3;
+    -fx-border-color: #444444;
+    -fx-border-radius: 3;
+    -fx-padding: 2;
+}
+
+.slider > .thumb {
+    -fx-background-color: #BDBDBD;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1em;
+    -fx-border-color: #444444;
+    -fx-border-radius: 1em;
+    -fx-padding: 7;
+}
+
+.slider:hover > .thumb,
+.slider > .thumb:pressed {
+    -fx-background-color: white;
+}
+
+.slider:focused > .thumb {
+    -fx-border-color: #8C8CE0;
+}
+
+.slider > .axis {
+    -fx-tick-label-fill: #9A9A9A;
+    -fx-tick-label-font-size: 12px;
+}
+
+.slider > .axis > .axis-tick-mark,
+.slider > .axis > .axis-minor-tick-mark {
+    -fx-stroke: #444444;
+}
+
+.slider:disabled {
+    -fx-opacity: 0.6;
+}

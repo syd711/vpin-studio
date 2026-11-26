@@ -1,0 +1,46 @@
+/**
+ * List View: dark inset box like the text inputs (see UI-STYLEGUIDE.md "Text inputs")
+ */
+.list-view {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-text-background-color: #FFFFFF;
+    -fx-control-inner-background: #161616;
+    -fx-background-color: #161616;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-border-color: #444444;
+    -fx-border-radius: 4;
+    -fx-padding: 1;
+}
+
+.list-view:focused {
+    -fx-border-color: #7A7A7A;
+}
+
+/* low specificity on purpose so that sm-log / sm-keyword-list cell rules still win */
+.list-view .list-cell {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-padding: 4 8 4 8;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: #262626;
+}
+
+.list-view .list-cell:filled:selected,
+.list-view .list-cell:filled:selected:hover {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-color: #3A3A3A;
+}
+
+.list-view .placeholder .label {
+    -fx-text-fill: #7A7A7A;
+}
+
+.list-view:disabled {
+    -fx-opacity: 0.6;
+}

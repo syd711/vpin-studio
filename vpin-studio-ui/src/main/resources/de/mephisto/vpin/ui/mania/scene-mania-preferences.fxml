@@ -17,19 +17,13 @@
          <children>
             <BorderPane>
                <center>
-                  <ScrollPane hbarPolicy="NEVER" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" styleClass="base-component">
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="pref-nav">
                      <content>
-                        <VBox fx:id="navigationBox" fillWidth="false">
+                        <VBox fx:id="navigationBox" spacing="2.0">
                            <children>
                               <VBox fx:id="maniaGroup">
                                  <children>
                                     <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="%mania.mania_preferences.cabinet">
-                                       <font>
-                                          <Font size="13.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="24.0" />
-                                       </VBox.margin>
                                     </Label>
                                     <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="%mania.mania_preferences.cabinet_settings" />
                                  </children>
@@ -41,12 +35,6 @@
                                  </children>
                               </VBox>
                            </children>
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                           <padding>
-                              <Insets left="18.0" />
-                           </padding>
                         </VBox>
                      </content>
                   </ScrollPane>

@@ -1,0 +1,55 @@
+/**
+ * Tree View: same look as the List View below (dark inset box, see UI-STYLEGUIDE.md "Text inputs")
+ */
+.tree-view {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-text-background-color: white;
+    -fx-control-inner-background: #161616;
+    -fx-background-color: #161616;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-border-color: #444444;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-padding: 1;
+}
+
+.tree-view:focused {
+    -fx-border-color: #7A7A7A;
+}
+
+.tree-view .tree-cell {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 4 8 4 8;
+}
+
+.tree-view .tree-cell:filled:hover {
+    -fx-background-color: #262626;
+}
+
+.tree-view .tree-cell:filled:selected,
+.tree-view .tree-cell:filled:selected:hover {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-color: #3A3A3A;
+}
+
+.tree-view .tree-cell > .tree-disclosure-node > .arrow {
+    -fx-background-color: #BDBDBD;
+}
+
+.tree-view .tree-cell:hover > .tree-disclosure-node > .arrow {
+    -fx-background-color: white;
+}
+
+.tree-view .placeholder .label {
+    -fx-text-fill: #7A7A7A;
+}
+
+.tree-view:disabled {
+    -fx-opacity: 0.6;
+}

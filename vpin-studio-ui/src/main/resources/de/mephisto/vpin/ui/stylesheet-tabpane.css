@@ -1,0 +1,106 @@
+/**
+ * Tabs: flat folder tabs (see UI-STYLEGUIDE.md). The header strip is one step lighter than the content,
+ * the selected tab has the content color so it merges with the page below.
+ * -sm-tab-strip / -sm-tab-content are looked up from the nearest .root or .subpanel ancestor.
+ */
+.root {
+    -sm-tab-strip: #2A2A2A;
+    -sm-tab-content: #222222;
+}
+
+.subpanel, .subpanel-tabbed {
+    -sm-tab-strip: #333333;
+    -sm-tab-content: #2A2A2A;
+}
+
+/* tab pane on a subpanel whose tab content is a #222222 page (System Manager) */
+.tab-pane.tabs-dark-content {
+    -sm-tab-content: #222222;
+}
+
+.tab-pane {
+    -fx-tab-min-height: 34px;
+}
+
+.tab-pane > .tab-header-area {
+    -fx-padding: 0;
+}
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: -sm-tab-strip;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6 6 0 0;
+    -fx-border-color: transparent;
+    -fx-effect: null;
+}
+
+.tab-pane > .tab-header-area > .headers-region {
+    -fx-padding: 8 12 0 12;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0 1 0 1;
+    -fx-background-radius: 5 5 0 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0 12 0 12;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover {
+    -fx-background-color: #3D3D3D;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: -sm-tab-content;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: #BDBDBD;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-graphic-text-gap: 6;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover .tab-label {
+    -fx-text-fill: white;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected .tab-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab .tab-label .ikonli-font-icon {
+    -fx-icon-color: #BDBDBD;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover .tab-label .ikonli-font-icon,
+.tab-pane > .tab-header-area > .headers-region > .tab:selected .tab-label .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab .focus-indicator,
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button {
+    -fx-background-color: transparent;
+    -fx-padding: 8 8 0 8;
+}
+
+.tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button > .arrow {
+    -fx-background-color: #BDBDBD;
+}
+
+.tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button:hover > .arrow {
+    -fx-background-color: white;
+}
+
+.tab-pane .sub-tab {
+    -fx-tab-min-height: 30px;
+    -fx-background-color: -fx-base-6;
+}

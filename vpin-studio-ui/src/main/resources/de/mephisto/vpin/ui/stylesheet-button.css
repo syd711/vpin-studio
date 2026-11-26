@@ -1,0 +1,349 @@
+.ghost-icon-button {
+    -fx-font-color: -fx-base-1;
+    -fx-font-size : 12px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: -fx-font-2;
+}
+
+.ghost-button {
+    -fx-font-color: -fx-font-2;
+    -fx-font-size : 32px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 4 4 4 4;
+    -fx-text-fill: -fx-font-2;
+}
+
+.ghost-button-default {
+    -fx-font-color: -fx-font-2;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 4 4 4 4;
+    -fx-text-fill: -fx-font-2;
+}
+
+.ghost-button:hover {
+    -fx-font-color: #fff8f8;
+    -fx-font-size : 32px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 4 4 4 4;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.ghost-button-small {
+    -fx-font-color: -fx-font-2;
+    -fx-font-size : 16px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: -fx-font-2;
+}
+
+.ghost-button-small:hover {
+    -fx-font-color: #fff8f8;
+    -fx-font-size : 16px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.ghost-button-tiny {
+    -fx-max-width: 14px;
+    -fx-max-height: 14px;
+    -fx-padding: 0px;
+    -fx-font-color: -fx-font-2;
+    -fx-font-size : 14px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: -fx-font-2;
+}
+
+.ghost-button-tiny:hover {
+    -fx-font-color: #fff8f8;
+    -fx-font-size : 14px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.playlist-button {
+    -fx-padding: 3 0 0 0px;
+    -fx-font-color: -fx-font-2;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: -fx-font-2;
+}
+
+.playlist-button:hover {
+    -fx-font-color: #fff8f8;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.table-media-button {
+    -fx-font-color: #FFFFFF;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 3px;
+}
+
+.table-media-button:hover {
+    -fx-font-color: #fff8f8;
+    -fx-background-color: #28333566;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.table-media-button-selected {
+    -fx-font-color: #fff8f8;
+    -fx-background-color: black;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: green;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+/**
+ * Friends Buttons
+ */
+.bar-button-left {
+    -fx-min-width: 114px;
+    -fx-min-height: 26px;
+    -fx-padding: 2 0 0 0;
+    -fx-border-radius: 0 0 0 4;
+    -fx-background-radius: 0 0 0 5;
+    -fx-background-color: #494949;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-color: #373737;
+    -fx-text-fill: #DDDDDD;
+}
+.bar-button-right {
+    -fx-min-width: 44px;
+    -fx-min-height: 26px;
+    -fx-padding: 2 0 0 0;
+    -fx-border-radius: 0 0 4 0;
+    -fx-background-radius: 0 0 5 0;
+    -fx-background-color: #494949;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-color: #373737;
+    -fx-text-fill: #DDDDDD;
+}
+
+.bar-button-left:hover,.bar-button-right:hover,.bar-button-left:selected,.bar-button-right:selected {
+    -fx-background-color: -fx-font-hover;
+    -fx-background-color: #5858D3;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.bar-button-selected {
+    -fx-background-color: -fx-font-hover;
+    -fx-background-color: #6666FF;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+
+/**
+ * VPS Buttons
+ */
+.vps-table-button {
+    -fx-background-color: -fx-base-6;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: transparent;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-width: 1;
+    -fx-font-size: 14px;
+    -fx-border-color:-fx-base-6;
+    -fx-text-fill: #DDDDDD;
+}
+
+.vps-table-button:hover {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-font-size: 14px;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #6666FF;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.vps-table-button-selected {
+    -fx-background-color: -fx-font-hover;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #6666FF;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+
+
+/**
+ * Installer Button
+ */
+.installer-button {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 2;
+    -fx-font-size: 14px;
+    -fx-border-color: #FF9933;
+    -fx-border-radius: 3px;
+    -fx-text-fill: #DDDDDD;
+}
+
+.installer-button:hover {
+    -fx-background-color: -fx-font-hover;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 2;
+    -fx-font-size: 14px;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #FF0033;
+    -fx-text-fill: #fff8f8;
+    -fx-border-radius: 3px;
+    -fx-cursor: hand;
+}
+
+.installer-button-selected {
+    -fx-background-color: -fx-font-hover;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #FF9933;
+    -fx-text-fill: #fff8f8;
+    -fx-border-radius: 3px;
+    -fx-cursor: hand;
+}
+
+/**
+ * Common Buttons
+ */
+.submit-button {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #6666FF;
+    -fx-border-width: 1;
+    -fx-font-size : 14px;
+    -fx-background-color: #333366;
+    -fx-text-fill: #fff8f8;
+    -fx-border-radius: 3px;
+}
+
+.submit-button:hover {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #4D4DB3;
+    -fx-border-width: 1;
+    -fx-font-size : 14px;
+    -fx-background-color: #6666FF;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.default-button {
+    -fx-border-radius: 3px;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #111111;
+    -fx-border-width: 1;
+    -fx-font-size : 14px;
+    -fx-background-color: #272b2f;
+    -fx-text-fill: #fff8f8;
+}
+
+.default-button:hover {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #4D4DB3;
+    -fx-border-width: 1;
+    -fx-font-size : 14px;
+    -fx-background-color: -fx-font-hover;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.warn-button {
+    -fx-border-radius: 3px;
+    -fx-border-color: #663333;
+    -fx-border-width: 1;
+    -fx-font-size : 14px;
+    -fx-background-color: #CC3333;
+    -fx-text-fill: #DDDDDD;
+}
+
+.warn-button:hover {
+    -fx-border-color: #663333;
+    -fx-border-width: 1;
+    -fx-font-size : 14px;
+    -fx-background-color: #FF3333;
+    -fx-text-fill: #DDDDDD;
+    -fx-cursor: hand;
+}
+
+
+.vps-button {
+    -fx-cursor: hand;
+    -fx-font-color: white;
+    -fx-font-weight : bold;
+    -fx-font-size : 11px;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 3 3 3 3;
+    -fx-padding: 2 2 2 2;
+}
+
+.vps-badge {
+    -fx-font-color: white;
+    -fx-font-weight : bold;
+    -fx-font-size : 12px;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 3 3 3 3;
+    -fx-padding: 2 4 2 4;
+}
+
+.vps-badge-button {
+    -fx-font-color: white;
+    -fx-font-weight : bold;
+    -fx-font-size : 14px;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #338033;
+    -fx-border-radius: 3 3 3 3;
+    -fx-padding: 2 4 2 4;
+}
+
+.text-button {
+    -fx-font-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-base : -fx-info-background;
+}
+
+.edit-button {
+    -fx-background-color: #5555FF;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-font-weight: bold;
+    -fx-border-radius: 3 3 3 3;
+    -fx-font-size: 14px;
+    -fx-border-color: #FFFFFF;
+    -fx-text-fill: #DDDDDD;
+}
+
+.edit-button:hover {
+    -fx-background-color: #7777FF;
+    -fx-border-style: solid solid solid solid;
+    -fx-font-size: 14px;
+    -fx-border-color: #6666FF;
+}

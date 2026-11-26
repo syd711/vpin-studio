@@ -1,0 +1,83 @@
+.toggle-button-selected {
+    -fx-background-color: #6666FFAA;
+}
+
+.toggle-selected {
+}
+
+.custom-toggle-button-small {
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+    -fx-border-radius: 3px;
+    -fx-font-size: 10px;
+}
+
+.custom-toggle-button-small:selected {
+    -fx-border-width: 1;
+    -fx-font-size: 10px;
+    -fx-border-color: #6666FF;
+    -fx-border-radius: 3px;
+    -fx-background-color: #333366; /* Selected button color */
+}
+
+.custom-toggle-button {
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+    -fx-border-radius: 3px;
+    -fx-font-size: 14px;
+}
+
+.custom-toggle-button:selected {
+    -fx-border-width: 1;
+    -fx-border-color: #6666FF;
+    -fx-border-radius: 3px;
+    -fx-background-color: #333366; /* Selected button color */
+}
+
+.custom-toggle-button2 {
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+    -fx-border-radius: 3px;
+    -fx-font-size: 14px;
+}
+
+.custom-toggle-button2:selected {
+    -fx-border-width: 1;
+    -fx-border-color: #44AA44;
+    -fx-border-radius: 3px;
+    -fx-background-color: #116611 /* Selected button color */
+}
+
+/* toggle buttons: sm-button look, selected = selection blue (custom-toggle-button* only keep their font size) */
+.toggle-button {
+    -fx-text-fill: white;
+    -fx-background-color: #333333;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-border-color: #444444;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.toggle-button:hover {
+    -fx-background-color: #3D3D3D;
+}
+
+.toggle-button:selected,
+.toggle-button:selected:hover {
+    -fx-text-fill: white;
+    -fx-background-color: #333366;
+    -fx-border-color: #8C8CE0;
+}
+
+.toggle-button:focused {
+    -fx-border-color: #7A7A7A;
+}
+
+.toggle-button:selected:focused {
+    -fx-border-color: #8C8CE0;
+}
+
+.toggle-button:disabled {
+    -fx-opacity: 0.6;
+}

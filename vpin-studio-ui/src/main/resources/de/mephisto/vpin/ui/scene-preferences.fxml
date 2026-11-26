@@ -18,14 +18,11 @@
          <children>
             <BorderPane>
                <center>
-                  <ScrollPane hbarPolicy="NEVER" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" styleClass="base-component">
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="pref-nav">
                      <content>
-                        <VBox fx:id="navigationBox" fillWidth="false">
+                        <VBox fx:id="navigationBox" spacing="2.0">
                            <children>
                               <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="%pref.asset_sources.vpin_studio_preferences">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
                               </Label>
                               <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="32.0" mnemonicParsing="false" onAction="#onCabinetSettings" styleClass="preference-button" text="%mania.mania_preferences.cabinet_settings">
                                  <tooltip>
@@ -66,12 +63,6 @@
                                  </tooltip>
                               </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="10.0" styleClass="preference-section" text="%pref.inputs.vpin_studio_frontend_preferences">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
                               </Label>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onControllerSetup" styleClass="preference-button" text="%pref.inputs.controller_setup">
                                  <tooltip>
@@ -99,24 +90,18 @@
                               <VBox fx:id="frontendPreferences">
                                  <children>
                                     <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="%pref.pinballx_settings.frontend_preferences">
-                                       <font>
-                                          <Font size="13.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="24.0" />
-                                       </VBox.margin>
                                     </Label>
-                                    <Button fx:id="popperSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="%pref.popper_settings.popper_settings">
+                                    <Button fx:id="popperSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperSettings" styleClass="preference-button" text="%pref.popper_settings.popper_settings">
                                        <tooltip>
                                           <Tooltip text="%pref.popper_settings.popper_settings" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="pinballXSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballXSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="%pref.pinballx_settings.pinballx_settings">
+                                    <Button fx:id="pinballXSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballXSettings" styleClass="preference-button" text="%pref.pinballx_settings.pinballx_settings">
                                        <tooltip>
                                           <Tooltip text="%pref.pinballx_settings.pinballx_settings" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="pinballYSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballYSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="%pref.pinbally_settings.pinbally_settings">
+                                    <Button fx:id="pinballYSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballYSettings" styleClass="preference-button" text="%pref.pinbally_settings.pinbally_settings">
                                        <tooltip>
                                           <Tooltip text="%pref.pinbally_settings.pinbally_settings" />
                                        </tooltip>
@@ -129,12 +114,6 @@
                                  </children>
                               </VBox>
                               <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="256.0" styleClass="preference-section" text="%preferences.validators_tagging">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
                               </Label>
                               <Button fx:id="validators_screensBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onMediaValidation" styleClass="preference-button" text="%pref.validators_screens.screen_validators">
                                  <tooltip>
@@ -153,12 +132,6 @@
                               </Button>
 
                               <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="133.0" styleClass="preference-section" text="%pref.highscore_cards.highscore_preferences">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
                               </Label>
                               <Button fx:id="highscore_cardsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="125.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHighscoreCards" styleClass="preference-button" text="%pref.restore_backup.highscore_card_settings">
                                  <VBox.margin>
@@ -174,12 +147,6 @@
                                  </tooltip>
                               </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="380.0" styleClass="preference-section" text="%pref.player_rankings.player_preferences">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
                               </Label>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="446.0" mnemonicParsing="false" onAction="#onRankings" styleClass="preference-button" text="%pref.player_rankings.ranking">
                                  <tooltip>
@@ -187,12 +154,6 @@
                                  </tooltip>
                               </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="560.0" styleClass="preference-section" text="%pref.discord_bot.discord_integration">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
                               </Label>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="672.0" mnemonicParsing="false" onAction="#onDiscordBot" styleClass="preference-button" text="%pref.discord_bot.bot_settings">
                                  <tooltip>
@@ -210,12 +171,6 @@
                                  </tooltip>
                               </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="10.0" styleClass="preference-section" text="%pref.backglass.3rd_party_preferences">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
                               </Label>
                               <Button fx:id="backglassBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onBackglassServer" styleClass="preference-button" text="%pref.backglass.backglass_server">
                                  <tooltip>
@@ -283,12 +238,6 @@
                                  </tooltip>
                               </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="982.0" styleClass="preference-section" text="%pref.shortcuts.help_support">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
                               </Label>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1331.0" mnemonicParsing="false" onAction="#onShortcuts" styleClass="preference-button" text="%pref.shortcuts.shortcuts">
                                  <tooltip>
@@ -301,12 +250,6 @@
                                  </tooltip>
                               </Button>
                            </children>
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                           <padding>
-                              <Insets left="18.0" />
-                           </padding>
                         </VBox>
                      </content>
                   </ScrollPane>

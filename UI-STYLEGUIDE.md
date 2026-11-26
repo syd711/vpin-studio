@@ -4,7 +4,10 @@ Visual rules for the redesigned views (Achievements, System Manager). New or rew
 so that colors, sizes, badges and buttons stay the same everywhere. **Reuse an existing token or class before
 adding a new one**; a new color or font size needs a reason that none of the existing ones covers.
 
-- CSS classes: `sm-*` at the end of `vpin-studio-ui/src/main/resources/de/mephisto/vpin/ui/stylesheet.css`
+- CSS classes: `sm-*` in `vpin-studio-ui/src/main/resources/de/mephisto/vpin/ui/stylesheet-system-manager.css`.
+  `stylesheet.css` only `@import`s one file per widget type (`stylesheet-textfield.css`, `stylesheet-tabpane.css`, …);
+  put new rules into the matching file. The import order is the cascade order, keep containers (combo box, date
+  picker, spinner) after the controls they contain
 - Java builders and color constants: `vpin-studio-ui/.../ui/achievements/AchievementsUI.java`
 - Prefer `styleClass="sm-…"` over inline `style="…"`. Inline styles are only fine for values computed at
   runtime (a category color, a progress fraction) and must still use the tokens below.
@@ -102,7 +105,7 @@ Borderless text buttons are not used any more (the former `sm-ghost-button` was 
 
 ### Text inputs
 
-Every `TextField`, `PasswordField` and `TextArea` is dark — styled globally via `.text-input` in `stylesheet.css`,
+Every `TextField`, `PasswordField` and `TextArea` is dark — styled globally via `.text-input` in `stylesheet-textfield.css`,
 no class needed: `#161616` fill, `#444444` 1px border, radius 4, white 14px text, `#7A7A7A` prompt text,
 `#7A7A7A` border when focused, `#333366` selection. Don't override it with inline white backgrounds.
 `sm-text-field` is the same look and stays valid for explicitness. Full-width log / script areas use
@@ -234,6 +237,12 @@ configuration conflicts:
   `-sm-tab-content`: `#2A2A2A`/`#222222` on the page, `#333333`/`#2A2A2A` inside a `subpanel`. If the tab content
   is a `#222222` page inside a subpanel (System Manager), add `tabs-dark-content` to the TabPane.
 - **Underlined tabs** (secondary level): add `sm-tabs` to a TabPane — 14px bold `#BDBDBD` labels, white when selected/hovered, 2px orange underline.
+- **Navigation sidebar** (`scene-navigation.fxml`, `nav-*` classes): 230px `#222222` panel (64px when collapsed,
+  persisted in `LocalUISettings`), header with 40px round avatar + `sm-title` + `sm-small` system name,
+  12px bold `#9A9A9A` section captions, items = 18px icon (`#BDBDBD`) + 14px label, `#333333` hover, selected =
+  `#3D2B17` fill with orange icon and bold label; count badge in warn colors; Settings / Collapse pinned at the bottom.
+  The preference navigations (`scene-preferences.fxml`, `mania/scene-mania-preferences.fxml`) use the same look:
+  `pref-nav` ScrollPane panel (no border), `preference-section` captions, `preference-button` items (`preference-button-selected`).
 - **Action bar** (`sm-actionbar`): top bar of a component tab; any Button inside gets the `sm-button` look automatically.
 
 ## 7. Checklist for a new view

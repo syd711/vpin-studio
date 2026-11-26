@@ -1,0 +1,83 @@
+.text-input {
+  -fx-background-color: linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border),
+    linear-gradient(from 0px 0px to 0px 5px, derive(#FFFFFF, -9%), #FFFFFF);
+  -fx-background-insets: 0, 1;
+  -fx-background-radius: 3, 2;
+}
+
+.text-area {
+    -fx-font-size : 14px;
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-focus-color: white;
+    -fx-border-color: #111111;
+    -fx-text-fill: white;
+    -fx-font-weight: normal;
+    -fx-background-radius: 3 3 3 3;
+ }
+
+.text-area:readonly {
+    -fx-background-insets: 0;
+    -fx-opacity: 1.0;
+    -fx-text-fill: white;
+    -fx-background-radius: 3 3 3 3;
+}
+
+.text-area:focused {
+ -fx-background-insets: 0;
+    -fx-focus-color: white;
+    -fx-background-radius: 3 3 3 3;
+}
+
+.text-area .content {
+    -fx-background-color: white;
+}
+
+.text-area:focused .content {
+}
+
+.text-field {
+  -fx-prompt-text-fill: -fx-base-3;
+}
+
+.text-area {
+    -fx-font-size: 14px;
+}
+
+.text-area .content {
+    -fx-background-color: black;
+    -fx-font-size: 14px;
+}
+
+
+/**
+ * Text inputs: every TextField / PasswordField / TextArea is dark (#161616, #444444 border), same as sm-text-field.
+ * Placed before the sm-* section so that sm-log-text / sm-script-text can still override it.
+ * Combo boxes / date pickers / color pickers use the same dark box (see below).
+ */
+.text-input {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #7A7A7A;
+    -fx-highlight-fill: #333366;
+    -fx-highlight-text-fill: white;
+    -fx-control-inner-background: #161616;
+    -fx-background-color: #161616;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-border-color: #444444;
+    -fx-border-radius: 4;
+}
+
+.text-input:focused {
+    -fx-border-color: #7A7A7A;
+}
+
+.text-input:disabled {
+    -fx-opacity: 0.6;
+}
+
+.text-area .content {
+    -fx-background-color: #161616;
+    -fx-background-radius: 4;
+}

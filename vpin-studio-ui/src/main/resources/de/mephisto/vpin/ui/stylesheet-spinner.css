@@ -1,0 +1,46 @@
+/* spinners: same dark box, transparent editor, muted arrows */
+.spinner {
+    -fx-font-size: 14px;
+    -fx-background-color: #161616;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-border-color: #444444;
+    -fx-border-radius: 4;
+}
+
+.spinner:focused,
+.spinner:contains-focus {
+    -fx-border-color: #7A7A7A;
+}
+
+.spinner:disabled {
+    -fx-opacity: 0.6;
+}
+
+.spinner > .text-field,
+.spinner > .text-field:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.spinner > .increment-arrow-button,
+.spinner > .decrement-arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 3 6 3 6;
+}
+
+.spinner > .increment-arrow-button:hover,
+.spinner > .decrement-arrow-button:hover {
+    -fx-background-color: #333333;
+}
+
+.spinner > .increment-arrow-button > .increment-arrow,
+.spinner > .decrement-arrow-button > .decrement-arrow {
+    -fx-background-color: #BDBDBD;
+}
+
+.spinner > .increment-arrow-button:hover > .increment-arrow,
+.spinner > .decrement-arrow-button:hover > .decrement-arrow {
+    -fx-background-color: white;
+}

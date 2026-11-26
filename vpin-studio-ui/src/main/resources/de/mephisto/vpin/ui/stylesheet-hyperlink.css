@@ -1,0 +1,14 @@
+.hyperlink, .hyperlink:hover {
+    -fx-font-size : 14px;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+    -fx-font-weight: normal;
+    -fx-underline: true;
+}
+
+
+.link-component {
+    -fx-font-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-base : #3399FF;
+}

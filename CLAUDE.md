@@ -141,7 +141,8 @@ public class GameServiceClient { ... }
 - Controllers: `*Controller.java`
 - CSS styling in resources
 - **Visual rules (colors, font sizes, buttons, pills, reusable tiles): `UI-STYLEGUIDE.md`** — follow it for every new or
-  reworked view; `sm-*` classes live at the end of `vpin-studio-ui/.../ui/stylesheet.css`
+  reworked view; `sm-*` classes live in `vpin-studio-ui/.../ui/stylesheet-system-manager.css`; `stylesheet.css` only `@import`s
+  one `stylesheet-<widget>.css` per widget type (import order = cascade order)
 
 ```java
 // Controller pattern

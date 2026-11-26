@@ -1,0 +1,325 @@
+.debug {
+    -fx-border-style: solid;
+    -fx-border-color: green;
+    -fx-border-width: 2;
+}
+
+/**
+ * Colors
+ */
+
+* {
+   -fx-base-1: #FFF8F8;
+   -fx-base-2: #C7C3C3;
+   -fx-base-3: #B0ABAB;
+   -fx-base-4: #888585;
+   -fx-base-5: #605E5E;
+   -fx-base-6: #222222;
+   -fx-base-7: #111111;
+   -fx-info-background: #333366;
+
+   -fx-font-1: #FFF8F8;
+   -fx-font-2: #B0ABAB;
+   -fx-font-hover: #333344;
+
+   -fx-primary-color: #333366;
+   -fx-secondary-color: #111111;
+   -fx-green: #33CC00;
+}
+
+.filter-component {
+    -fx-border-style: solid;
+    -fx-border-color: -fx-base-7;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-width: 1;
+}
+
+/**
+ * Main
+ */
+.root {
+    -fx-border-style: solid;
+    -fx-border-color: #605E5E;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.main, .root {
+    -fx-background-color: -fx-base-6;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.root:maximized, .main:maximized {
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+.version-label {
+    -fx-font-color: -fx-font-2;
+    -fx-text-fill: -fx-font-2;
+    -fx-font-size : 12px;
+}
+
+.highscore-screen {
+    -fx-border-style: solid;
+    -fx-border-color: -fx-base-3;
+    -fx-border-width: 2;
+}
+
+/**
+ * Widgets
+ */
+.widget-title {
+    -fx-font-size : 28px;
+    -fx-font-weight : bold;
+    -fx-text-fill: #FFFFFF;
+}
+
+.widget-item-inverted {
+    -fx-background-radius: 3 3 3 3;
+    -fx-background-color: -fx-base-6;
+}
+
+/**
+ * Subpanels
+ */
+.subpanel {
+    -fx-background-radius: 6 6 6 6;
+    -fx-border-radius: 6 6 6 6;
+    -fx-background-color: #2a2a2a;
+}
+
+.subpanel-tabbed {
+    -fx-background-radius: 0 0 6 6;
+    -fx-border-radius: 0 0 6 6;
+    -fx-background-color: #2a2a2a;
+   /* -fx-border-style: solid;
+    -fx-border-color: -fx-base-6;*/
+    -fx-border-width: 0 2 2 2;
+}
+
+/**
+ * Common Component Theme
+ */
+.base-component {
+    -fx-text-fill: #FFFFFF;
+    -fx-base : #111111;
+}
+
+/**
+ * Media Styling
+ */
+.media-container {
+    -fx-padding: 3 3 3 3;
+    -fx-background-color: -fx-base-7;
+}
+
+.media-parent {
+    -fx-background-color: -fx-base-7;
+}
+
+/**
+ * Info Container
+ */
+.info-container {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1;
+    -fx-border-radius: 3px;
+    -fx-background-color: -fx-info-background;
+}
+
+/**
+ * NagBar
+ */
+.nagbar-container {
+    -fx-padding: 3 3 3 6;
+    -fx-background-color: -fx-info-background;
+}
+
+.copyable-label, .copyable-label:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+}
+
+.tooltip {
+    -fx-font-size: 14;
+}
+
+.floating-toolbar {
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 6 6 6 6;
+    -fx-background-color: #222222;
+}
+
+
+.floating-toolbar-inverted {
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 6 6 6 6;
+    -fx-background-color: #111111;
+}
+
+.external-component .arrow {
+    -fx-background-color: #FFFFFF;
+}
+
+.external-component {
+    -fx-font-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #338800;
+    -fx-border-color: #33AA00;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-radius: 3px;
+}
+
+.external-component:hover {
+    -fx-font-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: #33AA00;
+    -fx-background-color: #339900;
+}
+
+.folder-component {
+    -fx-font-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-base : #CC9933;
+}
+
+.default-headline {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 14px;
+    -fx-font-weight : bold;
+}
+
+.default-text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 14px;
+}
+
+.default-text-color {
+    -fx-text-fill: #FFFFFF;
+}
+
+.default-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 18px;
+    -fx-font-weight : bold;
+}
+
+.help-text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 12px;
+}
+
+.action-selected {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #FF3333;
+    -fx-border-color: #990000;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1;
+    -fx-border-insets: 0 0 0 0;
+    -fx-background-radius: 2 2 2 2;
+}
+
+.green {
+    -fx-background-color: #338800;
+}
+
+.orange-label {
+    -fx-text-fill: #FF9933;
+    -fx-font-weight : bold;
+    -fx-font-size: 14px;
+}
+
+
+.white-label {
+    -fx-text-fill: #FFFFFF;
+}
+
+.green-label {
+    -fx-text-fill: #338800;
+    -fx-font-weight : bold;
+    -fx-font-size: 14px;
+}
+
+.tile {
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-border-radius: 4 4 4 4;
+}
+
+.edit-mode-border {
+    -fx-border-color: #6666FF;
+    -fx-border-style: solid;
+    -fx-border-width: 3;
+}
+
+.edit-mode-container {
+    -fx-background-color: #6666FF;
+}
+
+.dnd-dashed-border {
+    -fx-border-color: white;
+    -fx-border-width: 3;
+    -fx-border-style: segments(15, 15, 15, 15);
+}
+
+.dnd-dashed-border-small {
+    -fx-border-color: white;
+    -fx-border-width: 2;
+    -fx-border-style: segments(7, 7,7, 7);
+}
+
+
+.selection-panel {
+    -fx-background-color: #272b2f;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #272b2f;
+}
+
+.selection-panel:hover {
+    -fx-background-color: #272b3f;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #6666FF;
+}
+.selection-panel-selected {
+    -fx-background-color: #272b3f;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #6666FF;
+}
+
+
+/**
+ * Color Picker custom color hiding
+.color-palette .hyperlink, .color-palette .separator {
+    visibility: hidden;
+}
+.color-palette {
+    -fx-padding: 15 15 -30 15;
+}
+ */
+
+ .tooltip {
+    -fx-show-delay: 250ms;
+    -fx-show-duration: 10s;
+ }
+
+.separator:horizontal .line {
+    -fx-border-color: #272b2f;
+    -fx-border-width: 1;
+    -fx-border-insets: 0, 1 0 0 0;
+}
+
+.separator:vertical .line {
+    -fx-border-color: #272b2f;
+    -fx-border-width: 1;
+    -fx-border-insets: 0, 0 0 0 1;
+}
