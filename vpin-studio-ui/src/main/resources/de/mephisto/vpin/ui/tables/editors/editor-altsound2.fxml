@@ -122,7 +122,7 @@
          <center>
             <StackPane styleClass="media-parent" BorderPane.alignment="CENTER">
                <children>
-                  <TableView fx:id="tableView" style="-fx-background-color: -c-tile;" styleClass="base-component">
+                  <TableView fx:id="tableView" styleClass="base-component">
                     <columns>
                       <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.editors.editor_altsound.id" />
                       <TableColumn fx:id="columnType" prefWidth="140.0" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound2.type" />

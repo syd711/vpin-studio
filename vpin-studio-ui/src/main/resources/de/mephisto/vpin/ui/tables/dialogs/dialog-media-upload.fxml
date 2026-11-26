@@ -85,7 +85,7 @@
                            <children>
                               <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                                  <children>
-                                    <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: -c-tile;" styleClass="base-component">
+                                    <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" styleClass="base-component">
                                        <columns>
                                           <TableColumn fx:id="columnSelection" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" sortable="false" style="-fx-alignment: BASELINE_CENTER;">
                                              <graphic>

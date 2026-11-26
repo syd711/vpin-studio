@@ -26,7 +26,7 @@
             <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                <children>
 
-                  <TableView fx:id="tableView" style="-fx-background-color: -c-tile;" BorderPane.alignment="CENTER">
+                  <TableView fx:id="tableView" BorderPane.alignment="CENTER">
                      <columns>
                         <TableColumn fx:id="installedColumn" style="-fx-alignment: BASELINE_CENTER;" text="%vps.vps_tables.installed" />
                         <TableColumn fx:id="commentColumn" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.tables_overview.comment" />

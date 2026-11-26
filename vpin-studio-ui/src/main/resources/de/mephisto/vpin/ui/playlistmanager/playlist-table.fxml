@@ -19,7 +19,7 @@
    <center>
       <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;" BorderPane.alignment="CENTER">
          <children>
-            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: -c-tile;" styleClass="base-component">
+            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" styleClass="base-component">
                <columns>
                   <TableColumn fx:id="columnName" minWidth="100.0" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />
                   <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="200.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.emulator" />

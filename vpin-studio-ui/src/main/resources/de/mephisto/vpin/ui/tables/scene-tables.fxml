@@ -19,7 +19,7 @@
             <center>
                 <StackPane fx:id="editorRootStack" BorderPane.alignment="CENTER">
                     <children>
-                        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+                        <TabPane fx:id="tabPane" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE">
                             <tabs>
                                 <Tab fx:id="tablesTab" closable="false" text="%tables.alx.alx_delete.all_tables">
                                     <content>

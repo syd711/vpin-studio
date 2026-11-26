@@ -232,11 +232,6 @@ public class BuiltInPlayersController extends BasePlayersController implements I
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
-
-    for (TableColumn<PlayerRepresentation, ?> column : tableView.getColumns()) {
-      column.setText(column.getText().toUpperCase());
-    }
-
     maniaPlayerColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (!StringUtils.isEmpty(value.getManiaAccountUuid()) && Features.MANIA_ENABLED) {

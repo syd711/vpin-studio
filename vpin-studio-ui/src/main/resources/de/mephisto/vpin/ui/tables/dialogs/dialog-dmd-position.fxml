@@ -113,7 +113,7 @@
                <children>
                   <StackPane minHeight="-Infinity">
                      <children>
-                        <TabPane fx:id="tabPane" minHeight="-Infinity">
+                        <TabPane fx:id="tabPane" styleClass="primary-tabs" minHeight="-Infinity">
                            <tabs>
                               <Tab fx:id="playfieldTab" closable="false" text="%pref.validators_screens.playfield" />
                               <Tab fx:id="backglassTab" closable="false" text="%backglass.directb2s_admin.backglass" />

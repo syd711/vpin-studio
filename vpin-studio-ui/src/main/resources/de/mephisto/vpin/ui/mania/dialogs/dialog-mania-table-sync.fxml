@@ -70,7 +70,7 @@
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
-            <TableView fx:id="tableView" prefHeight="630.0" style="-fx-background-color: -c-tile;" styleClass="base-component">
+            <TableView fx:id="tableView" prefHeight="630.0" styleClass="base-component">
               <columns>
                   <TableColumn fx:id="statusColumn" prefWidth="50.0" style="-fx-alignment: BASELINE_CENTER;" />
                 <TableColumn fx:id="nameColumn" prefWidth="500.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="%competitions.competitions_discord.table" />

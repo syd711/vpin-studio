@@ -29,7 +29,7 @@
                            <children>
                               <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                                  <children>
-                                    <TableView fx:id="tableView" prefWidth="258.0" style="-fx-background-color: -c-tile;" styleClass="base-component">
+                                    <TableView fx:id="tableView" prefWidth="258.0" styleClass="base-component">
                                        <columns>
                                           <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="%cards.highscore_cards.display_name" />
                                           <TableColumn fx:id="columnTemplate" minWidth="70.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_CENTER;" text="%cards.highscore_cards.custom" />

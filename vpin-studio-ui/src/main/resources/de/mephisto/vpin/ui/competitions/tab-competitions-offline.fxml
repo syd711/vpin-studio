@@ -22,7 +22,7 @@
             <center>
                 <StackPane fx:id="tableStack">
                     <children>
-                        <TableView fx:id="tableView" style="-fx-background-color: -c-tile;" styleClass="base-component">
+                        <TableView fx:id="tableView" styleClass="base-component">
                             <columns>
                                 <TableColumn fx:id="columnTable" prefWidth="280.8000183105469" style="-fx-alignment: BASELINE_LEFT;" text="%competitions.competitions_discord.table" />
                                 <TableColumn fx:id="columnName" prefWidth="240.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />

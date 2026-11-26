@@ -25,7 +25,7 @@
           <children>
             <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                <children>
-                      <TableView fx:id="tableView" style="-fx-background-color: -c-tile;">
+                      <TableView fx:id="tableView">
                           <columns>
                               <TableColumn fx:id="installedColumn" style="-fx-alignment: CENTER;" text="%vps.vps_tables.installed" />
                               <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />

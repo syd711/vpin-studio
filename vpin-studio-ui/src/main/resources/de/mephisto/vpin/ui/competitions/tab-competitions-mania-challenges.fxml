@@ -24,7 +24,7 @@
             <center>
                 <StackPane fx:id="tableStack">
                     <children>
-                        <TableView fx:id="tableView" onMouseClicked="#onMouseClick" style="-fx-background-color: -c-tile;" styleClass="base-component">
+                        <TableView fx:id="tableView" onMouseClicked="#onMouseClick" styleClass="base-component">
                             <columns>
                                 <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="%competitions.competitions_iscored.your_table" />
                                 <TableColumn fx:id="statusColumn" prefWidth="110.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_mania.status" />

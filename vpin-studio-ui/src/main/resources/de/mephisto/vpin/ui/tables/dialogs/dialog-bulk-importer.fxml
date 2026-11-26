@@ -237,7 +237,7 @@
                   </ToggleButton>
                </items>
             </ToolBar>
-            <TableView fx:id="tableView" minHeight="120.0" style="-fx-background-color: -c-tile;" styleClass="base-component" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tableView" minHeight="120.0" styleClass="base-component" VBox.vgrow="ALWAYS">
       <columns>
          <TableColumn fx:id="columnSelect" maxWidth="44.0" minWidth="44.0" prefWidth="44.0" resizable="false" sortable="false" style="-fx-alignment: CENTER;" />
          <TableColumn fx:id="columnPreview" prefWidth="120.0" resizable="false" sortable="false" style="-fx-alignment: CENTER;" text="%bulk_importer.column_preview" />

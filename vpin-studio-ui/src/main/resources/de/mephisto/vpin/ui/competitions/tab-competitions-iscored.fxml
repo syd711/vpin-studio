@@ -22,7 +22,7 @@
             <center>
                 <StackPane fx:id="tableStack">
                     <children>
-                        <TableView fx:id="tableView" onMouseClicked="#onMouseClick" style="-fx-background-color: -c-tile;" styleClass="base-component">
+                        <TableView fx:id="tableView" onMouseClicked="#onMouseClick" styleClass="base-component">
                             <columns>
                         <TableColumn fx:id="settingsColumn" prefWidth="140.0" sortable="false" style="-fx-alignment: CENTER;" text="%competitions.competitions_iscored.game_settings" />
                         <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;">

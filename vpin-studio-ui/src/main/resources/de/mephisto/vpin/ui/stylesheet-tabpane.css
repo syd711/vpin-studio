@@ -13,8 +13,8 @@
     -sm-tab-content: -c-tile;
 }
 
-/* tab pane on a subpanel whose tab content is a -c-panel page (System Manager) */
-.tab-pane.tabs-dark-content {
+/* parent-tabs: tab pane on a subpanel whose tab content is a -c-panel page (System Manager) */
+.tab-pane.parent-tabs {
     -sm-tab-content: -c-panel;
 }
 
@@ -103,4 +103,51 @@
 .tab-pane .sub-tab {
     -fx-tab-min-height: 30px;
     -fx-background-color: -fx-base-6;
+}
+
+/* primary-tabs: underlined tabs (14px bold labels, orange underline on the selected tab) */
+.tab-pane.primary-tabs {
+    -fx-tab-min-height: 30px;
+}
+
+.tab-pane.primary-tabs > .tab-header-area {
+    -fx-padding: 4 12 0 12;
+}
+
+.tab-pane.primary-tabs > .tab-header-area > .headers-region {
+    -fx-padding: 0;
+}
+
+.tab-pane.primary-tabs > .tab-header-area > .tab-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -c-selected transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.tab-pane.primary-tabs > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 6 14 6 14;
+}
+
+.tab-pane.primary-tabs > .tab-header-area > .headers-region > .tab:selected {
+    -fx-border-color: transparent transparent -c-warn transparent;
+}
+
+.tab-pane.primary-tabs > .tab-header-area > .headers-region > .tab .tab-label {
+    -fx-text-fill: -c-muted;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.tab-pane.primary-tabs > .tab-header-area > .headers-region > .tab:selected .tab-label,
+.tab-pane.primary-tabs > .tab-header-area > .headers-region > .tab:hover .tab-label {
+    -fx-text-fill: -c-white;
+}
+
+.tab-pane.primary-tabs > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
 }

@@ -73,6 +73,7 @@
     /* Achievements palettes (rarity, rank medals, striped rows) */
     -c-row-even: #283335;
     -c-row-odd: #303733;
+    -c-table-selected: #4A4A7A;             /* selected table row (with a -c-info bar on the left) */
     -c-rarity-common: #EDEDED;
     -c-rarity-rare: #5AA9FF;
     -c-rarity-epic: #C77DFF;

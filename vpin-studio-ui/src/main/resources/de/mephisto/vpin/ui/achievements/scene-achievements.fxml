@@ -103,7 +103,7 @@
       </ToolBar>
    </fx:define>
    <center>
-      <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+      <TabPane fx:id="tabPane" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
          <tabs>
             <Tab fx:id="overviewTab" closable="false" text="%achievements.tab.overview">
                <graphic>
@@ -155,7 +155,7 @@
             </Tab>
          </tabs>
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="4.0" />
+            <Insets bottom="12.0" right="12.0" />
          </BorderPane.margin>
       </TabPane>
    </center>

@@ -21,7 +21,7 @@
           <children>
             <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                <children>
-                      <TableView fx:id="tableView" style="-fx-background-color: -c-tile;">
+                      <TableView fx:id="tableView">
                           <columns>
                               <TableColumn fx:id="iconColumn" minWidth="0.0" prefWidth="90.39989471435547" sortable="false" style="-fx-alignment: CENTER;" />
                               <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />

@@ -27,7 +27,7 @@
                             <children>
                                 <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                                     <children>
-                                        <TableView fx:id="tableView" prefWidth="258.0" style="-fx-background-color: -c-tile;" styleClass="base-component">
+                                        <TableView fx:id="tableView" prefWidth="258.0" styleClass="base-component">
                                             <columns>
                                                 <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="%cards.highscore_cards.display_name" />
                                     <TableColumn fx:id="columnDOFMapping" minWidth="100.0" prefWidth="90.0" style="-fx-alignment: BASELINE_CENTER;" text="%components.doftester.dof_tester.dof_mapped" />

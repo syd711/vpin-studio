@@ -29,7 +29,7 @@
          <children>
                   <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                         <children>
-                           <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: -c-tile;" styleClass="base-component">
+                           <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" styleClass="base-component">
                               <columns>
                                  <TableColumn fx:id="columnStatus" minWidth="60" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.status" />
                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="%cards.highscore_cards.display_name" />

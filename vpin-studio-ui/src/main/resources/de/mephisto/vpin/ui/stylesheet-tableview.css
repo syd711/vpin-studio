@@ -1,127 +1,144 @@
 /**
- * Table View
+ * Table View and TreeTable View
+ *
+ * Flat style for every table of the Studio: header band, striped rows in the theme row colors
+ * (same as the Achievements row lists), selected row = -c-table-selected with a 3px -c-info bar on the left.
+ * Default is the dense variant (40px rows); add "sm-table" for roomy tables (60px rows, Players).
  */
 
-.table-view {
-    -fx-font-size : 14px;
+.table-view,
+.tree-table-view {
+    -fx-font-size: 14px;
     -fx-text-fill: -c-white;
     -fx-text-background-color: -c-white;
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: -c-darkest;
-    -fx-border-width: 1;
-}
-.table-row-cell {
-    -fx-text-fill: -c-white;
-    -fx-cell-size: 40px;
-    -fx-border-width: 1;
-}
-.table-view .table-cell{
-    -fx-border-width: 1;
-    -fx-text-fill: -c-white;
-    -fx-border-color: transparent;
-}
-.table-row-cell: hover {
-    -fx-border-width: 1;
-    -fx-background-color: -c-row-hover-faint;
-    -fx-text-background-color: -c-highlight;
-}
-.table-row-cell: odd{
-    -fx-background-color: -c-row-odd-tint;
-    -fx-text-fill: -c-white;
-}
-.table-row-cell: even{
-    -fx-background-color: -c-row-even-tint;
-    -fx-text-fill: -c-white;
-}
-.table-row-cell: selected {
-    -fx-text-background-color: -c-white;
-    -fx-font-weight: bold;
-    -fx-background-color: -c-highlight-translucent;
-}
-/* Row hovered */
-.table-view:row-selection .table-row-cell:filled:hover {
-    -fx-background-color: -c-highlight-faint;
-    -fx-text-fill: -c-white;
-}
-/* Selected row hovered when table not focused */
-.table-view:row-selection .table-row-cell:filled:focused:hover {
-    -fx-background-color: -c-highlight-faint;
-    -fx-text-fill: -c-white;
-}
-/* Selected row hovered */
- .table-view:focused .table-row-cell:filled:focused:selected:hover {
-    -fx-text-background-color: -c-white;
-    -fx-font-weight: bold;
-    -fx-background-color: -c-highlight-translucent;
- }
-
-/**
- * Flat table inside a tile (Players): caption headers, divider lines instead of striping,
- * selected row in the navigation selection color.
- */
-.sm-table {
     -fx-background-color: -c-tile;
     -fx-background-radius: 6;
     -fx-border-color: -c-selected;
+    -fx-border-style: solid;
     -fx-border-radius: 6;
     -fx-border-width: 1;
     -fx-padding: 0;
 }
-.sm-table .column-header-background {
-    -fx-background-color: transparent;
-}
-.sm-table .column-header-background .filler,
-.sm-table .column-header {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent transparent -c-selected transparent;
+
+/* header band: darker strip with a strong bottom line, set apart from the rows */
+.table-view .column-header-background,
+.tree-table-view .column-header-background {
+    -fx-background-color: -c-footer;
+    -fx-background-radius: 5 5 0 0;
+    -fx-border-color: transparent transparent -c-border transparent;
     -fx-border-width: 0 0 1 0;
+}
+.table-view .column-header-background .filler,
+.tree-table-view .column-header-background .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.table-view .column-header,
+.tree-table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent -c-selected transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-insets: 10 0 10 0;
     -fx-size: 38;
 }
-.sm-table .column-header .label {
+.table-view .column-header:hover,
+.tree-table-view .column-header:hover {
+    -fx-background-color: -c-row-hover;
+}
+.table-view .column-header .label,
+.tree-table-view .column-header .label {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-text-fill: -c-subtle;
+    -fx-text-fill: -c-muted;
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 0 12 0 12;
+    -fx-padding: 0 6 0 6;
 }
-.sm-table .table-row-cell,
-.sm-table .table-row-cell:odd,
-.sm-table .table-row-cell:even {
-    -fx-cell-size: 60px;
+.table-view .column-header .arrow,
+.tree-table-view .column-header .arrow {
+    -fx-background-color: -c-warn;
+}
+
+/* striped rows */
+.table-row-cell,
+.tree-table-row-cell {
+    -fx-cell-size: 40px;
+    -fx-text-fill: -c-white;
+    -fx-background-color: -c-row-even;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+.table-row-cell:odd,
+.tree-table-row-cell:odd {
+    -fx-background-color: -c-row-odd;
+}
+.table-row-cell:empty,
+.tree-table-row-cell:empty {
     -fx-background-color: transparent;
-    -fx-border-color: transparent transparent -c-selected transparent;
-    -fx-border-width: 0 0 1 0;
 }
-.sm-table .table-row-cell:empty {
+.table-view .table-cell,
+.tree-table-view .tree-table-cell {
+    -fx-text-fill: -c-white;
+    -fx-padding: 0 6 0 6;
     -fx-border-color: transparent;
-}
-.sm-table .table-cell {
+    /* must be set via CSS: TableRowSkinBase forces TOP_LEFT on rows taller than 24px when no style is set */
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 0 12 0 12;
-    -fx-border-color: transparent;
 }
-.sm-table:row-selection .table-row-cell:filled:hover,
-.sm-table:row-selection .table-row-cell:filled:focused:hover {
+.tree-table-row-cell .tree-disclosure-node .arrow {
+    -fx-background-color: -c-muted;
+}
+
+/* hovered row */
+.table-view:row-selection .table-row-cell:filled:hover,
+.table-view:row-selection .table-row-cell:filled:focused:hover,
+.tree-table-view:row-selection .tree-table-row-cell:filled:hover,
+.tree-table-view:row-selection .tree-table-row-cell:filled:focused:hover {
     -fx-background-color: -c-control;
     -fx-font-weight: normal;
 }
-.sm-table .table-row-cell:filled:selected,
-.sm-table:focused .table-row-cell:filled:selected,
-.sm-table:focused .table-row-cell:filled:focused:selected,
-.sm-table:focused .table-row-cell:filled:focused:selected:hover,
-.sm-table:row-selection .table-row-cell:filled:selected:hover {
-    -fx-background-color: -c-warn-bg;
+
+/* selected row: -c-table-selected with a 3px -c-info bar on the left,
+   drawn as background layers so the cell content does not shift */
+.table-view .table-row-cell:filled:selected,
+.table-view:focused .table-row-cell:filled:selected,
+.table-view:focused .table-row-cell:filled:focused:selected,
+.table-view:focused .table-row-cell:filled:focused:selected:hover,
+.table-view:row-selection .table-row-cell:filled:selected:hover,
+.tree-table-view .tree-table-row-cell:filled:selected,
+.tree-table-view:focused .tree-table-row-cell:filled:selected,
+.tree-table-view:focused .tree-table-row-cell:filled:focused:selected,
+.tree-table-view:focused .tree-table-row-cell:filled:focused:selected:hover,
+.tree-table-view:row-selection .tree-table-row-cell:filled:selected:hover {
+    -fx-background-color: -c-info, -c-table-selected;
+    -fx-background-insets: 0, 0 0 0 3;
     -fx-text-background-color: -c-white;
     -fx-font-weight: normal;
 }
-/* the display name column */
-.sm-table .table-cell.sm-table-bold {
+.tree-table-row-cell:filled:selected .tree-disclosure-node .arrow {
+    -fx-background-color: -c-white;
+}
+
+.table-view .placeholder .label,
+.tree-table-view .placeholder .label {
+    -fx-text-fill: -c-muted;
+}
+
+/* roomy variant (Players) */
+.sm-table .table-row-cell {
+    -fx-cell-size: 60px;
+}
+.sm-table .table-cell,
+.sm-table .column-header .label {
+    -fx-padding: 0 12 0 12;
+}
+
+/* column classes */
+.table-view .table-cell.sm-table-bold {
     -fx-font-weight: bold;
 }
-/* the initials column */
-.sm-table .table-cell.sm-table-mono {
+.table-view .table-cell.sm-table-mono {
     -fx-font-family: "Consolas";
 }
-.sm-table .placeholder .label {
-    -fx-text-fill: -c-muted;
+.table-view .table-cell.sm-table-center,
+.table-view .column-header.sm-table-center .label {
+    -fx-alignment: CENTER;
 }

@@ -39,6 +39,12 @@ Table-like row lists in the Achievements view use `ROW_EVEN #283335` / `ROW_ODD 
 with a 3px `#8C8CE0` left border for the selected row (`AchievementsUI.row()`). Do not mix this striped style with
 the `sm-list-row` style inside one view.
 
+Every `TableView` / `TreeTableView` gets the same striped look from `stylesheet-tableview.css` without any class:
+`#1C1C1C` header band (12px bold `#BDBDBD` labels, column dividers, `#DD9646` sort arrow), 40px rows striped
+`ROW_EVEN` / `ROW_ODD`, hover `#333333`, selected row `-c-table-selected #4A4A7A` with a 3px `#8C8CE0` left bar.
+Don't set a background on the table in FXML. `sm-table` = roomy variant (60px rows, 12px padding); column classes
+`sm-table-bold`, `sm-table-mono`, `sm-table-center`.
+
 ### Text
 
 | Token | Hex | Use |
@@ -221,6 +227,10 @@ configuration conflicts:
   detail box with an `#8C8CE0` left border and a 16px bold name.
 - **Progress row** (`tile-closest.fxml`, `leaderboards/tile-table.fxml`): label, 12px `#9A9A9A` caption, flat `progress()` bar
   on `#161616`.
+- **Score tile** (`players/widget-highscore.fxml`): `sm-panel` with the table background image (cover) under a
+  `sm-score-tile-shade`; 72px wheel, `sm-title` table name + `sm-hint` "Manufacturer · Year", rank pill
+  (`sm-pill` + `sm-pill-rank-1/2/3` medal colors, `sm-pill-unknown` otherwise) + `sm-text` player + `sm-hint`
+  relative date (full date as tooltip), score font right-aligned.
 - Cards built in code use `AchievementsUI.card()` (VBox, spacing 8, padding 14/16, `#2A2A2A`, radius 6).
 
 ### System Manager
@@ -246,12 +256,11 @@ configuration conflicts:
 - **Monitor map** (`sm-map`): `#161616` canvas, monitors with `#4A4A4A` border, screens colored by source
   (frontend = `#8C8CE0`), `sm-chip`s for quick selection, legend below.
 - **Inspector** (Screens): `sm-panel` VBox, spacing 16, sections with `sm-caption` headings.
-- **Folder tabs** (default for every TabPane, no class needed): flat header strip one step lighter than the content,
-  tabs with 5px top radius, 14px `#BDBDBD` labels + icons (white on hover/selected, selected bold); the selected tab
-  takes the content color so it merges with the page. Strip/content colors come from `-sm-tab-strip` /
-  `-sm-tab-content`: `#2A2A2A`/`#222222` on the page, `#333333`/`#2A2A2A` inside a `subpanel`. If the tab content
-  is a `#222222` page inside a subpanel (System Manager), add `tabs-dark-content` to the TabPane.
-- **Underlined tabs** (secondary level): add `sm-tabs` to a TabPane — 14px bold `#BDBDBD` labels, white when selected/hovered, 2px orange underline.
+- **Tabs** (`stylesheet-tabpane.css`): every TabPane in the Studio gets `styleClass="primary-tabs"` — underlined tabs,
+  14px bold `#BDBDBD` labels, white when selected/hovered, 2px orange underline.
+  The only exception is the System Manager's root TabPane, which uses `parent-tabs`: flat folder tabs on a header strip
+  one step lighter than the content, 5px top radius, the selected tab takes the content color (`#222222` page inside a
+  subpanel) so it merges with the page. Strip/content colors come from `-sm-tab-strip` / `-sm-tab-content`.
 - **Navigation sidebar** (`scene-navigation.fxml`, `nav-*` classes): 230px `#222222` panel (64px when collapsed,
   persisted in `LocalUISettings`), header with 40px round avatar + `sm-title` + `sm-small` system name,
   12px bold `#9A9A9A` section captions, items = 18px icon (`#BDBDBD`) + 14px label, `#333333` hover, selected =

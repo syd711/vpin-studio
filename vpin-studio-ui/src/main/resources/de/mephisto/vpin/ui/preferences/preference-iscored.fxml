@@ -82,7 +82,7 @@
                         </Button>
                     </items>
                   </ToolBar>
-                  <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: -c-tile;" styleClass="base-component">
+                  <TableView fx:id="tableView" prefWidth="750.0" styleClass="base-component">
                     <columns>
                         <TableColumn fx:id="syncColumn" prefWidth="118.40002059936523" style="-fx-alignment: BASELINE_CENTER;" text="%pref.iscored.sync_enabled" />
                       <TableColumn fx:id="nameColumn" prefWidth="390.0" style="-fx-alignment: BASELINE_LEFT;" text="%pref.iscored.game_room_url" />

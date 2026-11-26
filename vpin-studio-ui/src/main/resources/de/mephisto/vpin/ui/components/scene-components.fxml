@@ -17,13 +17,13 @@
           <center>
               <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
                <center>
-                  <TabPane fx:id="rootTabPane" styleClass="tabs-dark-content" BorderPane.alignment="CENTER">
+                  <TabPane fx:id="rootTabPane" styleClass="parent-tabs" BorderPane.alignment="CENTER">
                      <tabs>
                         <Tab closable="false" text="%components.components.updates">
                            <content>
                               <BorderPane>
                                  <center>
-                                        <TabPane fx:id="tabPane" styleClass="sub-tab, sm-tabs" tabClosingPolicy="UNAVAILABLE">
+                                        <TabPane fx:id="tabPane" styleClass="sub-tab, primary-tabs" tabClosingPolicy="UNAVAILABLE">
                                             <tabs>
                                                 <Tab fx:id="overviewTab" closable="false" styleClass="sub-tab" text="%components.components.overview" />
                                                 <Tab fx:id="vpxTab" closable="false" text="%components.components.visual_pinball" />

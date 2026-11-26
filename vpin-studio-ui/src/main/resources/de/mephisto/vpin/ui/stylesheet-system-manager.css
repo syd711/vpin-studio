@@ -435,53 +435,6 @@
     -fx-border-color: transparent transparent -c-info-border transparent;
 }
 
-/* underlined tabs of the System Manager components */
-.tab-pane.sm-tabs {
-    -fx-tab-min-height: 30px;
-}
-
-.tab-pane.sm-tabs > .tab-header-area {
-    -fx-padding: 4 12 0 12;
-}
-
-.tab-pane.sm-tabs > .tab-header-area > .headers-region {
-    -fx-padding: 0;
-}
-
-.tab-pane.sm-tabs > .tab-header-area > .tab-header-background {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent transparent -c-selected transparent;
-    -fx-border-width: 0 0 1 0;
-}
-
-.tab-pane.sm-tabs > .tab-header-area > .headers-region > .tab {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
-    -fx-border-color: transparent;
-    -fx-border-width: 0 0 2 0;
-    -fx-padding: 6 14 6 14;
-}
-
-.tab-pane.sm-tabs > .tab-header-area > .headers-region > .tab:selected {
-    -fx-border-color: transparent transparent -c-warn transparent;
-}
-
-.tab-pane.sm-tabs > .tab-header-area > .headers-region > .tab .tab-label {
-    -fx-text-fill: -c-muted;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-}
-
-.tab-pane.sm-tabs > .tab-header-area > .headers-region > .tab:selected .tab-label,
-.tab-pane.sm-tabs > .tab-header-area > .headers-region > .tab:hover .tab-label {
-    -fx-text-fill: -c-white;
-}
-
-.tab-pane.sm-tabs > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
-    -fx-border-color: transparent;
-}
-
 /* System Manager emulators tab */
 .sm-pill-error {
     -fx-background-color: -c-error-bg;
@@ -534,4 +487,26 @@
     -fx-background-insets: 0;
     -fx-border-color: -c-selected;
     -fx-border-radius: 4;
+}
+
+/* score tile (players section, widget-highscore.fxml): darkens the table background image behind the text */
+.sm-score-tile-shade {
+    -fx-background-color: -c-darkest;
+    -fx-opacity: 0.55;
+}
+
+/* rank pills #1-#3 in the gold/silver/bronze medal colors, other ranks use sm-pill-unknown */
+.sm-pill-rank-1 {
+    -fx-background-color: -c-medal-gold;
+    -fx-text-fill: -c-darkest;
+}
+
+.sm-pill-rank-2 {
+    -fx-background-color: -c-medal-silver;
+    -fx-text-fill: -c-darkest;
+}
+
+.sm-pill-rank-3 {
+    -fx-background-color: -c-medal-bronze;
+    -fx-text-fill: -c-darkest;
 }

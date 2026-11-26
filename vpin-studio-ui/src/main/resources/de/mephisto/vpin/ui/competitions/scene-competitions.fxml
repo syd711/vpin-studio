@@ -30,7 +30,7 @@
             <center>
                 <StackPane BorderPane.alignment="CENTER">
                     <children>
-                        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+                        <TabPane fx:id="tabPane" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE">
                             <tabs>
                                 <Tab fx:id="offlineTab" closable="false" text="%competitions.competitions.offline_competitions">
                                     <content>

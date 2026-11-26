@@ -56,7 +56,7 @@
                   </Button>
               </items>
             </ToolBar>
-            <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: -c-tile;" styleClass="base-component">
+            <TableView fx:id="tableView" prefWidth="750.0" styleClass="base-component">
               <columns>
                   <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%pref.webhook_set.enabled" />
                   <TableColumn fx:id="providedColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%pref.asset_sources.provided" />

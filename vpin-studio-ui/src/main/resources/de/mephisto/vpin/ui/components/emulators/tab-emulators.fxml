@@ -310,7 +310,7 @@
                         <Label styleClass="sm-title" text="%components.emulators.scripts" />
                      </children>
                   </HBox>
-                  <TabPane fx:id="tabPane" styleClass="sm-tabs" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                  <TabPane fx:id="tabPane" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                      <tabs>
                         <Tab fx:id="startScriptTab" text="%components.emulators.emulators.launch_script" />
                         <Tab fx:id="vrStartScriptTab" text="%components.emulators.emulators.vr_launch_script" />

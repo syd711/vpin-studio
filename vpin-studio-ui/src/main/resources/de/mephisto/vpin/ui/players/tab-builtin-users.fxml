@@ -65,9 +65,9 @@
          <children>
             <TableView fx:id="tableView" styleClass="sm-table">
                <columns>
-                  <TableColumn fx:id="avatarColumn" minWidth="80.0" prefWidth="80.0" maxWidth="80.0" resizable="false" sortable="false" text="%players.builtin_users.avatar" />
+                  <TableColumn fx:id="avatarColumn" minWidth="80.0" prefWidth="80.0" maxWidth="80.0" resizable="false" sortable="false" styleClass="sm-table-center" text="%players.builtin_users.avatar" />
                   <TableColumn fx:id="nameColumn" minWidth="120.0" prefWidth="220.0" styleClass="sm-table-bold" text="%cards.highscore_cards.display_name" />
-                  <TableColumn fx:id="initialsColumn" minWidth="80.0" prefWidth="100.0" styleClass="sm-table-mono" text="%players.builtin_users.initials" />
+                  <TableColumn fx:id="initialsColumn" minWidth="80.0" prefWidth="100.0" styleClass="sm-table-mono, sm-table-center" text="%players.builtin_users.initials" />
                   <TableColumn fx:id="adminColumn" minWidth="110.0" prefWidth="140.0" text="%players.builtin_users.vpin_default_player" />
                   <TableColumn fx:id="maniaPlayerColumn" minWidth="130.0" prefWidth="170.0" text="%players.builtin_users.vpin_mania_account" />
                   <TableColumn fx:id="columnCreatedAt" minWidth="120.0" prefWidth="180.0" text="%backups.backups.created_at" />

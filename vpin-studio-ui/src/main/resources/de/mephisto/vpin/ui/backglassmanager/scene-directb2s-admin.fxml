@@ -170,7 +170,7 @@
                      <center>
                               <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
                                   <children>
-                                      <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: -c-tile;">
+                                      <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked">
                                           <columns>
                                               <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.status" />
                                               <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.backglass" />
