@@ -82,7 +82,7 @@
                   </VBox>
                </children>
             </HBox>
-            <HBox prefHeight="150.0" spacing="12.0">
+            <HBox spacing="12.0">
                <children>
                   <VBox fx:id="uploadReplaceBox" prefWidth="350.0" spacing="8.0" styleClass="sm-option-card" HBox.hgrow="ALWAYS">
                      <children>
@@ -92,7 +92,7 @@
                               <Label styleClass="sm-title" text="%tables.directb2s_upload.upload_and_replace" wrapText="true" />
                            </children>
                         </HBox>
-                        <Label fx:id="uploadAndCloneDescription" styleClass="sm-hint, sm-option-card-body" text="%tables.directb2s_upload.the_new_backglass_will_replace_the_existing_one" wrapText="true" />
+                        <Label fx:id="uploadAndCloneDescription" minHeight="-Infinity" styleClass="sm-hint, sm-option-card-body" text="%tables.directb2s_upload.the_new_backglass_will_replace_the_existing_one" wrapText="true" />
                      </children>
                      <HBox.margin>
                         <Insets />
@@ -106,8 +106,8 @@
                               <Label styleClass="sm-title" text="%tables.directb2s_upload.upload_and_append" wrapText="true" />
                            </children>
                         </HBox>
-                        <Label fx:id="uploadAndReplaceDescription" styleClass="sm-hint, sm-option-card-body" text="%tables.directb2s_upload.the_new_backglass_will_be_appended_to_the" wrapText="true" />
-                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="sm-hint, sm-option-card-body" text="%tables.directb2s_upload.you_can_select_the_active_version_in_the" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription" minHeight="-Infinity" styleClass="sm-hint, sm-option-card-body" text="%tables.directb2s_upload.the_new_backglass_will_be_appended_to_the" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" minHeight="-Infinity" styleClass="sm-hint, sm-option-card-body" text="%tables.directb2s_upload.you_can_select_the_active_version_in_the" wrapText="true" />
                      </children>
                   </VBox>
                </children>

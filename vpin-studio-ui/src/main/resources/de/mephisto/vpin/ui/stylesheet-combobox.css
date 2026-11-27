@@ -2,29 +2,6 @@
     -fx-font-size : 14px;
 }
 
-.combo-box-popup {
-    -fx-font-size : 14px;
-}
-
-.combo-box-popup .list-view {
-    -fx-font-size : 14px;
-}
-
-.combo-box-popup .list-cell {
-    -fx-background-color: -c-white;
-    -fx-text-fill: -c-black;
-}
-
-.combo-box .list-cell:hover {
-    -fx-text-fill: -c-white;
-    -fx-background-color: -c-primary;
-}
-
-.combo-box-popup .list-view .list-cell:filled:hover{
-    -fx-background-color: -c-primary;
-    -fx-text-fill: -c-white;
-}
-
 /* combo boxes, date pickers and color pickers: same translucent box as the buttons,
    30px high like the sm-button family (stylesheet-button.css) and the buttons of a floating toolbar */
 .combo-box-base {
@@ -82,20 +59,35 @@
     -fx-background-color: -c-white;
 }
 
-.combo-box-popup > .list-view {
+/* drop-down list (UI-STYLEGUIDE.md "Text inputs"): #161616 inset box, white 14px cells, -c-primary hover / selection.
+   Overrides the generic list view look (bold selected row, focus border, inner padding that shows a sliver of an empty row) */
+.combo-box-popup > .list-view,
+.combo-box-popup > .list-view:focused {
+    -fx-font-size: 14px;
     -fx-background-color: -c-inset;
     -fx-background-insets: 0;
+    -fx-background-radius: 4;
     -fx-border-color: -c-border;
+    -fx-border-radius: 4;
+    -fx-padding: 0;
     -fx-control-inner-background: -c-inset;
 }
 
 .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
-    -fx-background-color: -c-inset;
+    -fx-background-color: transparent;
     -fx-text-fill: -c-white;
+    -fx-font-weight: normal;
+    -fx-padding: 4 8 4 8;
 }
 
 .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover,
-.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected {
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
     -fx-background-color: -c-primary;
     -fx-text-fill: -c-white;
+    -fx-font-weight: normal;
+}
+
+.combo-box-popup > .list-view > .placeholder > .label {
+    -fx-text-fill: -c-disabled;
 }

@@ -157,7 +157,8 @@ no class needed: `#161616` fill, `#444444` 1px border, radius 4, white 14px text
 
 `ComboBox`, `DatePicker` and `ColorPicker` (`.combo-box-base`) use the button look: `-c-button` fill, `-c-button-border` border,
 radius 4, white 14px text, `#BDBDBD` arrow (white on hover), `-c-button-hover` fill + border on hover, `#7A7A7A` border when focused or open.
-The popup list is `#161616` with white cells and `#333366` for hover / selection. Editable combos have no extra
+The popup list is `#161616` with white 14px cells (padding `4 8`, regular weight also when selected) and `#333366` for
+hover / selection, without the focus border of a regular `ListView`. Editable combos have no extra
 inner box — the editor is transparent inside the combo's border.
 
 `Spinner` uses the same box with a transparent editor; the arrow buttons are transparent with `#BDBDBD` arrows

@@ -16,311 +16,249 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.dialogs.CompetitionOfflineDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
-   <bottom>
-      <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
-         <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
-               <HBox.margin>
-                  <Insets right="12.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%backups.backup_source_folder.save">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
-         </children>
-         <BorderPane.margin>
-            <Insets bottom="24.0" left="12.0" right="12.0" top="12.0" />
-         </BorderPane.margin>
-      </HBox>
-   </bottom>
    <center>
-      <BorderPane BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <bottom>
-            <BorderPane fx:id="validationContainer" styleClass="sm-alert" BorderPane.alignment="TOP_LEFT">
-               <center>
-                  <HBox spacing="12.0">
+      <VBox spacing="14.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="14.0" left="12.0" right="12.0" top="12.0" />
+         </padding>
+         <children>
+            <!-- rules -->
+            <HBox spacing="10.0" styleClass="sm-inset">
+               <children>
+                  <FontIcon iconLiteral="mdi2i-information-outline" iconSize="18" styleClass="c-icon-info" />
+                  <VBox spacing="4.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
-                           <children>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
-                           </children>
-                        </StackPane>
-                        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label fx:id="validationTitle" styleClass="sm-alert-title" wrapText="true" />
-                              <Label fx:id="validationDescription" styleClass="sm-alert-text" wrapText="true" />
-                           </children>
-                        </VBox>
+                        <Label styleClass="sm-text-bold" text="%competitions.discord_competition_edit.rules" />
+                        <Label styleClass="sm-hint" text="%competitions.offline_competition_edit.offline_competition_are_only_played_on_your_vpin" wrapText="true" />
+                        <Label styleClass="sm-hint" text="%competitions.offline_competition_edit.current_highscores_can_be_seen_on_the_dashboard" wrapText="true" />
+                        <Label styleClass="sm-hint" text="%competitions.offline_competition_edit.new_highscores_can_be_submitted_to_your_default" wrapText="true" />
                      </children>
-                  </HBox>
-               </center>
+                  </VBox>
+               </children>
                <padding>
                   <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
                </padding>
-               <BorderPane.margin>
-                  <Insets bottom="0.0" left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
-            </BorderPane>
-         </bottom>
-         <top>
-            <VBox styleClass="info-container" BorderPane.alignment="CENTER">
+            </HBox>
+
+            <HBox spacing="14.0">
                <children>
-                  <Label layoutX="11.0" layoutY="11.0" styleClass="default-title" text="%competitions.discord_competition_edit.rules" />
-                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="%competitions.offline_competition_edit.offline_competition_are_only_played_on_your_vpin" wrapText="true" />
-                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="%competitions.offline_competition_edit.current_highscores_can_be_seen_on_the_dashboard" wrapText="true" />
-                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="%competitions.offline_competition_edit.new_highscores_can_be_submitted_to_your_default" wrapText="true" />
+                  <!-- left column -->
+                  <VBox prefWidth="540.0" spacing="14.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <!-- tile: competition settings -->
+                        <VBox spacing="12.0" styleClass="sm-tile">
+                           <children>
+                              <Label styleClass="sm-title" text="%competitions.offline_competition_edit.competition_settings" />
+                              <GridPane hgap="8.0" vgap="8.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="30.0" />
+                                    <RowConstraints minHeight="30.0" />
+                                    <RowConstraints minHeight="30.0" />
+                                    <RowConstraints minHeight="30.0" />
+                                    <RowConstraints minHeight="24.0" />
+                                 </rowConstraints>
+                                 <children>
+                                    <!-- row 0: name -->
+                                    <Label styleClass="sm-text" text="%competitions.discord_competition_edit.competition_name" />
+                                    <TextField fx:id="nameField" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
+                                    <!-- row 1: table -->
+                                    <Label styleClass="sm-text" text="%competitions.discord_competition_edit.table" GridPane.rowIndex="1" />
+                                    <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <children>
+                                          <ComboBox fx:id="tableCombo" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                          <Label>
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="16" styleClass="c-icon-muted" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="%competitions.offline_competition_edit.because_of_the_highscore_extraction_only_vpx_tables" wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <!-- row 2: start date -->
+                                    <Label styleClass="sm-text" text="%competitions.discord_competition_edit.start_date" GridPane.rowIndex="2" />
+                                    <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <children>
+                                          <DatePicker fx:id="startDatePicker" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                          <ComboBox fx:id="startTime" minWidth="100.0" prefWidth="100.0" />
+                                       </children>
+                                    </HBox>
+                                    <!-- row 3: end date -->
+                                    <Label styleClass="sm-text" text="%competitions.discord_competition_edit.end_date" GridPane.rowIndex="3" />
+                                    <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <children>
+                                          <DatePicker fx:id="endDatePicker" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                          <ComboBox fx:id="endTime" minWidth="100.0" prefWidth="100.0" />
+                                       </children>
+                                    </HBox>
+                                    <!-- row 4: duration -->
+                                    <Label styleClass="sm-text" text="%competitions.discord_competition_edit.duration" GridPane.rowIndex="4" />
+                                    <Label fx:id="durationLabel" styleClass="sm-hint" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                 </children>
+                              </GridPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                           </padding>
+                        </VBox>
+
+                        <!-- tile: notification settings -->
+                        <VBox spacing="12.0" styleClass="sm-tile">
+                           <children>
+                              <Label styleClass="sm-title" text="%competitions.offline_competition_edit.notification_settings" />
+                              <GridPane hgap="8.0" vgap="8.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="30.0" />
+                                 </rowConstraints>
+                                 <children>
+                                    <Label styleClass="sm-text" text="%competitions.discord_competition_edit.discord_channel" />
+                                    <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1">
+                                       <children>
+                                          <ComboBox fx:id="channelsCombo" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                          <Label>
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="16" styleClass="c-icon-muted" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="%competitions.offline_competition_edit.select_a_channel_where_updates_about_the_competiiton" wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </GridPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </VBox>
+
+                  <!-- right column: tile your VPin settings -->
+                  <VBox prefWidth="440.0" spacing="12.0" styleClass="sm-tile">
+                     <children>
+                        <Label styleClass="sm-title" text="%competitions.discord_competition_edit.your_vpin_settings" />
+                        <GridPane hgap="8.0" vgap="8.0">
+                           <columnConstraints>
+                              <ColumnConstraints maxWidth="190.0" minWidth="190.0" prefWidth="190.0" />
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="30.0" />
+                              <RowConstraints minHeight="30.0" />
+                              <RowConstraints minHeight="30.0" />
+                           </rowConstraints>
+                           <children>
+                              <!-- row 0: competition icon -->
+                              <Label styleClass="sm-text" text="%competitions.offline_competition_edit.competition_icon" />
+                              <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1">
+                                 <children>
+                                    <ComboBox fx:id="competitionIconCombo" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    <Label>
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="16" styleClass="c-icon-muted" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="%competitions.discord_competition_edit.the_competition_badge_will_be_added_to_the" wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <!-- row 1: reset highscores -->
+                              <Label styleClass="sm-text" text="%competitions.discord_competition_edit.reset_highscores" GridPane.rowIndex="1" />
+                              <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <children>
+                                    <CheckBox fx:id="resetCheckbox" mnemonicParsing="false" styleClass="sm-text" />
+                                    <Label>
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="16" styleClass="c-icon-muted" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="%competitions.offline_competition_edit.the_reset_is_required_in_case_your_highscore" wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <!-- row 2: reset available -->
+                              <Label styleClass="sm-text" text="%competitions.discord_competition_join.highscore_reset_available" GridPane.rowIndex="2" />
+                              <Label fx:id="nvramLabel" styleClass="sm-text" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                           </children>
+                        </GridPane>
+
+                        <!-- wheel icon preview -->
+                        <VBox spacing="6.0">
+                           <children>
+                              <Label styleClass="sm-small" text="%competitions.discord_competition_edit.wheel_icon_preview" />
+                              <StackPane alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="220.0" minWidth="220.0" prefHeight="220.0" prefWidth="220.0" styleClass="sm-inset">
+                                 <children>
+                                    <ImageView fx:id="iconPreview" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="badgePreview" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                                       <StackPane.margin>
+                                          <Insets left="130.0" top="10.0" />
+                                       </StackPane.margin>
+                                    </ImageView>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                              </StackPane>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                     </padding>
+                  </VBox>
                </children>
-               <padding>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </padding>
-               <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
-            </VBox>
-         </top>
-         <left>
-            <VBox BorderPane.alignment="CENTER">
+            </HBox>
+
+            <!-- validation -->
+            <HBox fx:id="validationContainer" spacing="12.0" styleClass="sm-alert">
                <children>
-                  <Label text="%competitions.offline_competition_edit.competition_settings" styleClass="c-text-white">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <GridPane hgap="6.0" vgap="3.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="498.00000000000006" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                  <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                      <children>
-                        <Label fx:id="titleLabel" text="%competitions.discord_competition_edit.competition_name" styleClass="c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="nameField" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                        <Label fx:id="titleLabel1" layoutX="10.0" layoutY="33.0" text="%competitions.discord_competition_edit.table" styleClass="c-text-white" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <children>
-                              <ComboBox fx:id="tableCombo" prefHeight="30.0" prefWidth="310.0" />
-                              <Label styleClass="c-text-white">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <tooltip>
-                                    <Tooltip text="%competitions.offline_competition_edit.because_of_the_highscore_extraction_only_vpx_tables" />
-                                 </tooltip>
-                                 <HBox.margin>
-                                    <Insets left="6.0" />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <Label fx:id="titleLabel11" text="%competitions.discord_competition_edit.start_date" styleClass="c-text-white" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="titleLabel111" text="%competitions.discord_competition_edit.end_date" styleClass="c-text-white" GridPane.rowIndex="3">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label text="%competitions.discord_competition_edit.duration" styleClass="c-text-white" GridPane.rowIndex="4">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <children>
-                              <DatePicker fx:id="startDatePicker" />
-                              <ComboBox fx:id="startTime" prefWidth="100.0" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                           <children>
-                              <DatePicker fx:id="endDatePicker" />
-                              <ComboBox fx:id="endTime" prefWidth="100.0" />
-                           </children>
-                        </HBox>
-                        <Label fx:id="durationLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </GridPane>
-                  <Label text="%competitions.offline_competition_edit.notification_settings" styleClass="c-text-white">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <GridPane hgap="6.0" vgap="3.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="498.0" minWidth="10.0" prefWidth="496.39990234375" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label fx:id="titleLabel12" text="%competitions.discord_competition_edit.discord_channel" styleClass="c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
-                           <children>
-                              <ComboBox fx:id="channelsCombo" prefWidth="240.0" />
-                              <Label>
-                                 <graphic>
-                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="%competitions.offline_competition_edit.select_a_channel_where_updates_about_the_competiiton" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                        </HBox>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </GridPane>
-                  <Label layoutX="10.0" layoutY="329.0" text="%competitions.discord_competition_edit.your_vpin_settings" styleClass="c-text-white">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <GridPane hgap="6.0" vgap="3.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="497.60002441406243" minWidth="10.0" prefWidth="497.60002441406243" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label text="%competitions.offline_competition_edit.competition_icon" styleClass="c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
-                           <children>
-                              <ComboBox fx:id="competitionIconCombo" prefHeight="30.0" prefWidth="210.0" />
-                              <Label layoutX="227.0" layoutY="16.0">
-                                 <graphic>
-                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="%competitions.discord_competition_edit.the_competition_badge_will_be_added_to_the" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <Label text="%competitions.discord_competition_edit.wheel_icon_preview" styleClass="c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="3">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label text="%competitions.discord_competition_edit.reset_highscores" styleClass="c-text-white" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <children>
-                              <CheckBox fx:id="resetCheckbox" mnemonicParsing="false" styleClass="c-text-white">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label styleClass="c-text-white">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="%competitions.offline_competition_edit.the_reset_is_required_in_case_your_highscore" wrapText="true" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <Label text="%competitions.discord_competition_join.highscore_reset_available" styleClass="c-text-white" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="nvramLabel" prefWidth="100.0" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </GridPane>
-                  <StackPane alignment="TOP_LEFT">
-                     <VBox.margin>
-                        <Insets left="178.0" top="5.0" />
-                     </VBox.margin>
-                     <children>
-                        <ImageView fx:id="iconPreview" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                           <StackPane.margin>
-                              <Insets />
-                           </StackPane.margin>
-                        </ImageView>
-                        <ImageView fx:id="badgePreview" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
-                           <StackPane.margin>
-                              <Insets left="130.0" top="10.0" />
-                           </StackPane.margin>
-                        </ImageView>
+                        <FontIcon iconLiteral="mdi2e-exclamation-thick" iconSize="14" styleClass="c-icon-white" />
                      </children>
                   </StackPane>
+                  <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="validationTitle" styleClass="sm-alert-title" wrapText="true" />
+                        <Label fx:id="validationDescription" styleClass="sm-alert-text" wrapText="true" />
+                     </children>
+                  </VBox>
                </children>
-               <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
-            </VBox>
-         </left>
-      </BorderPane>
+               <padding>
+                  <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
    </center>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" spacing="8.0" styleClass="sm-footer" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel" />
+            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%backups.backup_source_folder.save" />
+         </children>
+         <padding>
+            <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+         </padding>
+      </HBox>
+   </bottom>
 </BorderPane>

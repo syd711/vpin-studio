@@ -51,9 +51,9 @@
       </BorderPane>
    </center>
    <right>
-      <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
+      <ToolBar minWidth="-Infinity" styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="%dropins.dropin_container.install" styleClass="sm-button">
+            <Button fx:id="installBtn" minWidth="-Infinity" mnemonicParsing="false" onAction="#onInstall" text="%dropins.dropin_container.install" styleClass="sm-button">
                <tooltip>
                   <Tooltip prefWidth="300.0" text="%components.doftester.toy_container.updates_can_only_be_installed_when_vpin_studio" wrapText="true" />
                </tooltip>
