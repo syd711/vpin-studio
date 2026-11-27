@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.achievements.BadgeInfo;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
+import de.mephisto.vpin.ui.util.SegmentedToggles;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -37,6 +38,8 @@ public class BadgesGridTileController implements Initializable {
   @FXML
   private ToggleGroup filterGroup;
   @FXML
+  private ToggleButton allBtn;
+  @FXML
   private ToggleButton earnedBtn;
   @FXML
   private ToggleButton lockedBtn;
@@ -65,6 +68,7 @@ public class BadgesGridTileController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    SegmentedToggles.keepSelected(allBtn, earnedBtn, lockedBtn);
     filterGroup.selectedToggleProperty().addListener((obs, o, n) -> {
       if (n == null) {
         o.setSelected(true);

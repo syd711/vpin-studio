@@ -55,6 +55,10 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private static final DataFormat JAVA_FORMAT = new DataFormat("application/x-java-serialized-object");
   private static final String DROP_HINT_STYLE = "-fx-border-color: " + ThemeColors.HIGHLIGHT + "; -fx-border-width: 2 0 2 0; -fx-padding: 3 3 1 3";
 
+  private static final String CELL_DEFAULT_STYLE = "-fx-font-size: 14px; -fx-text-fill: -c-white;";
+  private static final String CELL_DISABLED_STYLE = "-fx-font-size: 14px; -fx-text-fill: -c-disabled;";
+  private static final String CELL_ERROR_STYLE = "-fx-font-size: 14px; -fx-text-fill: -c-error;";
+
   private final Debouncer debouncer = new Debouncer();
 
   private static final Map<String, String> SQL_TEMPLATES = new LinkedHashMap<>();
@@ -87,7 +91,17 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private Button renameBtn;
 
   @FXML
-  private ScrollPane scrollPane;
+  private Label playlistsCaption;
+  @FXML
+  private Label settingsCaption;
+  @FXML
+  private Label optionsCaption;
+  @FXML
+  private Label sqlCaption;
+  @FXML
+  private Label gamesCaption;
+  @FXML
+  private Label playlistTitleLabel;
 
   @FXML
   private Button assetManagerBtn;
@@ -199,6 +213,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   }
 
   private void rename(String value, String oldValue, PlaylistRepresentation playlist) {
+    if (value == null) {
+      return; // dialog cancelled
+    }
     value = FileUtils.replaceWindowsChars(value);
     if (!StringUtils.isEmpty(value) && !oldValue.equalsIgnoreCase(value)) {
       try {
@@ -391,6 +408,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     templateSelector.setDisable(value.isEmpty() || !value.get().isSqlPlayList());
 
     errorContainer.setVisible(false);
+    playlistTitleLabel.setText(value.map(PlaylistRepresentation::getName).orElse("-"));
 
     assetManagerBtn.setDisable(value.isEmpty());
     if (value.isPresent()) {
@@ -480,8 +498,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    scrollPane.setFitToHeight(true);
-    scrollPane.setFitToWidth(true);
+    for (Label caption : List.of(playlistsCaption, settingsCaption, optionsCaption, sqlCaption, gamesCaption)) {
+      caption.setText(caption.getText().toUpperCase());
+    }
 
     treeView.setEditable(true);
     settingsBox.managedProperty().bindBidirectional(settingsBox.visibleProperty());
@@ -520,7 +539,6 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       Set<Map.Entry<String, String>> entries = SQL_TEMPLATES.entrySet();
       for (Map.Entry<String, String> entry : entries) {
         MenuItem item = new MenuItem(entry.getKey());
-        item.getStyleClass().add("default-text");
         item.setOnAction(new EventHandler<ActionEvent>() {
           @Override
           public void handle(ActionEvent event) {
@@ -562,10 +580,11 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       final HBox cellNode = new HBox();
 
       cellNode.setAlignment(Pos.CENTER_LEFT);
+      cellNode.setSpacing(6);
 
       final Label label = new Label();
+      label.setGraphicTextGap(6);
       final Label graphics = new Label();
-      label.getStyleClass().add("default-text");
       cellNode.getChildren().add(graphics);
       cellNode.getChildren().add(label);
 
@@ -619,26 +638,26 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           String tooltip = null;
           if (newItem.isSqlPlayList()) {
             tooltip = Messages.get("dialog.playlist_sql");
-            icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+            icon = WidgetFactory.createIcon("mdi2d-database-search-outline", 16, ThemeColors.MUTED);
 
           }
           else {
             tooltip = Messages.get("dialog.playlist_curated");
-            icon = WidgetFactory.createIcon("mdi2f-format-list-checkbox");
+            icon = WidgetFactory.createIcon("mdi2f-format-list-checkbox", 16, ThemeColors.MUTED);
           }
 
           label.setGraphic(icon);
           label.setTooltip(new Tooltip(tooltip));
 
           if (!StringUtils.isEmpty(newItem.getSqlError())) {
-            label.setStyle(WidgetFactory.ERROR_STYLE);
+            label.setStyle(CELL_ERROR_STYLE);
             label.setTooltip(new Tooltip(newItem.getSqlError()));
           }
           else if (!newItem.isVisible()) {
-            label.setStyle(WidgetFactory.DISABLED_TEXT_STYLE);
+            label.setStyle(CELL_DISABLED_STYLE);
           }
           else {
-            label.setStyle(WidgetFactory.DEFAULT_TEXT_STYLE);
+            label.setStyle(CELL_DEFAULT_STYLE);
           }
 
           Label playlistIcon = WidgetFactory.createPlaylistIcon(newItem, uiSettings);

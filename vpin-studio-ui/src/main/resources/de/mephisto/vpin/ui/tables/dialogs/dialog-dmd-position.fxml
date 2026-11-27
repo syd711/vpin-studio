@@ -305,11 +305,11 @@
                                     <Label styleClass="sm-caption" text="%tables.dmd_position.caption_position_on" />
                                     <VBox fx:id="radioOnPane">
                                        <children>
-                                          <HBox spacing="6.0">
+                                          <HBox styleClass="sm-segmented">
                                              <children>
-                                                <ToggleButton fx:id="radioOnBackglass" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="%backglass.directb2s_admin.backglass" HBox.hgrow="ALWAYS" />
-                                                <ToggleButton fx:id="radioOnB2sDMD" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="%backups.backups.dmd" HBox.hgrow="ALWAYS" />
-                                                <ToggleButton fx:id="radioOnPlayfield" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="%pref.validators_screens.playfield" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="radioOnBackglass" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%backglass.directb2s_admin.backglass" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="radioOnB2sDMD" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%backups.backups.dmd" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="radioOnPlayfield" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%pref.validators_screens.playfield" HBox.hgrow="ALWAYS" />
                                              </children>
                                           </HBox>
                                        </children>
@@ -363,12 +363,12 @@
                                     </HBox>
                                     <VBox fx:id="ratiosPane">
                                        <children>
-                                          <HBox spacing="6.0">
+                                          <HBox styleClass="sm-segmented">
                                              <children>
-                                                <ToggleButton fx:id="ratioOff" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="%tables.dmd_position.off" HBox.hgrow="ALWAYS" />
-                                                <ToggleButton fx:id="ratio3" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="3:1" HBox.hgrow="ALWAYS" />
-                                                <ToggleButton fx:id="ratio4" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="4:1" HBox.hgrow="ALWAYS" />
-                                                <ToggleButton fx:id="ratio8" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="8:1" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="ratioOff" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%tables.dmd_position.off" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="ratio3" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="3:1" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="ratio4" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="4:1" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="ratio8" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="8:1" HBox.hgrow="ALWAYS" />
                                              </children>
                                           </HBox>
                                        </children>

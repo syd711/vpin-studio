@@ -42,8 +42,8 @@
       </VBox>
    </center>
    <right>
-      <!-- fixed width: score widget (600) + scroll bar + horizontal padding (32) -->
-      <VBox minWidth="646.0" prefWidth="646.0" maxWidth="646.0" spacing="14.0" styleClass="sm-tile" BorderPane.alignment="CENTER">
+      <!-- fixed width: score widget (600) + scroll bar + horizontal padding (32) + border (2) -->
+      <VBox minWidth="648.0" prefWidth="648.0" maxWidth="648.0" spacing="14.0" styleClass="sm-tile, sm-tile-bordered" BorderPane.alignment="CENTER">
          <children>
             <HBox alignment="CENTER_LEFT" spacing="12.0">
                <children>

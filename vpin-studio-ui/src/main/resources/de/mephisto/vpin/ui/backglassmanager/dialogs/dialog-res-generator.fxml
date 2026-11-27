@@ -104,19 +104,19 @@
                            </padding>
                            <children>
                               <Label styleClass="sm-caption" text="%backglass.res_generator.caption_display" />
-                              <HBox spacing="6.0">
+                              <HBox styleClass="sm-segmented">
                                  <children>
-                                    <ToggleButton fx:id="radioStretchBackglass" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="%backglass.res_generator.stretch" HBox.hgrow="ALWAYS">
+                                    <ToggleButton fx:id="radioStretchBackglass" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%backglass.res_generator.stretch" HBox.hgrow="ALWAYS">
                                        <tooltip>
                                           <Tooltip text="%backglass.res_generator.stretch_backglass" />
                                        </tooltip>
                                     </ToggleButton>
-                                    <ToggleButton fx:id="radioCenterBackglass" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="%backglass.res_generator.center" HBox.hgrow="ALWAYS">
+                                    <ToggleButton fx:id="radioCenterBackglass" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%backglass.res_generator.center" HBox.hgrow="ALWAYS">
                                        <tooltip>
                                           <Tooltip text="%backglass.res_generator.center_backglass" />
                                        </tooltip>
                                     </ToggleButton>
-                                    <ToggleButton fx:id="radioCustomWidth" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="%backglass.res_generator.custom" HBox.hgrow="ALWAYS">
+                                    <ToggleButton fx:id="radioCustomWidth" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%backglass.res_generator.custom" HBox.hgrow="ALWAYS">
                                        <tooltip>
                                           <Tooltip text="%backglass.res_generator.custom_width" />
                                        </tooltip>

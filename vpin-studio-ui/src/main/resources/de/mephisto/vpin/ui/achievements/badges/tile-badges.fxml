@@ -18,11 +18,11 @@
          <children>
             <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%achievements.badges" />
             <Label fx:id="countLabel" style="-fx-font-size: 14px; -fx-text-fill: -c-muted;" />
-            <HBox>
+            <HBox alignment="CENTER_LEFT" styleClass="sm-segmented">
                <children>
-                  <ToggleButton fx:id="allBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" selected="true" text="%achievements.filter.all" toggleGroup="$filterGroup" />
-                  <ToggleButton fx:id="earnedBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" text="%achievements.filter.earned" toggleGroup="$filterGroup" />
-                  <ToggleButton fx:id="lockedBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" text="%achievements.filter.locked" toggleGroup="$filterGroup" />
+                  <ToggleButton fx:id="allBtn" mnemonicParsing="false" selected="true" text="%achievements.filter.all" toggleGroup="$filterGroup" />
+                  <ToggleButton fx:id="earnedBtn" mnemonicParsing="false" text="%achievements.filter.earned" toggleGroup="$filterGroup" />
+                  <ToggleButton fx:id="lockedBtn" mnemonicParsing="false" text="%achievements.filter.locked" toggleGroup="$filterGroup" />
                </children>
             </HBox>
          </children>

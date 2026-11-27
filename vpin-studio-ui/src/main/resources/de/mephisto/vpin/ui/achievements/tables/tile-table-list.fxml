@@ -36,13 +36,13 @@
             </Button>
          </children>
       </StackPane>
-      <FlowPane hgap="5.0" vgap="5.0">
+      <FlowPane hgap="2.0" styleClass="sm-segmented" vgap="2.0">
          <children>
-            <ToggleButton fx:id="allBtn" mnemonicParsing="false" selected="true" style="-fx-font-size: 14px;" toggleGroup="$filterGroup" />
-            <ToggleButton fx:id="inProgressBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" toggleGroup="$filterGroup" />
-            <ToggleButton fx:id="completedBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" toggleGroup="$filterGroup" />
-            <ToggleButton fx:id="notStartedBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" toggleGroup="$filterGroup" />
-            <ToggleButton fx:id="noMapBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" toggleGroup="$filterGroup" />
+            <ToggleButton fx:id="allBtn" mnemonicParsing="false" selected="true" toggleGroup="$filterGroup" />
+            <ToggleButton fx:id="inProgressBtn" mnemonicParsing="false" toggleGroup="$filterGroup" />
+            <ToggleButton fx:id="completedBtn" mnemonicParsing="false" toggleGroup="$filterGroup" />
+            <ToggleButton fx:id="notStartedBtn" mnemonicParsing="false" toggleGroup="$filterGroup" />
+            <ToggleButton fx:id="noMapBtn" mnemonicParsing="false" toggleGroup="$filterGroup" />
          </children>
       </FlowPane>
       <ListView fx:id="tableList" style="-fx-background-color: -c-row-even;" VBox.vgrow="ALWAYS" />

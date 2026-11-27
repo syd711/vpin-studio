@@ -15,7 +15,7 @@
          <center>
             <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
                <center>
-                  <TabPane fx:id="tabPane" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE">
+                  <TabPane fx:id="tabPane" styleClass="primary-tabs, parent-tabs" tabClosingPolicy="UNAVAILABLE">
                      <tabs>
                         <Tab fx:id="overviewTab" closable="false" styleClass="sub-tab" text="%components.components.overview" />
                         <Tab fx:id="vpxTab" closable="false" text="%components.components.visual_pinball" />

@@ -25,7 +25,7 @@
       <HBox spacing="14.0" BorderPane.alignment="CENTER">
          <children>
             <!-- emulator list -->
-            <VBox maxWidth="290.0" minWidth="290.0" prefWidth="290.0" styleClass="sm-panel">
+            <VBox maxWidth="290.0" minWidth="290.0" prefWidth="290.0" styleClass="sm-tile, sm-tile-bordered">
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
                      <padding>
@@ -75,7 +75,7 @@
             </VBox>
 
             <!-- settings of the selected emulator -->
-            <VBox maxWidth="430.0" minWidth="430.0" prefWidth="430.0" styleClass="sm-panel">
+            <VBox maxWidth="430.0" minWidth="430.0" prefWidth="430.0" styleClass="sm-tile, sm-tile-bordered">
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sm-divider">
                      <padding>
@@ -300,7 +300,7 @@
             </VBox>
 
             <!-- scripts -->
-            <VBox fx:id="scriptsPanel" styleClass="sm-panel" HBox.hgrow="ALWAYS">
+            <VBox fx:id="scriptsPanel" styleClass="sm-tile, sm-tile-bordered" HBox.hgrow="ALWAYS">
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="8.0">
                      <padding>

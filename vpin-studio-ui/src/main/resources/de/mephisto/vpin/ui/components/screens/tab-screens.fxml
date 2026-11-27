@@ -45,7 +45,7 @@
       <HBox spacing="14.0" BorderPane.alignment="CENTER">
          <children>
             <!-- screen list -->
-            <VBox maxWidth="290.0" minWidth="290.0" prefWidth="290.0" styleClass="sm-panel">
+            <VBox maxWidth="290.0" minWidth="290.0" prefWidth="290.0" styleClass="sm-tile, sm-tile-bordered">
                <children>
                   <HBox alignment="BASELINE_LEFT" spacing="8.0" styleClass="sm-divider">
                      <padding>
@@ -69,7 +69,7 @@
             </VBox>
 
             <!-- monitor map -->
-            <VBox styleClass="sm-panel" HBox.hgrow="ALWAYS">
+            <VBox styleClass="sm-tile, sm-tile-bordered" HBox.hgrow="ALWAYS">
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
                      <padding>
@@ -112,7 +112,7 @@
             <!-- inspector -->
             <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxWidth="270.0" minWidth="270.0" prefWidth="270.0" styleClass="sm-transparent-scroll">
                <content>
-                  <VBox fx:id="inspector" spacing="16.0" styleClass="sm-panel">
+                  <VBox fx:id="inspector" spacing="16.0" styleClass="sm-tile, sm-tile-bordered">
                      <padding>
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                      </padding>

@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.Score;
+import de.mephisto.vpin.connectors.iscored.Settings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -26,6 +27,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -84,28 +86,29 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
   private Label scoresCountLabel;
 
   @FXML
-  private Label publicReadHint;
+  private Label publicReadPill;
+  @FXML
+  private Label publicWritePill;
+  @FXML
+  private Label readAPIPill;
+  @FXML
+  private Label adminApprovalPill;
+  @FXML
+  private Label longNamesPill;
+  @FXML
+  private Label datesPill;
+  @FXML
+  private Label tournamentColumnPill;
 
   @FXML
-  private Label readAPIHint;
+  private Node errorBox;
+  @FXML
+  private Label publicReadError;
+  @FXML
+  private Label publicWriteError;
 
   @FXML
-  private Label publicWriteHint;
-
-  @FXML
-  private CheckBox adminApprovalCheckbox;
-  @FXML
-  private CheckBox readOnlyCheckbox;
-  @FXML
-  private CheckBox scoreEntriesCheckbox;
-  @FXML
-  private CheckBox readAPICheckbox;
-  @FXML
-  private CheckBox longNamesCheckbox;
-  @FXML
-  private CheckBox datesCheckbox;
-  @FXML
-  private CheckBox tournamentColumnCheckbox;
+  private Label summaryLabel;
 
   @FXML
   private Pane tags;
@@ -136,7 +139,8 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     badgeCombo.setDisable(true);
     ignoreHiddenCheckbox.setDisable(true);
     setDisabled(true);
-    nameLabel.setText("-");
+    nameLabel.setText("–");
+    resetFlags();
 
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomLoadingProgressModel(url, force));
     if (!progressDialog.getResults().isEmpty()) {
@@ -153,16 +157,25 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
 
       nameLabel.setText(gr.getName());
 
-      readOnlyCheckbox.setSelected(gr.getSettings().isPublicScoresReadingEnabled());
-      publicReadHint.setVisible(!readOnlyCheckbox.isSelected());
-      scoreEntriesCheckbox.setSelected(gr.getSettings().isPublicScoreEnteringEnabled());
-      publicWriteHint.setVisible(!scoreEntriesCheckbox.isSelected());
-      readAPICheckbox.setSelected(gr.getSettings().isApiReadingEnabled());
-      readAPIHint.setVisible(!readAPICheckbox.isSelected());
-      adminApprovalCheckbox.setSelected(gr.getSettings().isAdminApprovalEnabled());
-      longNamesCheckbox.setSelected(gr.getSettings().isLongNameInputEnabled());
-      datesCheckbox.setSelected(gr.getSettings().isDateFieldEnabled());
-      tournamentColumnCheckbox.setSelected(gr.getSettings().isCompetitionColumnEnabled());
+      Settings settings = gr.getSettings();
+      boolean publicRead = settings.isPublicScoresReadingEnabled();
+      boolean publicWrite = settings.isPublicScoreEnteringEnabled();
+      // required for VPin Studio
+      setPill(publicReadPill, publicRead ? "sm-pill-ok" : "sm-pill-error", Messages.get("pref.iscored_gameroom.this_flag_must_be_enabled_for_your_game"));
+      setPill(publicWritePill, publicWrite ? "sm-pill-ok" : "sm-pill-error", Messages.get("pref.iscored_gameroom.this_flag_must_be_enabled_for_your_game"));
+      // only needed for hidden tables
+      setPill(readAPIPill, settings.isApiReadingEnabled() ? "sm-pill-ok" : "sm-pill-warn", Messages.get("pref.iscored_gameroom.this_flag_must_be_enabled_to_post_highscores"));
+      // informational
+      setPill(adminApprovalPill, settings.isAdminApprovalEnabled() ? "sm-pill-ok" : "sm-pill-unknown", null);
+      setPill(longNamesPill, settings.isLongNameInputEnabled() ? "sm-pill-ok" : "sm-pill-unknown", null);
+      setPill(datesPill, settings.isDateFieldEnabled() ? "sm-pill-ok" : "sm-pill-unknown", null);
+      setPill(tournamentColumnPill, settings.isCompetitionColumnEnabled() ? "sm-pill-ok" : "sm-pill-unknown", null);
+
+      setShown(publicReadError, !publicRead);
+      setShown(publicWriteError, !publicWrite);
+      setShown(errorBox, !publicRead || !publicWrite);
+      summaryLabel.setText("");
+
       tableCountLabel.setText(String.valueOf(gr.getTaggedGames().size()));
 
       badgeCombo.setValue(gameRoom.getBadge());
@@ -221,7 +234,29 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
       urlField.setDisable(false);
       validateBtn.setDisable(false);
       saveBtn.setDisable(true);
+      summaryLabel.setText(Messages.get("pref.iscored_gameroom.load_failed"));
     }
+  }
+
+  private void resetFlags() {
+    for (Label pill : List.of(publicReadPill, publicWritePill, readAPIPill, adminApprovalPill, longNamesPill, datesPill, tournamentColumnPill)) {
+      setPill(pill, "sm-pill-unknown", null);
+    }
+    setShown(errorBox, false);
+    tableCountLabel.setText("–");
+    vpsTableCountLabel.setText("–");
+    scoresCountLabel.setText("–");
+  }
+
+  private static void setPill(Label pill, String state, @Nullable String tooltip) {
+    pill.getStyleClass().removeAll("sm-pill-ok", "sm-pill-warn", "sm-pill-error", "sm-pill-unknown");
+    pill.getStyleClass().add(state);
+    pill.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);
+  }
+
+  private static void setShown(Node node, boolean shown) {
+    node.setVisible(shown);
+    node.setManaged(shown);
   }
 
   private void setDisabled(boolean error) {
@@ -282,6 +317,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
 
     this.resetCheckbox.setSelected(gameRoom.isScoreReset());
     this.synchronizationCheckbox.setSelected(gameRoom.isSynchronize());
+    this.ignoreHiddenCheckbox.setSelected(gameRoom.isIgnoreHidden());
     this.syncIntervalSpinner.getValueFactory().setValue(gameRoom.getSyncIntervalMinutes());
 
     saveBtn.setDisable(StringUtils.isEmpty(gameRoom.getUrl()));
@@ -318,6 +354,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         saveBtn.setDisable(true);
         setDisabled(true);
+        summaryLabel.setText(Messages.get("pref.iscored_gameroom.validate_hint"));
       }
     });
 

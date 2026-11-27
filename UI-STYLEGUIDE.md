@@ -294,7 +294,8 @@ Every `Accordion` / `TitledPane` gets this look automatically:
   close button top right, `sm-alert-button`s bottom right. Dismissable, one per view at most.
 - **Split view** (`component-update-panel.fxml`, `screens/tab-screens.fxml`, `emulators/tab-emulators.fxml`): HBox of
   `sm-panel`s, gap 14, page padding `12 16 14 16`. Fixed-width side columns (290px list, 390–430px settings), the
-  right-most panel grows.
+  right-most panel grows. The Screens and Emulators views use `sm-tile, sm-tile-bordered` (lighter `-c-tile` background, `-c-panel-border` hairline) instead of
+  `sm-panel`s, with the same layout.
 - **Panel header**: HBox with `sm-divider` (bottom border), padding `10 12 10 14`: `sm-title` + `sm-small` meta +
   spacer + filters / search (`sm-text-field`) / icon buttons.
 - **Panel footer** (`sm-footer`): pinned below a `sm-transparent-scroll` ScrollPane, holds the buttons
@@ -491,6 +492,24 @@ Every `Accordion` / `TitledPane` gets this look automatically:
 - Preview column (`am-preview-column`, hairline left border): `am-preview` inset box with an `sm-hint` / `sm-small`
   empty state, then `sm-accent-button` Download (+ web preview) or the `sm-small` "PNG · 512 × 512 · 214 KB" meta line.
 - Footer = `sm-footer`: `default-button`s left, `submit-button` "Done" right.
+
+### Playlist manager (`playlistmanager/dialog-playlist-manager.fxml`, `playlist-table.fxml`)
+- Split view of `sm-panel`s (gap 14, page padding `12 16 14 16`): 320px playlist tree panel and a growing column with
+  the settings panel above the games panel.
+- Every panel starts with an `sm-divider` header (`sm-caption`, upper-cased by the controller); the settings header adds
+  the `sm-title` name of the selected playlist. Tree panel: reload button in the header, then a
+  `floating-toolbar-transparent` with create / rename | asset manager | `sm-danger-button` delete, then the TreeView.
+- Settings body (padding `14 18 18 18`, 22 between the two columns): "OPTIONS" check boxes (`sm-text`, 14px muted help
+  icons) and 130px `sm-text` field rows; "SQL QUERY" header row with the SQL check box, template `MenuButton` and
+  "Save query" right-aligned, an `sm-script-text` area and the `sm-alert` with the SQL error below.
+- Games panel: `floating-toolbar-transparent` (search | emulator | rebuild, `sm-danger-button` remove, `sm-hint` count
+  right-aligned) above the flat table. Tree rows use token colors (`-c-error` for SQL errors, `-c-disabled` for hidden
+  playlists) and 16px muted type icons.
+- Footer = `sm-footer` with the `sm-small` favourites hint (info icon) and the `submit-button` "Close".
+- Small form dialogs (`dialog-new-playlist.fxml`, `dialog-playlist-templates.fxml`): content padding `12 16 14 16`, an
+  optional `sm-inset` info row (`c-icon-info` icon + `sm-hint` lines), one `sm-tile, sm-tile-bordered` form grid
+  (hgap / vgap 8, fixed `sm-text` label column, fields fill the width), `sm-footer` with `default-button` Cancel / Close
+  (`cancelButton`) and the `submit-button` (`defaultButton`).
 
 ## 7. Checklist for a new view
 

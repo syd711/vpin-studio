@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.achievements.TableAchievements;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.Studio;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import de.mephisto.vpin.ui.util.SegmentedToggles;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.fxml.Initializable;
@@ -70,6 +71,7 @@ public class TableListTileController implements Initializable {
       clearBtn.setVisible(n != null && !n.isEmpty());
       applyFilter();
     });
+    SegmentedToggles.keepSelected(allBtn, inProgressBtn, completedBtn, notStartedBtn, noMapBtn);
     filterGroup.selectedToggleProperty().addListener((obs, o, n) -> {
       if (n == null) {
         o.setSelected(true);
