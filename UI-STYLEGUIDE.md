@@ -166,8 +166,9 @@ inner box — the editor is transparent inside the combo's border.
 the same outer size as the check box (~21px at 14px font) — keep both in sync when changing paddings.
 `ScrollBar`: 10px, no arrow buttons, transparent track, rounded `#444444` thumb (`#5A5A5A` hover, `#7A7A7A` drag).
 `ToggleButton` has the `sm-button` look (`-c-button`, `-c-button-border`, `-c-button-hover`); selected = `#333366` fill
-with an `#8C8CE0` border. Add `sm-button` for the 30px height. A Button showing an "on" state uses `toggle-button-selected`
-(same look), a mode switch (asset manager view) uses the green `toggle-button-selected-alt` (`#116611`, `#44AA44` border); a ToggleButton flagging a problem (maintenance mode) adds `sm-danger-button`. `sm-filter-pill` toggles keep their round outline look.
+with an `#8C8CE0` border. Add `sm-button` for the 30px height. Every on/off button uses this one "on" look (VR mode,
+cabinet monitor, asset manager view, filter button): prefer a ToggleButton, a plain Button showing an "on" state adds
+`toggle-button-selected` (same look). No other "on" colors; only a ToggleButton flagging a problem (maintenance mode) adds `sm-danger-button`. `sm-filter-pill` toggles keep their round outline look.
 `Slider`: `#161616` track with `#444444` border, round `#BDBDBD` thumb (white on hover/drag, `#8C8CE0` border when
 focused), tick marks `#444444`, tick labels 12px `#9A9A9A`.
 `ListView`: `#161616` box with `#444444` border (radius 4, `#7A7A7A` when focused), transparent white 14px cells with
@@ -245,7 +246,7 @@ Every `Accordion` / `TitledPane` gets this look automatically:
 - **Collapsed** = a transparent row with a 1px `-c-panel-border` divider below, hover `-c-row-hover`, thin `-c-subtle`
   chevron on the left (points right), hand cursor.
 - **Expanded** = a `-c-row-hover` card (1px `-c-selected` border, radius 8, 4px air above and below), chevron points
-  down, the header becomes a lighter `-c-collapsible-header` band (hover `-c-collapsible-header-hover`, radius
+  down, the header becomes a darker `-c-collapsible-header` band (hover `-c-collapsible-header-hover`, radius
   `7 7 0 0`) with a 1px `-c-selected` divider below, so it stands apart from the transparent toolbars of the content,
   and its leading `c-icon-muted` icon turns orange (`-c-warn`). The content is transparent (scroll panes and `accordion-container` inside included), so
   the card color shows through.
@@ -448,7 +449,8 @@ Every `Accordion` / `TitledPane` gets this look automatically:
   `sm-accent-radio` + 18px `c-icon-muted, sm-option-card-icon` + `sm-title`; the content below gets `sm-option-card-body`
   (aligned with the title). Selected card = `sm-option-card-selected` (warn banner fill, orange border and icon), a click
   anywhere on the card selects it. Options that only apply to one choice live inside its card below an `sm-divider`;
-  cards that don't apply are disabled as a whole.
+  cards that don't apply are disabled as a whole. This is the only style for radio choice panels (table upload, .dif
+  patch, backglass upload, asset source folder, recorder); the old blue `selection-panel` is gone.
 - Footer = `sm-footer` with an `sm-hint` one-line summary of what will happen, `default-button` Cancel and a
   `submit-button` whose text names the chosen action ("Upload & replace").
 

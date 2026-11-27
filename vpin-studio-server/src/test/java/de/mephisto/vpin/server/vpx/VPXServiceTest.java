@@ -238,29 +238,36 @@ public class VPXServiceTest {
 
   @Test
   void launchParameters_windows() {
-    assertThat(VPXService.launchParameters("cameraMode", true, true)).containsExactly("-Minimized", "-PovEdit");
-    assertThat(VPXService.launchParameters("primary", true, true)).containsExactly("-Minimized", "-Primary", "-Play");
-    assertThat(VPXService.launchParameters(null, true, true)).containsExactly("-Minimized", "-Play");
+    assertThat(VPXService.launchParameters("cameraMode", true, true, true)).containsExactly("-Minimized", "-PovEdit");
+    assertThat(VPXService.launchParameters("primary", true, true, true)).containsExactly("-Minimized", "-Primary", "-Play");
+    assertThat(VPXService.launchParameters(null, true, true, true)).containsExactly("-Minimized", "-Play");
   }
 
   @Test
   void launchParameters_windows_vpx1081_notMinimized() {
-    assertThat(VPXService.launchParameters("cameraMode", true, false)).containsExactly("-PovEdit");
-    assertThat(VPXService.launchParameters("primary", true, false)).containsExactly("-Primary", "-Play");
-    assertThat(VPXService.launchParameters(null, true, false)).containsExactly("-Play");
+    assertThat(VPXService.launchParameters("cameraMode", true, false, true)).containsExactly("-PovEdit");
+    assertThat(VPXService.launchParameters("primary", true, false, true)).containsExactly("-Primary", "-Play");
+    assertThat(VPXService.launchParameters(null, true, false, true)).containsExactly("-Play");
+  }
+
+  @Test
+  void launchParameters_windows_vpx109_noPrimary() {
+    assertThat(VPXService.launchParameters("cameraMode", true, false, false)).containsExactly("-PovEdit");
+    assertThat(VPXService.launchParameters("primary", true, false, false)).containsExactly("-Play");
+    assertThat(VPXService.launchParameters(null, true, false, false)).containsExactly("-Play");
   }
 
   @Test
   void launchParameters_standalone_hasNoEditorOptions() {
-    assertThat(VPXService.launchParameters("cameraMode", false, true)).containsExactly("-PovEdit");
-    assertThat(VPXService.launchParameters("primary", false, true)).containsExactly("-Play");
-    assertThat(VPXService.launchParameters(null, false, true)).containsExactly("-Play");
+    assertThat(VPXService.launchParameters("cameraMode", false, true, true)).containsExactly("-PovEdit");
+    assertThat(VPXService.launchParameters("primary", false, true, true)).containsExactly("-Play");
+    assertThat(VPXService.launchParameters(null, false, true, true)).containsExactly("-Play");
   }
 
   @Test
   void play_delegatesWithPlatformParameters() {
     Game game = mock(Game.class);
-    String[] expected = VPXService.launchParameters("cameraMode", OSUtil.isWindows(), OSUtil.isWindows());
+    String[] expected = VPXService.launchParameters("cameraMode", OSUtil.isWindows(), OSUtil.isWindows(), OSUtil.isWindows());
     when(vpxCommandLineService.execute(game, null, expected)).thenReturn(true);
 
     boolean result = service.play(game, null, "cameraMode");

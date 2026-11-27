@@ -1,62 +1,21 @@
-/* a Button showing an "on" state (e.g. the cabinet monitor button): same look as a selected ToggleButton */
-.toggle-button-selected, .toggle-button-selected:hover {
+/* Every on/off button shares ONE "on" look: selection blue -c-primary with a -c-info border (VR mode, maintenance
+   cabinet monitor, asset manager view, filter, …). A ToggleButton gets it via :selected, a plain Button showing an
+   "on" state (cabinet monitor, filter button) via the toggle-button-selected class. Only exception: sm-danger-button
+   (maintenance mode) flags a problem in red. */
+.toggle-button-selected, .toggle-button-selected:hover, .toggle-button-selected:focused {
+    -fx-text-fill: -c-white;
     -fx-background-color: -c-primary;
     -fx-border-color: -c-info;
-}
-
-/* green "on" variant for a mode switch (asset manager view of the table overview), distinct from the blue filter state */
-.toggle-button-selected-alt, .toggle-button-selected-alt:hover {
-    -fx-background-color: -c-toggle-selected;
-    -fx-border-color: -c-toggle-selected-border;
 }
 
 .toggle-selected {
 }
 
-.custom-toggle-button-small {
-    -fx-border-width: 1;
-    -fx-border-color: transparent;
-    -fx-border-radius: 3px;
-    -fx-font-size: 10px;
-}
-
-.custom-toggle-button-small:selected {
-    -fx-border-width: 1;
-    -fx-font-size: 10px;
-    -fx-border-color: -c-highlight;
-    -fx-border-radius: 3px;
-    -fx-background-color: -c-primary; /* Selected button color */
-}
-
 .custom-toggle-button {
-    -fx-border-width: 1;
-    -fx-border-color: transparent;
-    -fx-border-radius: 3px;
     -fx-font-size: 14px;
 }
 
-.custom-toggle-button:selected {
-    -fx-border-width: 1;
-    -fx-border-color: -c-highlight;
-    -fx-border-radius: 3px;
-    -fx-background-color: -c-primary; /* Selected button color */
-}
-
-.custom-toggle-button2 {
-    -fx-border-width: 1;
-    -fx-border-color: transparent;
-    -fx-border-radius: 3px;
-    -fx-font-size: 14px;
-}
-
-.custom-toggle-button2:selected {
-    -fx-border-width: 1;
-    -fx-border-color: -c-toggle-selected-border;
-    -fx-border-radius: 3px;
-    -fx-background-color: -c-toggle-selected /* Selected button color */
-}
-
-/* toggle buttons: sm-button look, selected = selection blue (custom-toggle-button* only keep their font size) */
+/* toggle buttons: sm-button look, selected = selection blue */
 .toggle-button {
     -fx-text-fill: -c-white;
     -fx-background-color: -c-button;

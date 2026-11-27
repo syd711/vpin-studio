@@ -41,7 +41,6 @@ public final class ThemeColors {
   public static final String PANEL = hex("-c-panel");
   public static final String ROW_HOVER = hex("-c-row-hover");
   public static final String SEPARATOR = hex("-c-separator");
-  public static final String SELECTION_PANEL_HOVER = hex("-c-selection-panel-hover");
   public static final String TILE = hex("-c-tile");
   public static final String PANEL_BORDER = hex("-c-panel-border");
   public static final String CONTROL = hex("-c-control");

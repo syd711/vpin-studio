@@ -152,9 +152,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     customLauncherCheckbox.setDisable(true);
     primaryCheckbox.setDisable(true);
 
-    recordingProgressPanel.getStyleClass().add("selection-panel-selected");
-    emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
-    frontendRecordingRadio.getStyleClass().remove("selection-panel-selected");
+    emulatorRecordingPanel.getStyleClass().remove("sm-option-card-selected");
+    frontendRecordingPanel.getStyleClass().remove("sm-option-card-selected");
 
     progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
 
@@ -320,13 +319,23 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     ToggleGroup toggleGroup = new ToggleGroup();
     emulatorRecordingRadio.setToggleGroup(toggleGroup);
     frontendRecordingRadio.setToggleGroup(toggleGroup);
+    emulatorRecordingPanel.setOnMouseClicked(e -> {
+      if (!emulatorRecordingRadio.isDisabled()) {
+        emulatorRecordingRadio.setSelected(true);
+      }
+    });
+    frontendRecordingPanel.setOnMouseClicked(e -> {
+      if (!frontendRecordingRadio.isDisabled()) {
+        frontendRecordingRadio.setSelected(true);
+      }
+    });
 
     if (settings.getRecordingMode() == null || settings.getRecordingMode().equals(RecordingMode.emulator)) {
-      frontendRecordingPanel.getStyleClass().remove("selection-panel-selected");
+      frontendRecordingPanel.getStyleClass().remove("sm-option-card-selected");
       emulatorRecordingRadio.setSelected(true);
     }
     else {
-      emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
+      emulatorRecordingPanel.getStyleClass().remove("sm-option-card-selected");
       frontendRecordingRadio.setSelected(true);
     }
 
@@ -334,14 +343,14 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          if (!emulatorRecordingPanel.getStyleClass().contains("selection-panel-selected")) {
-            emulatorRecordingPanel.getStyleClass().add("selection-panel-selected");
+          if (!emulatorRecordingPanel.getStyleClass().contains("sm-option-card-selected")) {
+            emulatorRecordingPanel.getStyleClass().add("sm-option-card-selected");
           }
-          frontendRecordingPanel.getStyleClass().remove("selection-panel-selected");
+          frontendRecordingPanel.getStyleClass().remove("sm-option-card-selected");
           settings.setRecordingMode(RecordingMode.emulator);
         }
         else {
-          frontendRecordingPanel.getStyleClass().remove("selection-panel-selected");
+          frontendRecordingPanel.getStyleClass().remove("sm-option-card-selected");
         }
         client.getPreferenceService().setJsonPreference(settings);
       }
@@ -351,14 +360,14 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          if (!frontendRecordingPanel.getStyleClass().contains("selection-panel-selected")) {
-            frontendRecordingPanel.getStyleClass().add("selection-panel-selected");
+          if (!frontendRecordingPanel.getStyleClass().contains("sm-option-card-selected")) {
+            frontendRecordingPanel.getStyleClass().add("sm-option-card-selected");
           }
-          emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
+          emulatorRecordingPanel.getStyleClass().remove("sm-option-card-selected");
           settings.setRecordingMode(RecordingMode.frontend);
         }
         else {
-          emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
+          emulatorRecordingPanel.getStyleClass().remove("sm-option-card-selected");
         }
         client.getPreferenceService().setJsonPreference(settings);
       }

@@ -11,6 +11,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -287,7 +288,7 @@
                   </Button>
       
                   <Separator fx:id="assetManagerSeparator" layoutX="277.0" layoutY="10.0" orientation="VERTICAL" />
-                  <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" styleClass="sm-button, sm-button-icon, c-text-white">
+                  <ToggleButton fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" styleClass="sm-button, sm-button-icon, c-text-white">
                      <graphic>
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-format-list-bulleted-type" iconSize="18" />
                      </graphic>
@@ -297,15 +298,8 @@
                      <tooltip>
                         <Tooltip text="%tables.tables_overview.asset_manager_view_ctrl_m" />
                      </tooltip>
-                  </Button>
-                  <SplitMenuButton fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
-                     <items>
-                        <MenuItem fx:id="bulkImporterItem" mnemonicParsing="false" onAction="#onBulkImporter" text="%tables.tables_overview.bulk_importer">
-                           <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-multiple-image" iconSize="18" />
-                           </graphic>
-                        </MenuItem>
-                     </items>
+                  </ToggleButton>
+                  <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                      <graphic>
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
                      </graphic>
@@ -315,7 +309,18 @@
                      <tooltip>
                         <Tooltip text="%tables.tables_overview.asset_manager_ctrl_i" />
                      </tooltip>
-                  </SplitMenuButton>
+                  </Button>
+                  <Button fx:id="bulkImporterBtn" mnemonicParsing="false" onAction="#onBulkImporter" styleClass="sm-button, sm-button-icon, c-text-white">
+                     <graphic>
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-multiple-image" iconSize="18" />
+                     </graphic>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="%tables.tables_overview.bulk_importer_tooltip" />
+                     </tooltip>
+                  </Button>
                   <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />

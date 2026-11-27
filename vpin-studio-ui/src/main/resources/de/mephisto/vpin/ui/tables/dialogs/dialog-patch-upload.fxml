@@ -122,43 +122,33 @@
                   </VBox>
                </children>
             </HBox>
-            <HBox prefHeight="150.0" spacing="12.0">
+            <HBox spacing="12.0">
                <children>
-                  <VBox fx:id="uploadCloneBox" prefWidth="430.0" styleClass="selection-panel">
+                  <VBox fx:id="uploadCloneBox" prefWidth="430.0" spacing="8.0" styleClass="sm-option-card" HBox.hgrow="ALWAYS">
                      <children>
-                        <RadioButton fx:id="patchAndCloneRadio" mnemonicParsing="false" text="%tables.patch_upload.patch_and_clone" styleClass="c-text-white" wrapText="true">
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </RadioButton>
-                        <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description, c-text-white" text="%tables.patch_upload.the_game_file_will_be_patched_and_patched" wrapText="true" />
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <RadioButton fx:id="patchAndCloneRadio" mnemonicParsing="false" styleClass="sm-accent-radio" />
+                              <Label minHeight="-Infinity" styleClass="sm-title" text="%tables.patch_upload.patch_and_clone" wrapText="true" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="uploadAndCloneDescription" minHeight="-Infinity" styleClass="sm-hint, sm-option-card-body" text="%tables.patch_upload.the_game_file_will_be_patched_and_patched" wrapText="true" />
                      </children>
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </padding>
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
                   </VBox>
-                  <VBox fx:id="uploadReplaceBox" prefWidth="430.0" styleClass="selection-panel">
+                  <VBox fx:id="uploadReplaceBox" prefWidth="430.0" spacing="8.0" styleClass="sm-option-card" HBox.hgrow="ALWAYS">
                      <children>
-                        <RadioButton fx:id="patchAndReplaceRadio" mnemonicParsing="false" text="%tables.patch_upload.patch_and_replace" styleClass="c-text-white" wrapText="true">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </RadioButton>
-                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description, c-text-white" text="%tables.patch_upload.the_game_file_will_be_patched_the_existing" wrapText="true" />
-                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="checkbox-description, c-text-white" text="%tables.patch_upload.attention_choosing_the_wrong_table_for_the_patch" wrapText="true" />
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <RadioButton fx:id="patchAndReplaceRadio" mnemonicParsing="false" styleClass="sm-accent-radio" />
+                              <Label minHeight="-Infinity" styleClass="sm-title" text="%tables.patch_upload.patch_and_replace" wrapText="true" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="uploadAndReplaceDescription" minHeight="-Infinity" styleClass="sm-hint, sm-option-card-body" text="%tables.patch_upload.the_game_file_will_be_patched_the_existing" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription1" minHeight="-Infinity" styleClass="sm-hint, sm-option-card-body" text="%tables.patch_upload.attention_choosing_the_wrong_table_for_the_patch" wrapText="true" />
                      </children>
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </padding>
                   </VBox>
                </children>
             </HBox>

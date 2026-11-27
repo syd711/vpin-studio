@@ -84,41 +84,31 @@
             </HBox>
             <HBox prefHeight="150.0" spacing="12.0">
                <children>
-                  <VBox fx:id="uploadReplaceBox" prefWidth="350.0" styleClass="selection-panel">
+                  <VBox fx:id="uploadReplaceBox" prefWidth="350.0" spacing="8.0" styleClass="sm-option-card" HBox.hgrow="ALWAYS">
                      <children>
-                        <RadioButton fx:id="uploadAndReplaceRadio" mnemonicParsing="false" text="%tables.directb2s_upload.upload_and_replace" styleClass="c-text-white" wrapText="true">
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </RadioButton>
-                        <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description, c-text-white" text="%tables.directb2s_upload.the_new_backglass_will_replace_the_existing_one" wrapText="true" />
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <RadioButton fx:id="uploadAndReplaceRadio" mnemonicParsing="false" styleClass="sm-accent-radio" />
+                              <Label styleClass="sm-title" text="%tables.directb2s_upload.upload_and_replace" wrapText="true" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="uploadAndCloneDescription" styleClass="sm-hint, sm-option-card-body" text="%tables.directb2s_upload.the_new_backglass_will_replace_the_existing_one" wrapText="true" />
                      </children>
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </padding>
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
                   </VBox>
-                  <VBox fx:id="uploadAppendBox" prefWidth="350.0" styleClass="selection-panel">
+                  <VBox fx:id="uploadAppendBox" prefWidth="350.0" spacing="8.0" styleClass="sm-option-card" HBox.hgrow="ALWAYS">
                      <children>
-                        <RadioButton fx:id="uploadAndAppendRadio" mnemonicParsing="false" text="%tables.directb2s_upload.upload_and_append" styleClass="c-text-white" wrapText="true">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </RadioButton>
-                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description, c-text-white" text="%tables.directb2s_upload.the_new_backglass_will_be_appended_to_the" wrapText="true" />
-                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="checkbox-description, c-text-white" text="%tables.directb2s_upload.you_can_select_the_active_version_in_the" wrapText="true" />
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <RadioButton fx:id="uploadAndAppendRadio" mnemonicParsing="false" styleClass="sm-accent-radio" />
+                              <Label styleClass="sm-title" text="%tables.directb2s_upload.upload_and_append" wrapText="true" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="uploadAndReplaceDescription" styleClass="sm-hint, sm-option-card-body" text="%tables.directb2s_upload.the_new_backglass_will_be_appended_to_the" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="sm-hint, sm-option-card-body" text="%tables.directb2s_upload.you_can_select_the_active_version_in_the" wrapText="true" />
                      </children>
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </padding>
                   </VBox>
                </children>
                <VBox.margin>

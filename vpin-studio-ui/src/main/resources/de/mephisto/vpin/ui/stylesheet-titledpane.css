@@ -2,7 +2,7 @@
  * Accordion & Titled Pane = the common collapsible panel.
  * Collapsed: a transparent row with a 1px -c-panel-border divider below, hover = -c-row-hover, chevron on the left.
  * Expanded: a -c-row-hover card (1px -c-selected border, radius 8, 4px air above and below), the header becomes a
- * lighter -c-collapsible-header band with a 1px -c-selected divider below (so it stands apart from the transparent
+ * darker -c-collapsible-header band with a 1px -c-selected divider below (so it stands apart from the transparent
  * toolbars in the content) and its muted icon turns orange. Header = optional 18px muted icon + bold
  * sm-collapsible-title label (+ sm-collapsible-button actions right aligned). Accordions get an 8px padding inside
  * their tile.

@@ -57,21 +57,23 @@ public class Directb2sUploadController extends BaseUploadController {
     ToggleGroup toggleGroup = new ToggleGroup();
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
     uploadAndAppendRadio.setToggleGroup(toggleGroup);
+    uploadReplaceBox.setOnMouseClicked(e -> uploadAndReplaceRadio.setSelected(true));
+    uploadAppendBox.setOnMouseClicked(e -> uploadAndAppendRadio.setSelected(true));
 
     uploadAndAppendRadio.setSelected(true);
-    uploadAppendBox.getStyleClass().add("selection-panel-selected");
+    uploadAppendBox.getStyleClass().add("sm-option-card-selected");
 
     uploadAndReplaceRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          if (!uploadReplaceBox.getStyleClass().contains("selection-panel-selected")) {
-            uploadReplaceBox.getStyleClass().add("selection-panel-selected");
+          if (!uploadReplaceBox.getStyleClass().contains("sm-option-card-selected")) {
+            uploadReplaceBox.getStyleClass().add("sm-option-card-selected");
           }
-          uploadAppendBox.getStyleClass().remove("selection-panel-selected");
+          uploadAppendBox.getStyleClass().remove("sm-option-card-selected");
         }
         else {
-          uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
+          uploadReplaceBox.getStyleClass().remove("sm-option-card-selected");
         }
       }
     });
@@ -80,13 +82,13 @@ public class Directb2sUploadController extends BaseUploadController {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          if (!uploadAndAppendRadio.getStyleClass().contains("selection-panel-selected")) {
-            uploadAppendBox.getStyleClass().add("selection-panel-selected");
+          if (!uploadAppendBox.getStyleClass().contains("sm-option-card-selected")) {
+            uploadAppendBox.getStyleClass().add("sm-option-card-selected");
           }
-          uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
+          uploadReplaceBox.getStyleClass().remove("sm-option-card-selected");
         }
         else {
-          uploadAppendBox.getStyleClass().remove("selection-panel-selected");
+          uploadAppendBox.getStyleClass().remove("sm-option-card-selected");
         }
       }
     });

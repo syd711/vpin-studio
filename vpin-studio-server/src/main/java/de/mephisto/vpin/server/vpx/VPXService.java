@@ -302,8 +302,10 @@ public class VPXService implements InitializingBean {
   public boolean play(@Nullable Game game, @Nullable String altExe, @Nullable String option) {
     if (game != null) {
       boolean windows = OSUtil.isWindows();
-      boolean minimized = windows && !EmulatorVersion.isVpxPerTableFileLayoutSupported(getLaunchExeVersion(game, altExe));
-      return vpxCommandLineService.execute(game, altExe, launchParameters(option, windows, minimized));
+      String version = windows ? getLaunchExeVersion(game, altExe) : null;
+      boolean minimized = windows && !EmulatorVersion.isVpxPerTableFileLayoutSupported(version);
+      boolean primarySupported = windows && !EmulatorVersion.isVpx109CommandLine(version);
+      return vpxCommandLineService.execute(game, altExe, launchParameters(option, windows, minimized, primarySupported));
     }
     return false;
   }
@@ -331,9 +333,10 @@ public class VPXService implements InitializingBean {
   /**
    * Standalone builds have no editor window, so they do not know -Minimized (nor -Primary)
    * and exit with "Invalid Parameter" when they get one.
-   * VPX 10.8.1+ is launched without -Minimized.
+   * VPX 10.8.1+ is launched without -Minimized, VPX 10.9+ rejects it together with -Play.
+   * VPX 10.9+ does not know -Primary anymore.
    */
-  static String[] launchParameters(@Nullable String option, boolean windows, boolean minimized) {
+  static String[] launchParameters(@Nullable String option, boolean windows, boolean minimized, boolean primarySupported) {
     String command = "cameraMode".equals(option) ? "-PovEdit" : "-Play";
     if (!windows) {
       return new String[]{command};
@@ -342,7 +345,7 @@ public class VPXService implements InitializingBean {
     if (minimized) {
       params.add("-Minimized");
     }
-    if ("primary".equals(option)) {
+    if (primarySupported && "primary".equals(option)) {
       params.add("-Primary");
     }
     params.add(command);

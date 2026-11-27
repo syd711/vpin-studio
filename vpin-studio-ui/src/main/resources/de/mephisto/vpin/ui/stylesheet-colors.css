@@ -16,11 +16,10 @@
     -c-panel: #1A1A1A;                      /* panels of a split view, page background */
     -c-row-hover: #262626;                  /* hovered list row */
     -c-separator: #272B2F;                  /* separators, selection panels */
-    -c-selection-panel-hover: #272B3F;      /* hovered / selected selection panel */
     -c-tile: #232323;                       /* cards / tiles on the page background */
     -c-panel-border: #2E2E2E;               /* border of a panel inside a panel */
-    -c-collapsible-header: #2E2E2E;         /* header band of an expanded collapsible */
-    -c-collapsible-header-hover: #333333;   /* hovered header band of an expanded collapsible */
+    -c-collapsible-header: #1E1E1E;         /* header band of an expanded collapsible (darker than its card) */
+    -c-collapsible-header-hover: #242424;   /* hovered header band of an expanded collapsible */
     -c-control: #333333;                    /* list-row hover, neutral pill */
     /* buttons, toggle buttons and combo boxes: translucent white over the surface they sit on, so the same control
        is a bit lighter than a tile (#2A2A2A on #232323) and than the page / window header (#232323 on #1A1A1A) */

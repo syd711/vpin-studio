@@ -164,21 +164,23 @@ public class PatchUploadController extends BaseUploadController {
     ToggleGroup toggleGroup = new ToggleGroup();
     patchAndReplaceRadio.setToggleGroup(toggleGroup);
     patchAndCloneRadio.setToggleGroup(toggleGroup);
+    uploadCloneBox.setOnMouseClicked(e -> patchAndCloneRadio.setSelected(true));
+    uploadReplaceBox.setOnMouseClicked(e -> patchAndReplaceRadio.setSelected(true));
 
     patchAndCloneRadio.setSelected(true);
-    uploadCloneBox.getStyleClass().add("selection-panel-selected");
+    uploadCloneBox.getStyleClass().add("sm-option-card-selected");
 
     patchAndReplaceRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          if (!uploadReplaceBox.getStyleClass().contains("selection-panel-selected")) {
-            uploadReplaceBox.getStyleClass().add("selection-panel-selected");
+          if (!uploadReplaceBox.getStyleClass().contains("sm-option-card-selected")) {
+            uploadReplaceBox.getStyleClass().add("sm-option-card-selected");
           }
-          uploadCloneBox.getStyleClass().remove("selection-panel-selected");
+          uploadCloneBox.getStyleClass().remove("sm-option-card-selected");
         }
         else {
-          uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
+          uploadReplaceBox.getStyleClass().remove("sm-option-card-selected");
         }
       }
     });
@@ -187,13 +189,13 @@ public class PatchUploadController extends BaseUploadController {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          if (!uploadCloneBox.getStyleClass().contains("selection-panel-selected")) {
-            uploadCloneBox.getStyleClass().add("selection-panel-selected");
+          if (!uploadCloneBox.getStyleClass().contains("sm-option-card-selected")) {
+            uploadCloneBox.getStyleClass().add("sm-option-card-selected");
           }
-          uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
+          uploadReplaceBox.getStyleClass().remove("sm-option-card-selected");
         }
         else {
-          uploadCloneBox.getStyleClass().remove("selection-panel-selected");
+          uploadCloneBox.getStyleClass().remove("sm-option-card-selected");
         }
       }
     });

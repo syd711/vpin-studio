@@ -237,28 +237,6 @@
 }
 
 
-.selection-panel {
-    -fx-background-color: -c-separator;
-    -fx-border-style: solid solid solid solid;
-    -fx-border-width: 1 1 1 1;
-    -fx-border-radius: 6 6 6 6;
-    -fx-border-color: -c-separator;
-}
-
-.selection-panel:hover {
-    -fx-background-color: -c-selection-panel-hover;
-    -fx-border-style: solid solid solid solid;
-    -fx-border-width: 1 1 1 1;
-    -fx-border-radius: 6 6 6 6;
-    -fx-border-color: -c-highlight;
-}
-.selection-panel-selected {
-    -fx-background-color: -c-selection-panel-hover;
-    -fx-border-style: solid solid solid solid;
-    -fx-border-width: 1 1 1 1;
-    -fx-border-radius: 6 6 6 6;
-    -fx-border-color: -c-highlight;
-}
 
 
 /**

@@ -25,6 +25,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
@@ -318,6 +321,10 @@ public class BuiltInPlayersController extends BasePlayersController implements I
           onEdit();
         }
       });
+      final ContextMenu menu = new ContextMenu();
+      // filled in the capturing phase: ContextMenu#show ignores menus without items, so it must be populated before the row's own handler shows it
+      row.addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> refreshContextMenu(menu, row.getItem()));
+      row.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> row.setContextMenu(isNowEmpty ? null : menu));
       return row;
     });
 
@@ -345,6 +352,42 @@ public class BuiltInPlayersController extends BasePlayersController implements I
         maniaPlayerColumn.setVisible(!StringUtils.isEmpty(settings.getCabinetUuid()));
       }
     }
+  }
+
+  private void refreshContextMenu(ContextMenu ctxMenu, @Nullable PlayerRepresentation player) {
+    ctxMenu.getItems().clear();
+    if (player == null) {
+      return;
+    }
+
+    MenuItem editItem = new MenuItem(Messages.get("players.builtin_users.context_menu.edit"));
+    editItem.setGraphic(WidgetFactory.createIcon("mdi2p-pencil-outline"));
+    editItem.setOnAction(e -> onEdit());
+    ctxMenu.getItems().add(editItem);
+
+    MenuItem addItem = new MenuItem(Messages.get("players.builtin_users.context_menu.add"));
+    addItem.setGraphic(WidgetFactory.createIcon("mdi2p-plus"));
+    addItem.setOnAction(e -> onAdd());
+    ctxMenu.getItems().add(addItem);
+
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
+    MenuItem copyInitialsItem = new MenuItem(Messages.get("players.builtin_users.context_menu.copy_initials"));
+    copyInitialsItem.setGraphic(WidgetFactory.createIcon("mdi2c-content-copy"));
+    copyInitialsItem.setDisable(StringUtils.isEmpty(player.getInitials()));
+    copyInitialsItem.setOnAction(e -> {
+      ClipboardContent content = new ClipboardContent();
+      content.putString(player.getInitials().toUpperCase());
+      Clipboard.getSystemClipboard().setContent(content);
+    });
+    ctxMenu.getItems().add(copyInitialsItem);
+
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
+    MenuItem deleteItem = new MenuItem(Messages.get("players.builtin_users.context_menu.delete"));
+    deleteItem.setGraphic(WidgetFactory.createIcon("mdi2d-delete-outline"));
+    deleteItem.setOnAction(e -> onDelete());
+    ctxMenu.getItems().add(deleteItem);
   }
 
   private static Label pill(String text, String variant, String iconLiteral) {

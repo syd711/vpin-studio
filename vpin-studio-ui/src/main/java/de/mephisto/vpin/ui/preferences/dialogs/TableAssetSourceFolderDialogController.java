@@ -148,14 +148,16 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
     ToggleGroup toggleGroup = new ToggleGroup();
     screensRadio.setToggleGroup(toggleGroup);
     autoDetectRadio.setToggleGroup(toggleGroup);
+    autoDetectBox.setOnMouseClicked(e -> autoDetectRadio.setSelected(true));
+    screensBox.setOnMouseClicked(e -> screensRadio.setSelected(true));
 
     autoDetectRadio.setSelected(true);
 
     if (source.getLookupStrategy().equals(AssetLookupStrategy.screens)) {
-      screensBox.getStyleClass().add("selection-panel-selected");
+      screensBox.getStyleClass().add("sm-option-card-selected");
     }
     else {
-      autoDetectBox.getStyleClass().add("selection-panel-selected");
+      autoDetectBox.getStyleClass().add("sm-option-card-selected");
     }
 
     screensRadio.setSelected(source.getLookupStrategy().equals(AssetLookupStrategy.screens));
@@ -163,13 +165,13 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          if (!screensBox.getStyleClass().contains("selection-panel-selected")) {
-            screensBox.getStyleClass().add("selection-panel-selected");
+          if (!screensBox.getStyleClass().contains("sm-option-card-selected")) {
+            screensBox.getStyleClass().add("sm-option-card-selected");
           }
-          autoDetectBox.getStyleClass().remove("selection-panel-selected");
+          autoDetectBox.getStyleClass().remove("sm-option-card-selected");
         }
         else {
-          screensBox.getStyleClass().remove("selection-panel-selected");
+          screensBox.getStyleClass().remove("sm-option-card-selected");
         }
       }
     });
@@ -179,13 +181,13 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          if (!autoDetectBox.getStyleClass().contains("selection-panel-selected")) {
-            autoDetectBox.getStyleClass().add("selection-panel-selected");
+          if (!autoDetectBox.getStyleClass().contains("sm-option-card-selected")) {
+            autoDetectBox.getStyleClass().add("sm-option-card-selected");
           }
-          screensBox.getStyleClass().remove("selection-panel-selected");
+          screensBox.getStyleClass().remove("sm-option-card-selected");
         }
         else {
-          autoDetectBox.getStyleClass().remove("selection-panel-selected");
+          autoDetectBox.getStyleClass().remove("sm-option-card-selected");
         }
       }
     });

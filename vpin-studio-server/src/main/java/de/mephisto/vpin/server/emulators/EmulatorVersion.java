@@ -28,6 +28,7 @@ public class EmulatorVersion {
   private static final String[] VPX_EXES = {"VPinballX64.exe", "VPinballX_BGFX64.exe", "VPinballX_GL64.exe", "VPinballX.exe", "VPinballX_BGFX.exe", "VPinballX_GL.exe"};
 
   private static final int[] VPX_PER_TABLE_FILE_LAYOUT_VERSION = {10, 8, 1};
+  private static final int[] VPX_109_COMMAND_LINE_VERSION = {10, 9, 0};
 
   /**
    * @return the file version of the executable of the emulator, e.g. "10.8.1.3788", or null if it can't be
@@ -77,12 +78,26 @@ public class EmulatorVersion {
    * @return true if the given VPX version supports the per table file layout, i.e. it is 10.8.1 or newer
    */
   public static boolean isVpxPerTableFileLayoutSupported(@Nullable String version) {
+    return isAtLeast(version, VPX_PER_TABLE_FILE_LAYOUT_VERSION);
+  }
+
+  /**
+   * VPX 10.9 reworked the command line: -Primary and the true fullscreen options are gone ("Invalid Parameter")
+   * and -Minimized/-ExtMinimized are only accepted together with the Win32 editor, not with -Play.
+   *
+   * @return true if the given VPX version is 10.9 or newer
+   */
+  public static boolean isVpx109CommandLine(@Nullable String version) {
+    return isAtLeast(version, VPX_109_COMMAND_LINE_VERSION);
+  }
+
+  private static boolean isAtLeast(@Nullable String version, int[] required) {
     if (StringUtils.isEmpty(version)) {
       return false;
     }
 
     String[] segments = version.trim().split("\\.");
-    for (int i = 0; i < VPX_PER_TABLE_FILE_LAYOUT_VERSION.length; i++) {
+    for (int i = 0; i < required.length; i++) {
       int value;
       try {
         value = i < segments.length ? Integer.parseInt(segments[i].replaceAll("\\D.*", "")) : 0;
@@ -90,8 +105,8 @@ public class EmulatorVersion {
       catch (NumberFormatException e) {
         return false;
       }
-      if (value != VPX_PER_TABLE_FILE_LAYOUT_VERSION[i]) {
-        return value > VPX_PER_TABLE_FILE_LAYOUT_VERSION[i];
+      if (value != required[i]) {
+        return value > required[i];
       }
     }
     return true;

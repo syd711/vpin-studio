@@ -29,4 +29,14 @@ public class EmulatorVersionTest {
     assertThat(EmulatorVersion.isVpxPerTableFileLayoutSupported("")).isFalse();
     assertThat(EmulatorVersion.isVpxPerTableFileLayoutSupported("abc")).isFalse();
   }
+
+  @Test
+  void isVpx109CommandLine() {
+    assertThat(EmulatorVersion.isVpx109CommandLine("10.9.0.0")).isTrue();
+    assertThat(EmulatorVersion.isVpx109CommandLine("10.9")).isTrue();
+    assertThat(EmulatorVersion.isVpx109CommandLine("11.0.0.0")).isTrue();
+    assertThat(EmulatorVersion.isVpx109CommandLine("10.8.1.3788")).isFalse();
+    assertThat(EmulatorVersion.isVpx109CommandLine("10.8.0.2058")).isFalse();
+    assertThat(EmulatorVersion.isVpx109CommandLine(null)).isFalse();
+  }
 }

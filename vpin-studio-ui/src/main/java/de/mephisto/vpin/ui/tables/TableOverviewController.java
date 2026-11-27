@@ -299,13 +299,16 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private Separator mappingSeparator;
 
   @FXML
-  private Button assetManagerViewBtn;
+  private ToggleButton assetManagerViewBtn;
 
   @FXML
   private SplitMenuButton validateBtn;
 
   @FXML
-  private SplitMenuButton assetManagerBtn;
+  private Button assetManagerBtn;
+
+  @FXML
+  private Button bulkImporterBtn;
 
   @FXML
   private Button deleteBtn;
@@ -418,6 +421,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     tablesController.getTablesSideBarController().getTitledPaneMedia().setExpanded(false);
 
     assetManagerMode = !assetManagerMode;
+    // also called from the context menu / Ctrl+M, so the toggle state follows the mode, not the click
+    assetManagerViewBtn.setSelected(assetManagerMode);
     tablesController.getAssetViewSideBarController().setVisible(assetManagerMode);
     tablesController.getTablesSideBarController().setVisible(!assetManagerMode);
     converterBtn.setVisible(assetManagerMode);
@@ -425,16 +430,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     Platform.runLater(() -> {
       if (assetManagerMode) {
         tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), assetScreenSelection == null ? VPinScreen.Wheel : assetScreenSelection);
-        assetManagerViewBtn.getStyleClass().add("toggle-selected");
-        if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected-alt")) {
-          assetManagerViewBtn.getStyleClass().add("toggle-button-selected-alt");
-        }
         importUploadButtonGroup.setVisible(false);
         validationButtonGroup.setVisible(false);
       }
       else {
-        assetManagerViewBtn.getStyleClass().remove("toggle-selected");
-        assetManagerViewBtn.getStyleClass().remove("toggle-button-selected-alt");
         importUploadButtonGroup.setVisible(true);
         validationButtonGroup.setVisible(true);
       }
@@ -2047,6 +2046,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.stopBtn.managedProperty().bindBidirectional(this.stopBtn.visibleProperty());
     this.assetManagerSeparator.managedProperty().bindBidirectional(assetManagerSeparator.visibleProperty());
     this.assetManagerBtn.managedProperty().bindBidirectional(this.assetManagerBtn.visibleProperty());
+    this.bulkImporterBtn.managedProperty().bindBidirectional(this.bulkImporterBtn.visibleProperty());
     this.assetManagerViewBtn.managedProperty().bindBidirectional(this.assetManagerViewBtn.visibleProperty());
     this.tableEditBtn.managedProperty().bindBidirectional(this.tableEditBtn.visibleProperty());
     this.importSeparator.managedProperty().bindBidirectional(this.importSeparator.visibleProperty());
@@ -2069,6 +2069,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     if (!Features.MEDIA_ENABLED) {
       this.assetManagerBtn.setVisible(false);
+      this.bulkImporterBtn.setVisible(false);
       this.assetManagerViewBtn.setVisible(false);
     }
 
@@ -2183,6 +2184,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       secondaryToolbar.getItems().add(assetManagerViewBtn);
       toolbar.getItems().remove(assetManagerBtn);
       secondaryToolbar.getItems().add(assetManagerBtn);
+      toolbar.getItems().remove(bulkImporterBtn);
+      secondaryToolbar.getItems().add(bulkImporterBtn);
       toolbar.getItems().remove(tableEditBtn);
       secondaryToolbar.getItems().add(tableEditBtn);
       toolbar.getItems().remove(converterBtn);
@@ -2211,6 +2214,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         addToToolbar(toolbar, assetManagerSeparator);
         addToToolbar(toolbar, assetManagerViewBtn);
         addToToolbar(toolbar, assetManagerBtn);
+        addToToolbar(toolbar, bulkImporterBtn);
         addToToolbar(toolbar, tableEditBtn);
         addToToolbar(toolbar, converterBtn);
         addToToolbar(toolbar, deleteSeparator);
