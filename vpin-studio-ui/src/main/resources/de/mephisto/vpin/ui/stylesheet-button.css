@@ -644,3 +644,30 @@
 .button.designer-layer-button:hover, .toggle-button.designer-layer-button:hover {
     -fx-background-color: -c-control;
 }
+
+/* hover actions laid over a media preview (tables sidebar screen tiles): opaque, so they stay readable on any media */
+.button.sm-button.am-tile-action {
+    -fx-background-color: -c-tile;
+    -fx-border-color: -c-border;
+}
+
+.button.sm-button.am-tile-action:hover {
+    -fx-background-color: -c-control;
+}
+
+.button.sm-button.am-tile-action.folder-component {
+    -fx-background-color: -c-folder;
+    -fx-border-color: -c-folder-border;
+}
+
+.button.sm-button.am-tile-action.folder-component:hover {
+    -fx-background-color: -c-folder-hover;
+}
+
+/* compact square size of the tile actions: 24px like sm-button-small, also for the danger variant */
+.button.sm-button-icon.am-tile-action {
+    -fx-font-size: 12px;
+    -fx-padding: 3 4 3 4;
+    -fx-min-height: 24;
+    -fx-pref-height: 24;
+}

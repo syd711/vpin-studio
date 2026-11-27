@@ -221,7 +221,7 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
   /**
    * The table name as folder name, without the characters that are not allowed in file names.
    */
-  static String folderName(GameRepresentation game) {
+  public static String folderName(GameRepresentation game) {
     String name = StringUtils.defaultIfBlank(game.getGameDisplayName(), FilenameUtils.getBaseName(game.getGameFileName()));
     name = StringUtils.defaultString(name).replaceAll("[\\\\/:*?\"<>|\\p{Cntrl}]", "_").trim();
     // Windows does not allow names ending with a dot or space

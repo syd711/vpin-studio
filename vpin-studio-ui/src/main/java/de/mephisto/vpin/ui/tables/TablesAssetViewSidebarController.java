@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ public class TablesAssetViewSidebarController implements Initializable {
       loader.setResources(Messages.getBundle());
       Parent root = loader.load();
       dialogController = loader.getController();
+      VBox.setVgrow(root, Priority.ALWAYS);
       assetSidebarVBox.getChildren().add(root);
     }
     catch (IOException e) {

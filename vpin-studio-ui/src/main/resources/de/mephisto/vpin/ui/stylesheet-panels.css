@@ -305,3 +305,16 @@
     -fx-graphic-text-gap: 8;
     -fx-text-fill: -c-muted;
 }
+
+/* screen the highscore cards are generated for (tables sidebar media panel) */
+.am-screen-tile-highlight, .am-screen-tile-highlight:hover {
+    -fx-border-color: -c-info;
+    -fx-border-style: solid;
+    -fx-border-width: 2;
+}
+
+/* section inside a tile with a divider above and below (installed files of the asset view) */
+.am-section-top {
+    -fx-border-color: -c-selected transparent -c-selected transparent;
+    -fx-border-width: 1 0 1 0;
+}

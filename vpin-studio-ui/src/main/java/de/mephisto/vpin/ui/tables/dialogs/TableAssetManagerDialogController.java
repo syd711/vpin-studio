@@ -32,6 +32,7 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerPane.MediaPane;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ContextMenus;
 import de.mephisto.vpin.ui.util.SegmentedToggles;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
@@ -58,7 +59,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -236,9 +240,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private Label assetSearchLabel;
-
-  @FXML
-  private Label previewTitleLabel;
 
   @FXML
   private ToggleButton playlistsRadio;
@@ -774,6 +775,80 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
   }
 
+  /**
+   * Context menu of the installed files: the actions of the toolbar above the list. Every entry fires its toolbar
+   * button, so the actions and their enabled state are the same in both places.
+   */
+  private void refreshAssetContextMenu(ContextMenu menu) {
+    menu.getItems().clear();
+    List<FrontendMediaItemRepresentation> selection = assetList.getSelectionModel().getSelectedItems();
+    boolean noSelection = selection.isEmpty();
+    if (selection.size() == 1) {
+      menu.getItems().add(ContextMenus.caption(selection.getFirst().getName()));
+    }
+    else if (selection.size() > 1) {
+      menu.getItems().add(ContextMenus.caption(Messages.get("tables.table_asset_manager.ctx_files_selected", selection.size())));
+    }
+
+    MenuItem viewItem = fromButton(ContextMenus.item(Messages.get("tables.table_asset_manager.ctx_view"), "mdi2e-eye-outline", viewBtn::fire), viewBtn, noSelection);
+    MenuItem infoItem = fromButton(ContextMenus.item(Messages.get("tables.table_asset_manager.ctx_show_metadata"), "mdi2i-information-variant", infoBtn::fire), infoBtn, noSelection);
+    ContextMenus.section(menu, viewItem, infoItem);
+
+    MenuItem defaultItem = fromButton(ContextMenus.item(Messages.get("tables.table_asset_manager.set_as_default"), "mdi2c-check", setDefaultBtn::fire), setDefaultBtn, noSelection);
+    MenuItem renameItem = fromButton(ContextMenus.item(Messages.get("tables.table_asset_manager.rename"), "mdi2p-pencil-outline",
+        new KeyCodeCombination(KeyCode.F2), renameBtn::fire), renameBtn, noSelection);
+    ContextMenus.section(menu, defaultItem, renameItem);
+
+    MenuItem downloadItem = fromButton(ContextMenus.item(Messages.get("backups.backup_download.download"), "mdi2d-download", downloadAssetBtn::fire), downloadAssetBtn, noSelection);
+    MenuItem uploadItem = fromButton(ContextMenus.item(Messages.get("backups.backup_upload.upload"), "mdi2u-upload", uploadBtn::fire), uploadBtn, false);
+    MenuItem folderItem = null;
+    if (folderBtn.isVisible()) {
+      folderItem = fromButton(ContextMenus.item(Messages.get("dropins.dropin_container.open_folder"), "mdi2f-folder-open", folderBtn::fire), folderBtn, false);
+    }
+    ContextMenus.section(menu, downloadItem, uploadItem, folderItem);
+
+    Menu convertMenu = null;
+    if (conversionMenu.isVisible() && !conversionMenu.getItems().isEmpty()) {
+      convertMenu = ContextMenus.menu(Messages.get("tables.table_asset_manager.ctx_convert"), "mdi2r-rotate-3d-variant", copyItems(conversionMenu.getItems()));
+      convertMenu.setDisable(conversionMenu.isDisabled() || noSelection);
+    }
+    Menu blankVideoMenu = null;
+    if (addToPlaylistBtn.isVisible()) {
+      blankVideoMenu = ContextMenus.menu(Messages.get("tables.table_asset_manager.ctx_blank_video"), "mdi2f-fullscreen", copyItems(addToPlaylistBtn.getItems()));
+      blankVideoMenu.setDisable(addToPlaylistBtn.isDisabled());
+    }
+    MenuItem blankAudioItem = null;
+    if (addAudioBlank.isVisible()) {
+      blankAudioItem = fromButton(ContextMenus.item(Messages.get("tables.table_asset_manager.ctx_add_blank_audio"), "mdi2m-music-note-plus", addAudioBlank::fire), addAudioBlank, false);
+    }
+    ContextMenus.section(menu, convertMenu, blankVideoMenu, blankAudioItem);
+
+    ContextMenus.section(menu, fromButton(ContextMenus.item(Messages.get("competitions.competitions.reload"), "mdi2r-reload", reloadBtn::fire), reloadBtn, false));
+
+    MenuItem deleteItem = ContextMenus.danger(Messages.get("common.delete"), "mdi2d-delete-outline", new KeyCodeCombination(KeyCode.DELETE), deleteBtn::fire);
+    deleteItem.setDisable(deleteBtn.isDisabled() || noSelection);
+    MenuItem deleteScreenItem = ContextMenus.danger(Messages.get("tables.table_asset_manager_embedded.delete_screen_assets"), "mdi2d-delete-sweep-outline", null, screenDeleteBtn::fire);
+    deleteScreenItem.setDisable(screenDeleteBtn.isDisable() || assetList.getItems().isEmpty());
+    MenuItem deleteGameItem = ContextMenus.danger(Messages.get("tables.table_asset_manager_embedded.delete_game_assets"), "mdi2d-delete-forever-outline", null, gameDeleteBtn::fire);
+    deleteGameItem.setDisable(gameDeleteBtn.isDisable());
+    ContextMenus.section(menu, deleteItem, deleteScreenItem, deleteGameItem);
+  }
+
+  private static MenuItem fromButton(MenuItem item, Node button, boolean needsSelection) {
+    item.setDisable(button.isDisabled() || needsSelection);
+    return item;
+  }
+
+  /**
+   * Copies of the items of a toolbar menu, a MenuItem can only be part of one menu.
+   */
+  private static MenuItem[] copyItems(List<MenuItem> items) {
+    return items.stream()
+        .filter(MenuItem::isVisible)
+        .map(original -> ContextMenus.item(original.getText(), null, original::fire))
+        .toArray(MenuItem[]::new);
+  }
+
   @FXML
   private void onSearch() {
     Platform.runLater(() -> {
@@ -827,8 +902,18 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
     serverAssetsList.setItems(assets);
     serverAssetsList.refresh();
-    setResultsText(Messages.get("tables.table_asset_manager.results_for", assets.size(), searchField.getText().trim()));
+    String resultsText = Messages.get("tables.table_asset_manager.results_for", assets.size(), searchField.getText().trim());
 
+    if (isEmbeddedMode()) {
+      // the asset view has no room for a result line: the count only shows as the empty text of the list
+      setResultsText(null);
+      if (assets.isEmpty()) {
+        serverAssetsList.setPlaceholder(new Label(resultsText));
+      }
+      return;
+    }
+
+    setResultsText(resultsText);
     if (assets.isEmpty()) {
       serverAssetsList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.no_matching_assets_found")));
     }
@@ -842,18 +927,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   /**
-   * Enables the download / web preview actions of the search result preview. The embedded view hides them,
-   * the dialog keeps them in place and only disables them.
+   * Enables the download / web preview actions of the search result preview.
    */
   private void setServerAssetActionsEnabled(boolean enabled) {
-    if (isEmbeddedMode()) {
-      downloadBtn.setVisible(enabled);
-      webPreviewBtn.setVisible(enabled);
-    }
-    else {
-      downloadBtn.setDisable(!enabled);
-      webPreviewBtn.setDisable(!enabled);
-    }
+    downloadBtn.setDisable(!enabled);
+    webPreviewBtn.setDisable(!enabled);
   }
 
   /**
@@ -1179,18 +1257,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       tablesRadio.setSelected(true);
       SegmentedToggles.keepSelected(tablesRadio, playlistsRadio);
 
-      screensCaption.setText(screensCaption.getText().toUpperCase());
-      installedCaption.setText(installedCaption.getText().toUpperCase());
-      resultsLabel.managedProperty().bind(resultsLabel.visibleProperty());
-      setResultsText(null);
-
       Circle dot = new Circle(4);
       dot.setFill(ThemeColors.color(ThemeColors.INFO));
       frontendLabel.setGraphic(dot);
       frontendLabel.setText(Messages.get("tables.table_asset_manager.frontend", client.getFrontendService().getFrontendCached().getName()));
-
-      serverAssetsList.setCellFactory(list -> new SearchResultCell());
-      assetList.setCellFactory(list -> new InstalledAssetCell());
 
       playlistsRadio.setDisable(!Features.PLAYLIST_ENABLED);
       if (Features.PLAYLIST_ENABLED) {
@@ -1247,6 +1317,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       });
     }
 
+    screensCaption.setText(screensCaption.getText().toUpperCase());
+    installedCaption.setText(installedCaption.getText().toUpperCase());
+    resultsLabel.managedProperty().bind(resultsLabel.visibleProperty());
+    setResultsText(null);
+    serverAssetsList.setCellFactory(list -> new SearchResultCell());
+    assetList.setCellFactory(list -> new InstalledAssetCell());
+
     Frontend frontend = client.getFrontendService().getFrontendCached();
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
     //assetSearchBox.setVisible(tableAssetSource != null);
@@ -1259,12 +1336,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.folderBtn.setVisible(SystemUtil.isFolderActionSupported());
     this.folderSeparator.setVisible(SystemUtil.isFolderActionSupported());
 
-    if (isEmbeddedMode()) {
-      mediaRootPane.createPanes((rootPane, text, screen, suffixes) -> new TableAssetManagerMediaPane(rootPane, text, screen, suffixes), true);
-    }
-    else {
-      mediaRootPane.createPanes((rootPane, text, screen, suffixes) -> new AssetScreenTile(rootPane, text, screen, suffixes), false);
-    }
+    mediaRootPane.createPanes((rootPane, text, screen, suffixes) -> new ScreenTile(rootPane, text, screen, false, suffixes), isEmbeddedMode());
 
     mediaRootPane.addListeners(this);
     mediaRootPane.setPanesVisibility(supportedScreens);
@@ -1301,6 +1373,19 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         event.acceptTransferModes(TransferMode.COPY);
       }
       event.consume();
+    });
+
+    // context menu of the installed files, rebuilt on every request; its accelerators are forwarded by hand
+    ContextMenu assetContextMenu = new ContextMenu();
+    assetList.setContextMenu(assetContextMenu);
+    assetList.addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED, e -> refreshAssetContextMenu(assetContextMenu));
+    assetList.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+      if (e.getCode() == KeyCode.DELETE || e.getCode() == KeyCode.F2) {
+        refreshAssetContextMenu(assetContextMenu);
+        if (ContextMenus.fireAccelerator(assetContextMenu, e)) {
+          e.consume();
+        }
+      }
     });
 
 
@@ -1341,7 +1426,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         if (list.isEmpty()) {
           conversionMenu.setDisable(true);
           mediaPane.setCenter(createEmptyState(Messages.get("tables.table_asset_manager.no_media_selected"),
-              isEmbeddedMode() ? null : Messages.get("tables.table_asset_manager.no_media_selected_hint")));
+              Messages.get("tables.table_asset_manager.no_media_selected_hint")));
           updateMediaInfo(null);
           return;
         }
@@ -1372,12 +1457,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    if (isEmbeddedMode()) {
-      assetList.prefHeightProperty().bind(root.prefHeightProperty());
-    }
-    else {
-      clearCacheBtn.setVisible(Features.MEDIA_CACHE || !client.getAssetSourcesService().getAssetSources().isEmpty());
-    }
+    clearCacheBtn.managedProperty().bind(clearCacheBtn.visibleProperty());
+    clearCacheBtn.setVisible(Features.MEDIA_CACHE || !client.getAssetSourcesService().getAssetSources().isEmpty());
 
     infoBtn.setDisable(true);
 
@@ -1419,139 +1500,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           });
         }
       });
-    }
-  }
-
-  private static class TableAssetManagerMediaPane extends MediaPane {
-
-    TableAssetManagerMediaPane(TableAssetManagerPane<?> rootPane, String text, VPinScreen screen, String[] suffix) {
-      super(rootPane, text, screen, suffix);
-
-      this.getStyleClass().add("media-container");
-      Label label = new Label(text);
-      ThemeColors.setTextFill(label, ThemeColors.WHITE);
-      this.setBottom(label);
-      BorderPane.setAlignment(label, Pos.CENTER);
-
-      BorderPane borderPane = new BorderPane();
-      this.setTop(borderPane);
-      BorderPane.setAlignment(borderPane, Pos.TOP_RIGHT);
-    }
-  }
-
-  /**
-   * Screen tile of the dialog: screen name + "Empty" / "N files" bottom left, check badge top right when the screen
-   * has media. Empty, filled and selected states are style classes, the hover state is CSS only.
-   */
-  private static class AssetScreenTile extends MediaPane {
-    /**
-     * Below this height the name and the status share one line and the check badge is hidden (e.g. the Logo tile)
-     */
-    private static final double COMPACT_HEIGHT = 64;
-
-    private final Label statusLabel = new Label();
-    private final Label separatorLabel = new Label("·");
-    private final StackPane checkBadge;
-    private final VBox labels;
-    private final HBox nameRow;
-    private boolean compact = false;
-    private int fileCount = 0;
-
-    AssetScreenTile(TableAssetManagerPane<?> rootPane, String text, VPinScreen screen, String[] suffix) {
-      super(rootPane, text, screen, suffix);
-      getStyleClass().add("am-screen-tile");
-
-      Label nameLabel = new Label(text);
-      nameLabel.getStyleClass().add("sm-text-bold");
-      nameLabel.setMinWidth(0);
-      statusLabel.getStyleClass().add("am-screen-status");
-      statusLabel.setMinWidth(Region.USE_PREF_SIZE);
-      separatorLabel.getStyleClass().add("am-screen-status");
-      separatorLabel.managedProperty().bind(separatorLabel.visibleProperty());
-      separatorLabel.setVisible(false);
-
-      // the status label moves between the second line (regular) and the name row (compact)
-      nameRow = new HBox(6, nameLabel, separatorLabel);
-      nameRow.setAlignment(Pos.BASELINE_LEFT);
-      labels = new VBox(2, nameRow, statusLabel);
-      labels.setPadding(new Insets(0, 10, 10, 14));
-      labels.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-      labels.setMinWidth(0);
-
-      FontIcon check = new FontIcon("mdi2c-check");
-      check.setIconSize(16);
-      checkBadge = new StackPane(check);
-      checkBadge.getStyleClass().add("am-screen-check");
-
-      // badge and labels are layered, so the badge takes no height from the labels
-      StackPane content = new StackPane(checkBadge, labels);
-      content.setMinSize(0, 0);
-      StackPane.setAlignment(checkBadge, Pos.TOP_RIGHT);
-      StackPane.setMargin(checkBadge, new Insets(10, 10, 0, 0));
-      StackPane.setAlignment(labels, Pos.BOTTOM_LEFT);
-      setCenter(content);
-
-      // never draw outside of the tile, however small it gets
-      Rectangle clip = new Rectangle();
-      clip.widthProperty().bind(widthProperty());
-      clip.heightProperty().bind(heightProperty());
-      clip.setArcWidth(12);
-      clip.setArcHeight(12);
-      setClip(clip);
-
-      heightProperty().addListener((obs, oldValue, newValue) -> {
-        boolean newCompact = newValue.doubleValue() < COMPACT_HEIGHT;
-        if (newCompact != compact) {
-          compact = newCompact;
-          // not during the layout pass
-          Platform.runLater(this::applyCompact);
-        }
-      });
-
-      setFileCount(0);
-    }
-
-    private void applyCompact() {
-      if (compact) {
-        labels.getChildren().remove(statusLabel);
-        nameRow.getChildren().add(statusLabel);
-        labels.setPadding(new Insets(0, 10, 0, 14));
-        StackPane.setAlignment(labels, Pos.CENTER_LEFT);
-      }
-      else {
-        nameRow.getChildren().remove(statusLabel);
-        labels.getChildren().add(statusLabel);
-        labels.setPadding(new Insets(0, 10, 10, 14));
-        StackPane.setAlignment(labels, Pos.BOTTOM_LEFT);
-      }
-      separatorLabel.setVisible(compact);
-      checkBadge.setVisible(fileCount > 0 && !compact);
-    }
-
-    void setFileCount(int count) {
-      if (count == 0) {
-        statusLabel.setText(Messages.get("tables.table_asset_manager.empty"));
-      }
-      else if (count == 1) {
-        statusLabel.setText(Messages.get("tables.table_asset_manager.one_file"));
-      }
-      else {
-        statusLabel.setText(Messages.get("tables.table_asset_manager.n_files", count));
-      }
-      fileCount = count;
-      checkBadge.setVisible(count > 0 && !compact);
-      setStyleClass("am-screen-tile-filled", count > 0);
-    }
-
-    void setSelected(boolean selected) {
-      setStyleClass("am-screen-tile-selected", selected);
-    }
-
-    private void setStyleClass(String styleClass, boolean enabled) {
-      getStyleClass().remove(styleClass);
-      if (enabled) {
-        getStyleClass().add(styleClass);
-      }
     }
   }
 
@@ -1678,11 +1626,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       mediaItems = frontendMedia.getMediaItems(s);
     }
 
-    if (borderPane instanceof AssetScreenTile tile) {
+    if (borderPane instanceof ScreenTile tile) {
       // hover is styled by CSS, only the file count and the selection are set here
       tile.setFileCount(mediaItems.size());
       if (clicked) {
-        if (this.lastSelected instanceof AssetScreenTile previous && previous != tile) {
+        if (this.lastSelected instanceof ScreenTile previous && previous != tile) {
           previous.setSelected(false);
         }
         tile.setSelected(true);
@@ -1699,48 +1647,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
             setResultsText(null);
           }
         }
-      }
-      return;
-    }
-
-    if (mediaItems.isEmpty()) {
-      borderPane.getStyleClass().removeAll("green");
-    }
-    else {
-      borderPane.getStyleClass().add("green");
-    }
-
-    if (clicked) {
-      if (this.lastSelected != null) {
-        this.lastSelected.setStyle(null);
-      }
-
-      if (this.screen.equals(s)) {
-        borderPane.setStyle("-fx-cursor: hand;-fx-background-color: " + ThemeColors.HIGHLIGHT);
-        this.lastSelected = borderPane;
-        return;
-      }
-      borderPane.setStyle("-fx-cursor: hand;-fx-background-color: " + ThemeColors.HIGHLIGHT);
-      this.lastSelected = borderPane;
-
-      this.screen = s;
-      refreshTableMediaView();
-      if (isAutoSearchEnabled()) {
-        onSearch();
-      }
-      else {
-        serverAssetsList.setItems(FXCollections.emptyObservableList());
-        serverAssetsList.refresh();
-      }
-      return;
-    }
-
-    if (!borderPane.equals(lastSelected)) {
-      if (hovered) {
-        borderPane.setStyle("-fx-cursor: hand;-fx-background-color: " + ThemeColors.HIGHLIGHT);
-      }
-      else {
-        borderPane.setStyle(null);
       }
     }
   }
@@ -2007,9 +1913,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   private Node createServerPreviewEmptyState() {
-    if (isEmbeddedMode()) {
-      return createEmptyState(Messages.get("tables.table_asset_manager.no_preview_activated"), null);
-    }
     return createEmptyState(Messages.get("tables.table_asset_manager.no_result_selected"),
         Messages.get("tables.table_asset_manager.select_result_for_preview"));
   }
@@ -2069,11 +1972,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }).thenAcceptLater(media -> {
       this.frontendMedia = media;
 
-      if (!isEmbeddedMode()) {
-        String screenLabel = TableAssetManagerPane.getScreenLabel(screen, false);
-        installedTitleLabel.setText(screenLabel);
-        assetSearchLabel.setText(Messages.get("tables.table_asset_manager.find_screen", screenLabel).toUpperCase());
-      }
+      String screenLabel = TableAssetManagerPane.getScreenLabel(screen, false);
+      installedTitleLabel.setText(screenLabel);
+      assetSearchLabel.setText(Messages.get("tables.table_asset_manager.find_screen", screenLabel).toUpperCase());
 
       if (!isEmbeddedMode()) {
         this.helpBtn.setDisable(!VPinScreen.Loading.equals(screen));
@@ -2117,14 +2018,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
 
       refreshTableView();
-      if (previewTitleLabel != null) {
-        Node node = this.lastSelected;
-        if (node == null) {
-          node = mediaRootPane.wheel;
-        }
-        Label nameLabel = (Label) ((BorderPane) node).getBottom();
-        previewTitleLabel.setText(nameLabel.getText());
-      }
     });
   }
 

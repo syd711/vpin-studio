@@ -21,12 +21,11 @@ import de.mephisto.vpin.ui.util.VisibilityHoverListener;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import org.apache.commons.lang3.StringUtils;
@@ -143,7 +142,7 @@ public class TablesSidebarMediaController implements Initializable {
               pane.btn_dmdPos.setDisable(g.isEmpty() || !directb2sAvailable);
             }
 
-            pane.btn_edit.setText(String.valueOf(frontendMedia.getMediaItems(pane.getScreen()).size()));
+            pane.setFileCount(frontendMedia.getMediaItems(pane.getScreen()).size());
           }
 
           refreshMedia(frontendMedia, cardScreen, preview, directB2SData);
@@ -158,7 +157,7 @@ public class TablesSidebarMediaController implements Initializable {
     }
     else {
       for (TablesSidebarMediaItemPane pane : mediaRootPane.getMediaPanes()) {
-        pane.btn_edit.setText(" ");
+        pane.clearFileCount();
       }
       resetMedia();
     }
@@ -168,38 +167,43 @@ public class TablesSidebarMediaController implements Initializable {
     Platform.runLater(() -> {
       for (TablesSidebarMediaItemPane mediaRoot : mediaRootPane.getMediaPanes()) {
         VPinScreen screen = mediaRoot.getScreen();
-        mediaRoot.getStyleClass().remove("highscore-screen");
+        boolean cardTarget = cardScreen != null && cardScreen.equals(screen);
+        mediaRoot.setHighlighted(cardTarget);
         Tooltip.uninstall(mediaRoot, highscoreCardTooltip);
-        if (cardScreen != null && cardScreen.equals(screen)) {
-          mediaRoot.getStyleClass().add("highscore-screen");
+        if (cardTarget) {
           Tooltip.install(mediaRoot, highscoreCardTooltip);
         }
 
+        BorderPane holder = mediaRoot.getMediaHolder();
+        WidgetFactory.disposeMediaPane(holder);
+
         FrontendMediaItemRepresentation item = gameMedia.getDefaultMediaItem(screen);
-        WidgetFactory.createMediaContainer(client, mediaRoot, item, preview);
-
-        Node center = mediaRoot.getCenter();
-        if (screen.equals(VPinScreen.BackGlass) && center instanceof Label && directB2SData != null && directB2SData.isBackgroundAvailable()) {
-          VBox box = new VBox(3);
-          box.setAlignment(Pos.CENTER);
-          box.getChildren().add(center);
-          Label l = new Label(Messages.get("tables.tables_sidebar_media.backglass_available"));
-          l.setStyle(WidgetFactory.MEDIA_CONTAINER_LABEL);
-          box.getChildren().add(l);
-          mediaRoot.setCenter(box);
+        if (item != null && preview) {
+          holder.setCenter(WidgetFactory.createAssetMediaPlayer(client, item, false, true));
+          Tooltip.install(holder, WidgetFactory.createMediaItemTooltip(item));
         }
-
-        if (screen.equals(VPinScreen.Menu) && center instanceof Label && directB2SData != null && directB2SData.isDmdImageAvailable()) {
-          VBox box = new VBox(3);
-          box.setAlignment(Pos.CENTER);
-          box.getChildren().add(center);
-          Label l = new Label(Messages.get("tables.tables_sidebar_media.fulldmd_available"));
-          l.setStyle(WidgetFactory.MEDIA_CONTAINER_LABEL);
-          box.getChildren().add(l);
-          mediaRoot.setCenter(box);
+        else if (item != null) {
+          holder.setCenter(createHint(Messages.get("dialog.preview_disabled")));
+        }
+        else if (screen.equals(VPinScreen.BackGlass) && directB2SData != null && directB2SData.isBackgroundAvailable()) {
+          holder.setCenter(createHint(Messages.get("tables.tables_sidebar_media.backglass_available")));
+        }
+        else if (screen.equals(VPinScreen.Menu) && directB2SData != null && directB2SData.isDmdImageAvailable()) {
+          holder.setCenter(createHint(Messages.get("tables.tables_sidebar_media.fulldmd_available")));
         }
       }
     });
+  }
+
+  /**
+   * Muted one-liner in the middle of a tile without a preview.
+   */
+  private static Label createHint(String text) {
+    Label label = new Label(text);
+    label.getStyleClass().add("sm-small");
+    label.setWrapText(true);
+    label.setTextAlignment(TextAlignment.CENTER);
+    return label;
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
@@ -213,8 +217,8 @@ public class TablesSidebarMediaController implements Initializable {
 
   public void resetMedia() {
     for (TablesSidebarMediaItemPane pane : mediaRootPane.getMediaPanes()) {
-      WidgetFactory.disposeMediaPane(pane);
-      WidgetFactory.createNoMediaLabel(pane);
+      WidgetFactory.disposeMediaPane(pane.getMediaHolder());
+      pane.setHighlighted(false);
     }
   }
 

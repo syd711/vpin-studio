@@ -19,12 +19,15 @@ import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMoveStructure;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportProgressModel;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportScanProgressModel;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FilterPills;
+import de.mephisto.vpin.ui.util.SegmentedToggles;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,6 +39,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -72,6 +77,36 @@ public class BulkImporterController implements Initializable, DialogController {
   private static final String MOVE_KEEP_STRUCTURE = "bulkImporterMoveKeepStructure";
   private static final String MOVE_STRUCTURE = "bulkImporterMoveStructure";
   private static final String EMULATOR_ID = "bulkImporterEmulatorId";
+  private static final String PREVIEW_SIZE = "bulkImporterPreviewSize";
+  /**
+   * Automatic matches from this score on are "good", below they should be checked.
+   */
+  private static final double GOOD_SCORE = 0.8;
+  private static final int MATCH_BAR_WIDTH = 64;
+
+  /**
+   * The filter pills above the review table.
+   */
+  private enum ReviewFilter {
+    ALL, GOOD, CHECK, NO_TABLE;
+
+    boolean test(BulkImportItem item) {
+      switch (this) {
+        case GOOD:
+          return item.gameProperty().get() != null && isGoodMatch(item);
+        case CHECK:
+          return item.gameProperty().get() != null && !isGoodMatch(item);
+        case NO_TABLE:
+          return item.gameProperty().get() == null;
+        default:
+          return true;
+      }
+    }
+  }
+
+  private static boolean isGoodMatch(BulkImportItem item) {
+    return SOURCE_MANUAL.equals(item.matchSourceProperty().get()) || item.scoreProperty().get() >= GOOD_SCORE;
+  }
 
   @FXML
   private TextField sourceField;
@@ -90,7 +125,13 @@ public class BulkImporterController implements Initializable, DialogController {
   @FXML
   private ComboBox<VPinScreen> defaultScreenCombo;
   @FXML
-  private ComboBox<BulkImportMode> defaultModeCombo;
+  private ToggleGroup defaultModeGroup;
+  @FXML
+  private ToggleButton modeAppendBtn;
+  @FXML
+  private ToggleButton modeOverwriteBtn;
+  @FXML
+  private ToggleButton modeIfMissingBtn;
   @FXML
   private CheckBox moveCheck;
   @FXML
@@ -98,17 +139,21 @@ public class BulkImporterController implements Initializable, DialogController {
   @FXML
   private Button moveTargetBtn;
   @FXML
-  private RadioButton moveFlatRadio;
+  private ToggleButton moveFlatBtn;
   @FXML
-  private RadioButton moveKeepStructureRadio;
+  private ToggleButton moveKeepStructureBtn;
   @FXML
-  private RadioButton moveTableFolderRadio;
+  private ToggleButton moveTableFolderBtn;
   @FXML
   private ToggleGroup moveStructureGroup;
   @FXML
-  private CheckBox previewCheck;
+  private HBox moveStructureBox;
+  @FXML
+  private Label movePreviewLabel;
   @FXML
   private ToggleGroup previewSizeGroup;
+  @FXML
+  private ToggleButton sizeOffBtn;
   @FXML
   private ToggleButton sizeSmallBtn;
   @FXML
@@ -133,7 +178,11 @@ public class BulkImporterController implements Initializable, DialogController {
   private TableColumn<BulkImportItem, BulkImportItem> columnMode;
 
   @FXML
+  private HBox filterBox;
+  @FXML
   private Label summaryLabel;
+  @FXML
+  private Label skipLabel;
   @FXML
   private Button importBtn;
   @FXML
@@ -143,7 +192,10 @@ public class BulkImporterController implements Initializable, DialogController {
 
   private final ObservableList<BulkImportItem> items = FXCollections.observableArrayList(
       item -> new javafx.beans.Observable[]{item.gameProperty(), item.screenProperty(), item.selectedProperty()});
+  private final FilteredList<BulkImportItem> filteredItems = new FilteredList<>(items);
   private final CheckBox selectAllCheck = new CheckBox();
+  private final ToggleGroup filterGroup = new ToggleGroup();
+  private final Map<ReviewFilter, ToggleButton> filterPills = new EnumMap<>(ReviewFilter.class);
 
   // tables of all active emulators, allGames holds the ones of the selected emulator
   private List<GameRepresentation> loadedGames = Collections.emptyList();
@@ -197,14 +249,36 @@ public class BulkImporterController implements Initializable, DialogController {
     List<VPinScreen> supportedScreens = client.getFrontendService().getFrontendCached().getSupportedScreens();
     Arrays.stream(VPinScreen.values()).filter(supportedScreens::contains).forEach(screens::add);
     defaultScreenCombo.setItems(FXCollections.observableArrayList(screens));
-    defaultScreenCombo.setConverter(screenConverter);
+    // without a default screen the screen is chosen per file
+    defaultScreenCombo.setConverter(new StringConverter<>() {
+      @Override
+      public String toString(VPinScreen screen) {
+        return screen == null ? Messages.get("bulk_importer.screen_ask") : screenConverter.toString(screen);
+      }
+
+      @Override
+      public VPinScreen fromString(String string) {
+        return null;
+      }
+    });
     defaultScreenCombo.valueProperty().addListener((obs, o, n) -> rematch(false, false));
     screenOptions = screens;
     this.screenConverter = screenConverter;
 
-    defaultModeCombo.setItems(FXCollections.observableArrayList(BulkImportMode.values()));
-    defaultModeCombo.setConverter(modeConverter());
-    defaultModeCombo.setValue(BulkImportMode.APPEND);
+    modeAppendBtn.setUserData(BulkImportMode.APPEND);
+    modeOverwriteBtn.setUserData(BulkImportMode.OVERWRITE);
+    modeIfMissingBtn.setUserData(BulkImportMode.IF_MISSING);
+    SegmentedToggles.keepSelected(modeAppendBtn, modeOverwriteBtn, modeIfMissingBtn);
+    defaultModeGroup.selectedToggleProperty().addListener((obs, o, n) -> {
+      if (n == null) {
+        return;
+      }
+      // the setting applies to all files, single rows can be changed afterwards
+      for (BulkImportItem item : items) {
+        item.modeProperty().set(getDefaultMode());
+      }
+      tableView.refresh();
+    });
 
     detectScreenCheck.selectedProperty().addListener((obs, o, n) -> rematch(false, false));
     recursiveCheck.selectedProperty().addListener((obs, o, n) -> {
@@ -224,23 +298,28 @@ public class BulkImporterController implements Initializable, DialogController {
       }
     });
 
+    sizeOffBtn.setUserData(0);
     sizeSmallBtn.setUserData(48);
     sizeMediumBtn.setUserData(96);
     sizeLargeBtn.setUserData(160);
+    SegmentedToggles.keepSelected(sizeOffBtn, sizeSmallBtn, sizeMediumBtn, sizeLargeBtn);
+    String savedSize = LocalUISettings.getString(PREVIEW_SIZE);
+    for (Toggle toggle : previewSizeGroup.getToggles()) {
+      if (String.valueOf(toggle.getUserData()).equals(savedSize)) {
+        toggle.setSelected(true);
+      }
+    }
+    previewSize = (Integer) previewSizeGroup.getSelectedToggle().getUserData();
     previewSizeGroup.selectedToggleProperty().addListener((obs, old, toggle) -> {
       if (toggle == null) {
-        old.setSelected(true); // one size is always active
         return;
       }
       previewSize = (Integer) toggle.getUserData();
+      LocalUISettings.saveProperty(PREVIEW_SIZE, String.valueOf(previewSize));
       applyPreviewSize();
     });
 
-    previewCheck.selectedProperty().addListener((obs, o, n) -> applyPreviewSize());
-    sizeSmallBtn.disableProperty().bind(previewCheck.selectedProperty().not());
-    sizeMediumBtn.disableProperty().bind(previewCheck.selectedProperty().not());
-    sizeLargeBtn.disableProperty().bind(previewCheck.selectedProperty().not());
-
+    initFilterPills();
     initMoveSettings();
     initTable();
     applyPreviewSize();
@@ -343,22 +422,79 @@ public class BulkImporterController implements Initializable, DialogController {
   private void initMoveSettings() {
     moveCheck.setSelected(Boolean.parseBoolean(LocalUISettings.getString(MOVE_ENABLED)));
     moveTargetField.setText(StringUtils.defaultString(LocalUISettings.getString(MOVE_TARGET)));
-    moveStructureGroup.selectToggle(getStructureRadio(loadMoveStructure()));
+    moveStructureGroup.selectToggle(getStructureToggle(loadMoveStructure()));
+    SegmentedToggles.keepSelected(moveFlatBtn, moveKeepStructureBtn, moveTableFolderBtn);
 
     moveTargetField.disableProperty().bind(moveCheck.selectedProperty().not());
     moveTargetBtn.disableProperty().bind(moveCheck.selectedProperty().not());
-    moveFlatRadio.disableProperty().bind(moveCheck.selectedProperty().not());
-    moveKeepStructureRadio.disableProperty().bind(moveCheck.selectedProperty().not());
-    moveTableFolderRadio.disableProperty().bind(moveCheck.selectedProperty().not());
+    moveStructureBox.disableProperty().bind(moveCheck.selectedProperty().not());
+    movePreviewLabel.disableProperty().bind(moveCheck.selectedProperty().not());
 
     moveCheck.selectedProperty().addListener((obs, o, n) -> LocalUISettings.saveProperty(MOVE_ENABLED, String.valueOf(n)));
     moveStructureGroup.selectedToggleProperty().addListener((obs, old, toggle) -> {
       if (toggle == null) {
-        old.setSelected(true); // one structure option is always active
         return;
       }
       LocalUISettings.saveProperty(MOVE_STRUCTURE, getMoveStructure().name());
+      updateMovePreview();
     });
+    moveTargetField.textProperty().addListener((obs, o, n) -> updateMovePreview());
+    updateMovePreview();
+  }
+
+  /**
+   * Shows where a file ends up with the chosen structure, using a file of the list as example.
+   */
+  private void updateMovePreview() {
+    BulkImportItem sample = items.stream().filter(BulkImportItem::isImported).findFirst()
+        .orElse(items.stream().filter(i -> i.gameProperty().get() != null).findFirst().orElse(null));
+    String target = StringUtils.defaultIfBlank(moveTargetField.getText(), "…");
+    String fileName = sample != null ? sample.getFile().getName() : Messages.get("bulk_importer.move_preview_file");
+    String path;
+    switch (getMoveStructure()) {
+      case KEEP_STRUCTURE:
+        path = sample != null ? sample.getRelativePath()
+            : Messages.get("bulk_importer.move_preview_subfolder") + File.separator + fileName;
+        break;
+      case TABLE_FOLDER:
+        String folder = sample != null ? BulkImportProgressModel.folderName(sample.gameProperty().get())
+            : Messages.get("bulk_importer.move_preview_table");
+        path = folder + File.separator + fileName;
+        break;
+      default:
+        path = fileName;
+    }
+    String text = StringUtils.removeEnd(target, File.separator) + File.separator + path;
+    movePreviewLabel.setText(text);
+    movePreviewLabel.setTooltip(new Tooltip(text));
+  }
+
+  private BulkImportMode getDefaultMode() {
+    Toggle toggle = defaultModeGroup.getSelectedToggle();
+    return toggle != null ? (BulkImportMode) toggle.getUserData() : BulkImportMode.APPEND;
+  }
+
+  //---------------- review filter -----------------------------------------------------------------------------------
+
+  private void initFilterPills() {
+    addFilterPill(ReviewFilter.ALL, "bulk_importer.filter_all", null);
+    addFilterPill(ReviewFilter.GOOD, "bulk_importer.filter_good", ThemeColors.OK);
+    addFilterPill(ReviewFilter.CHECK, "bulk_importer.filter_check", ThemeColors.WARN);
+    addFilterPill(ReviewFilter.NO_TABLE, "bulk_importer.filter_no_table", ThemeColors.ERROR);
+    filterPills.get(ReviewFilter.ALL).setSelected(true);
+    filterGroup.selectedToggleProperty().addListener((obs, o, n) -> {
+      if (n != null) {
+        ReviewFilter filter = (ReviewFilter) n.getUserData();
+        filteredItems.setPredicate(filter::test);
+      }
+    });
+  }
+
+  private void addFilterPill(ReviewFilter filter, String messageKey, String dotColor) {
+    ToggleButton pill = FilterPills.create(filterGroup, Messages.get(messageKey), dotColor, 0);
+    pill.setUserData(filter);
+    filterPills.put(filter, pill);
+    filterBox.getChildren().add(pill);
   }
 
   private static BulkImportMoveStructure loadMoveStructure() {
@@ -374,22 +510,22 @@ public class BulkImporterController implements Initializable, DialogController {
     return Boolean.parseBoolean(LocalUISettings.getString(MOVE_KEEP_STRUCTURE)) ? BulkImportMoveStructure.KEEP_STRUCTURE : BulkImportMoveStructure.FLAT;
   }
 
-  private RadioButton getStructureRadio(BulkImportMoveStructure structure) {
+  private ToggleButton getStructureToggle(BulkImportMoveStructure structure) {
     switch (structure) {
       case KEEP_STRUCTURE:
-        return moveKeepStructureRadio;
+        return moveKeepStructureBtn;
       case TABLE_FOLDER:
-        return moveTableFolderRadio;
+        return moveTableFolderBtn;
       default:
-        return moveFlatRadio;
+        return moveFlatBtn;
     }
   }
 
   private BulkImportMoveStructure getMoveStructure() {
-    if (moveKeepStructureRadio.isSelected()) {
+    if (moveKeepStructureBtn.isSelected()) {
       return BulkImportMoveStructure.KEEP_STRUCTURE;
     }
-    if (moveTableFolderRadio.isSelected()) {
+    if (moveTableFolderBtn.isSelected()) {
       return BulkImportMoveStructure.TABLE_FOLDER;
     }
     return BulkImportMoveStructure.FLAT;
@@ -410,7 +546,9 @@ public class BulkImporterController implements Initializable, DialogController {
   }
 
   private void initTable() {
-    tableView.setItems(items);
+    SortedList<BulkImportItem> sortedItems = new SortedList<>(filteredItems);
+    sortedItems.comparatorProperty().bind(tableView.comparatorProperty());
+    tableView.setItems(sortedItems);
     tableView.setPlaceholder(new Label(Messages.get("bulk_importer.placeholder")));
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -486,27 +624,39 @@ public class BulkImporterController implements Initializable, DialogController {
           setGraphic(null);
           return;
         }
-        setGraphic(createPreview(item.getFile()));
+        setGraphic(previewSize > 0 ? createPreview(item.getFile()) : null);
       }
     });
 
     columnFile.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue()));
     columnFile.setComparator(Comparator.comparing(BulkImportItem::getRelativePath, String.CASE_INSENSITIVE_ORDER));
     columnFile.setCellFactory(c -> new TableCell<>() {
+      private final Label name = new Label();
+      private final Label folder = new Label();
+      private final VBox box = new VBox(2, name, folder);
+
       {
         setAlignment(Pos.CENTER_LEFT);
+        name.getStyleClass().addAll("sm-text", "sm-mono");
+        folder.getStyleClass().add("sm-small");
+        box.setAlignment(Pos.CENTER_LEFT);
       }
 
       @Override
       protected void updateItem(BulkImportItem item, boolean empty) {
         super.updateItem(item, empty);
         if (empty || item == null) {
-          setText(null);
+          setGraphic(null);
           setTooltip(null);
           return;
         }
-        setText(item.getRelativePath());
+        name.setText(item.getFile().getName());
+        String parent = new File(item.getRelativePath()).getParent();
+        folder.setText(parent != null ? parent + File.separator : "");
+        folder.setVisible(parent != null);
+        folder.setManaged(parent != null);
         setTooltip(new Tooltip(item.getFile().getAbsolutePath()));
+        setGraphic(box);
       }
     });
 
@@ -515,31 +665,60 @@ public class BulkImporterController implements Initializable, DialogController {
 
     columnScore.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue()));
     columnScore.setComparator(Comparator.comparingDouble(i -> i.scoreProperty().get()));
+    // match bar + percentage: green = good match, orange = check, red = no table
     columnScore.setCellFactory(c -> new TableCell<>() {
+      private final Region fill = new Region();
+      private final StackPane track = new StackPane(fill);
+      private final Label value = new Label();
+      private final HBox box = new HBox(10, track, value);
+      private final Tooltip tooltip = new Tooltip();
+
       {
         setAlignment(Pos.CENTER_LEFT);
+        track.setAlignment(Pos.CENTER_LEFT);
+        track.setMinSize(MATCH_BAR_WIDTH, 6);
+        track.setMaxSize(MATCH_BAR_WIDTH, 6);
+        track.setStyle("-fx-background-color: " + ThemeColors.INSET + "; -fx-background-radius: 3;");
+        fill.setMaxHeight(6);
+        value.getStyleClass().addAll("sm-text-bold", "sm-mono");
+        box.setAlignment(Pos.CENTER_LEFT);
       }
 
       @Override
       protected void updateItem(BulkImportItem item, boolean empty) {
         super.updateItem(item, empty);
         if (empty || item == null) {
-          setText(null);
+          setGraphic(null);
+          setTooltip(null);
           return;
         }
+        String color;
+        double score;
         if (item.gameProperty().get() == null) {
-          setText("-");
-          setStyle("-fx-text-fill: " + ThemeColors.ORANGE_BRIGHT + ";");
+          color = ThemeColors.ERROR;
+          score = 0;
+          value.setText("–");
+          tooltip.setText(Messages.get("bulk_importer.no_match"));
         }
         else if (SOURCE_MANUAL.equals(item.matchSourceProperty().get())) {
-          setText(Messages.get("bulk_importer.manual"));
-          setStyle("-fx-text-fill: " + ThemeColors.SUCCESS_LIGHT + ";");
+          color = ThemeColors.OK;
+          score = 1;
+          value.setText(Messages.get("bulk_importer.manual"));
+          tooltip.setText(Messages.get("bulk_importer.manual"));
         }
         else {
-          int pct = (int) Math.round(item.scoreProperty().get() * 100);
-          setText(pct + "% (" + Messages.get("bulk_importer.matched_by_" + item.matchSourceProperty().get()) + ")");
-          setStyle(pct >= 80 ? "-fx-text-fill: " + ThemeColors.SUCCESS_LIGHT + ";" : "-fx-text-fill: " + ThemeColors.YELLOW_LIGHT + ";");
+          score = item.scoreProperty().get();
+          color = score >= GOOD_SCORE ? ThemeColors.OK : ThemeColors.WARN;
+          value.setText(Math.round(score * 100) + "%");
+          tooltip.setText(Messages.get("bulk_importer.matched_by_" + item.matchSourceProperty().get()));
         }
+        double width = Math.max(0, Math.min(1, score)) * MATCH_BAR_WIDTH;
+        fill.setMinWidth(width);
+        fill.setMaxWidth(width);
+        fill.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 3;");
+        value.setStyle("-fx-text-fill: " + color + ";");
+        setTooltip(tooltip);
+        setGraphic(box);
       }
     });
 
@@ -636,24 +815,29 @@ public class BulkImporterController implements Initializable, DialogController {
       pane.getChildren().add(view);
     }
     else {
-      String icon = VIDEO_EXT.contains(ext) ? "mdi2v-video" : AUDIO_EXT.contains(ext) ? "mdi2m-music-note" : "mdi2f-file-outline";
-      FontIcon fontIcon = new FontIcon(icon);
-      ThemeColors.setIconColor(fontIcon, ThemeColors.WHITE);
-      fontIcon.setIconSize(Math.max(24, previewSize / 2));
-      Label label = new Label(ext.toUpperCase());
-      label.setStyle("-fx-text-fill: " + ThemeColors.TEXT_SECONDARY + ";");
-      javafx.scene.layout.VBox box = new javafx.scene.layout.VBox(4, fontIcon, label);
-      box.setAlignment(Pos.CENTER);
-      pane.getChildren().add(box);
+      // file type badge, the format icon only from the medium size on
+      Label badge = new Label(ext.toUpperCase());
+      badge.getStyleClass().add("am-format-badge");
+      badge.setMinSize(Math.max(46, previewSize * 0.7), Math.max(24, previewSize * 0.45));
+      badge.setMaxSize(Math.max(46, previewSize * 0.7), Math.max(24, previewSize * 0.45));
+      if (previewSize >= 96) {
+        String icon = VIDEO_EXT.contains(ext) ? "mdi2v-video-outline" : AUDIO_EXT.contains(ext) ? "mdi2m-music-note" : "mdi2f-file-outline";
+        FontIcon fontIcon = new FontIcon(icon);
+        fontIcon.setIconSize(18);
+        ThemeColors.setIconColor(fontIcon, ThemeColors.TEXT_LIGHT);
+        badge.setGraphic(fontIcon);
+        badge.setContentDisplay(ContentDisplay.TOP);
+      }
+      pane.getChildren().add(badge);
     }
     return pane;
   }
 
   private void applyPreviewSize() {
-    boolean show = previewCheck.isSelected();
+    boolean show = previewSize > 0;
     columnPreview.setVisible(show);
-    // without previews the rows fall back to the stylesheet's default row height
-    tableView.setFixedCellSize(show ? previewSize + 14 : -1);
+    // two text lines in the file column and the 30px combo boxes need at least 52px
+    tableView.setFixedCellSize(show ? Math.max(52, previewSize + 12) : 52);
     columnPreview.setPrefWidth(previewSize + 24);
     columnPreview.setMinWidth(previewSize + 24);
     columnPreview.setMaxWidth(previewSize + 24);
@@ -777,7 +961,7 @@ public class BulkImporterController implements Initializable, DialogController {
           item.screenProperty().set(screen != null ? screen : defaultScreen);
         }
         if (force) {
-          item.modeProperty().set(defaultModeCombo.getValue() != null ? defaultModeCombo.getValue() : BulkImportMode.APPEND);
+          item.modeProperty().set(getDefaultMode());
           item.setSelectionManual(false);
         }
         updateImportSelection(item);
@@ -806,14 +990,32 @@ public class BulkImporterController implements Initializable, DialogController {
     long matched = items.stream().filter(i -> i.gameProperty().get() != null).count();
     long importable = items.stream().filter(BulkImportItem::isImportable).count();
     long selected = items.stream().filter(BulkImportItem::isImported).count();
+    long noTable = items.size() - matched;
     long noScreen = items.stream().filter(i -> i.gameProperty().get() != null && i.screenProperty().get() == null).count();
-    summaryLabel.setText(Messages.get("msg.files_matched_selected_for_import", items.size(), matched, selected, String.valueOf((noScreen > 0 ? "  " + Messages.get("bulk_importer.summary_no_screen", noScreen) : ""))));
+
+    summaryLabel.setText(items.isEmpty() ? "" : Messages.get("bulk_importer.summary", items.size(), selected));
+    List<String> skipped = new ArrayList<>();
+    if (noTable > 0) {
+      skipped.add(Messages.get("bulk_importer.summary_no_table", noTable));
+    }
+    if (noScreen > 0) {
+      skipped.add(Messages.get("bulk_importer.summary_no_screen", noScreen));
+    }
+    skipLabel.setText(String.join("  ", skipped));
+    skipLabel.setStyle("-fx-text-fill: " + ThemeColors.WARN + ";");
+
     importBtn.setDisable(selected == 0);
-    removeUnmatchedBtn.setDisable(matcher == null || matched == items.size());
+    importBtn.setText(selected > 0 ? Messages.get("bulk_importer.import_count", selected) : Messages.get("bulk_importer.import"));
+    removeUnmatchedBtn.setDisable(matcher == null || noTable == 0);
+
+    for (Map.Entry<ReviewFilter, ToggleButton> pill : filterPills.entrySet()) {
+      FilterPills.setCount(pill.getValue(), items.stream().filter(pill.getKey()::test).count());
+    }
 
     selectAllCheck.setDisable(importable == 0);
     selectAllCheck.setIndeterminate(selected > 0 && selected < importable);
     selectAllCheck.setSelected(importable > 0 && selected == importable);
+    updateMovePreview();
   }
 
   //---------------- bulk actions ------------------------------------------------------------------------------------
@@ -836,8 +1038,9 @@ public class BulkImporterController implements Initializable, DialogController {
     List<BulkImportItem> selection = targets();
     int index = tableView.getSelectionModel().getSelectedIndex();
     items.removeAll(selection);
-    if (!items.isEmpty()) {
-      tableView.getSelectionModel().select(Math.min(index, items.size() - 1));
+    int rows = tableView.getItems().size();
+    if (rows > 0) {
+      tableView.getSelectionModel().clearAndSelect(Math.max(0, Math.min(index, rows - 1)));
     }
     updateSummary();
   }
@@ -893,7 +1096,7 @@ public class BulkImporterController implements Initializable, DialogController {
         Math.round(scoreSlider.getValue() * 100),
         detectScreenCheck.isSelected(),
         defaultScreenCombo.getValue(),
-        defaultModeCombo.getValue(),
+        getDefaultMode(),
         moveCheck.isSelected(),
         moveTarget != null ? moveTarget.getAbsolutePath() : null,
         structure,

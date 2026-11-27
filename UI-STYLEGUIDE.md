@@ -452,16 +452,34 @@ Every `Accordion` / `TitledPane` gets this look automatically:
 - Footer = `sm-footer` with an `sm-hint` one-line summary of what will happen, `default-button` Cancel and a
   `submit-button` whose text names the chosen action ("Upload & replace").
 
+### Bulk importer (`tables/dialogs/dialog-bulk-importer.fxml`)
+- Four numbered `sm-tile, sm-tile-bordered` sections like the upload dialog: "1 · SOURCE" (emulator combo, `sm-mono`
+  folder field, `sm-button` "Select Folder…", `sm-accent-checkbox`), "2 · MATCHING" and "3 · AFTER IMPORT" side by
+  side (form grids with `sm-text` labels; mode / structure choices are `sm-segmented` toggles; an `sm-small, sm-mono`
+  line previews the move target path), "4 · REVIEW" grows with the table.
+- Review header: `sm-caption` + `FilterPills` (All, Good match `-c-ok`, Check `-c-warn`, Needs a table `-c-error`),
+  then right-aligned `sm-hint` "Preview" + `sm-segmented` Off / S / M / L, `sm-button`s and an `sm-danger-button,
+  sm-button-icon` remove button.
+- Rows: preview thumbnail or `am-format-badge`; file = `sm-mono` name over an `sm-small` folder; match = 64px bar on
+  `-c-inset` + bold mono percentage, both green (≥ 80 % or manual), orange (check) or red (no table).
+- Footer = `sm-footer`: `sm-hint` "N files found · M selected", a `-c-warn` skip note, `default-button` Cancel and a
+  `submit-button` "Import N files".
+
 ### Asset manager (`tables/dialogs/dialog-table-asset-manager.fxml`)
 - Selection bar (`sm-divider` row): `sm-segmented` Tables / Playlists, prev / next `sm-button-icon`s around the table
   combo, "VPS assets" `sm-button`, `sm-chip, am-frontend-chip` with a `-c-info` dot right-aligned.
 - Split view of `sm-panel`s (gap 14): Screens panel (`sm-caption` + `sm-small` "N of M have media", the screen map, a
   legend of `am-legend` swatches) and a column with the search and the installed panels.
-- Screen tiles (`AssetScreenTile`): `am-screen-tile` = `-c-panel-border` fill (one step lighter than the tile it sits on,
-  `-c-control` on hover) with a dashed `-c-border` outline; `am-screen-tile-filled` = `-c-ok-bg` fill + round
-  `am-screen-check` badge, status line in `-c-ok`; `am-screen-tile-selected` = 2px orange border (`-c-warn-bg` fill
-  when empty).
-  The embedded tables sidebar keeps the old media panes.
+- Screen tiles (`tables/dialogs/ScreenTile`, shared by the dialog, the asset view and the tables sidebar media panel):
+  `am-screen-tile` = `-c-panel-border` fill (one step lighter than the tile it sits on, `-c-control` on hover) with a
+  dashed `-c-border` outline; `am-screen-tile-filled` = `-c-ok-bg` fill, status line in `-c-ok`;
+  `am-screen-tile-selected` = 2px orange border (`-c-warn-bg` fill when empty); `am-screen-tile-highlight` = 2px
+  `-c-info` border (highscore card screen). Name + "Empty" / "N files" bottom left, one line below 64px tile height;
+  content is clipped to the tile. Plain tiles show a round `am-screen-check` badge, media tiles (sidebar) the
+  preview above a "Name · N files" line and the hover actions (`am-tile-action`, opaque `sm-button-icon`s) on top.
+- Asset view (`dialog-table-asset-manager-embedded.fxml`, Ctrl+M): a 620px column under the common details header
+  with the same blocks stacked: search tile (caption + sources, then field + search button, results + preview),
+  screens tile (map + preview, then an `am-section-top` "INSTALLED" section with the actions, then the list).
 - Panel header = `sm-divider` row: `sm-caption` ("FIND WHEEL" / "INSTALLED" + `sm-title` screen name), then the actions:
   icon-only `sm-button-icon`s with tooltips (only Upload keeps its text), `folder-component` + reload right-aligned.
 - Lists are `am-list`: flat rows with 1px `-c-table-divider` lines and the table selection look (amber tint, 3px
