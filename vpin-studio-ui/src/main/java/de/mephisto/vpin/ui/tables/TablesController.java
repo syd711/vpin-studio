@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -26,6 +25,9 @@ import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import de.mephisto.vpin.ui.vpxz.VPXZController;
 import de.mephisto.vpin.ui.vpxz.VPXZSidebarController;
 import javafx.animation.TranslateTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ObservableList;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -41,11 +43,12 @@ import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +56,9 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -130,17 +135,36 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @FXML
   private StackPane editorRootStack;
 
+  /**
+   * Separator, preferences and "show details panel" button, appended to the first toolbar row of the active page.
+   */
   @FXML
-  private Button toggleSidebarBtn;
+  private HBox viewActions;
 
   @FXML
-  private Button tableSettingsBtn;
+  private Button showSidebarBtn;
 
   @FXML
-  private Label pageTitle;
+  private HBox sidebarHeader;
+
+  @FXML
+  private Label sidebarTitleLabel;
 
   private Node sidePanelRoot;
   private boolean sidebarVisible = true;
+
+  private final BooleanProperty sidebarHidden = new SimpleBooleanProperty(false);
+  private final BooleanProperty sidebarAvailable = new SimpleBooleanProperty(true);
+
+  /**
+   * The toolbar row that currently holds the view actions.
+   */
+  private ObservableList<Node> viewActionsOwner;
+
+  /**
+   * The name of the item selected in each sidebar, keyed by the sidebar controller.
+   */
+  private final Map<Object, String> sidebarTitles = new HashMap<>();
 
   /**
    * The tabs are the pages of this view, they are selected through the navigation.
@@ -217,7 +241,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   @FXML
-  private void toggleSidebar() {
+  public void toggleSidebar() {
     sidebarVisible = !sidebarVisible;
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
@@ -350,11 +374,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
 
+    showSidebarBtn.visibleProperty().bind(sidebarHidden.and(sidebarAvailable));
+    showSidebarBtn.managedProperty().bind(showSidebarBtn.visibleProperty());
+    sidebarHeader.managedProperty().bind(sidebarHeader.visibleProperty());
+
     client.getPreferenceService().addListener(this);
   }
 
   public void setSidebarVisible(boolean b) {
-    toggleSidebarBtn.setDisable(getTablesSideBarController().isEmpty());
+    refreshSidebarAvailable();
 
     if (b && sidePanelRoot.isVisible()) {
       return;
@@ -370,24 +398,80 @@ public class TablesController implements Initializable, StudioFXController, Stud
         @Override
         public void handle(ActionEvent event) {
           sidePanelRoot.setVisible(false);
-          FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-left");
-          toggleSidebarBtn.setGraphic(icon);
+          sidebarHidden.set(true);
         }
       });
       t.play();
     }
     else {
+      sidebarHidden.set(false);
       sidePanelRoot.setVisible(true);
       TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, PauseMenuUIDefaults.SCROLL_OFFSET, -612);
-      t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-          FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-right");
-          toggleSidebarBtn.setGraphic(icon);
-        }
-      });
       t.play();
     }
+  }
+
+  /**
+   * The "show details panel" button is only offered on pages with a (non-empty) sidebar.
+   */
+  private void refreshSidebarAvailable() {
+    int selectedTab = getSelectedTab();
+    boolean hasSidebar = selectedTab == TAB_VPS || selectedTab == TAB_BACKUPS || selectedTab == TAB_VPXZ
+        || (selectedTab == TAB_TABLE && !getTablesSideBarController().isEmpty());
+    sidebarAvailable.set(hasSidebar);
+  }
+
+  /**
+   * Moves the view actions (preferences, show details panel) to the end of the first toolbar row of the given page.
+   */
+  private void attachViewActions(int tab) {
+    ObservableList<Node> items = getToolbarItems(tab);
+    if (items == null || items == viewActionsOwner) {
+      return;
+    }
+    if (viewActionsOwner != null) {
+      viewActionsOwner.remove(viewActions);
+    }
+    // in a ToolBar the actions are pushed to the right end, in the HBox row of the backglass manager
+    // the search field already takes the free space
+    HBox.setHgrow(viewActions, tab == TAB_BACKGLASS ? Priority.NEVER : Priority.ALWAYS);
+    items.add(viewActions);
+    viewActionsOwner = items;
+  }
+
+  private ObservableList<Node> getToolbarItems(int tab) {
+    return switch (tab) {
+      case TAB_TABLE -> tableOverviewController.getToolbarItems();
+      case TAB_BACKGLASS -> backglassManagerController.getToolbarItems();
+      case TAB_VPS -> vpsTablesController.getToolbarItems();
+      case TAB_STATISTICS -> alxController.getToolbarItems();
+      case TAB_BACKUPS -> backupsController != null ? backupsController.getToolbarItems() : null;
+      case TAB_VPXZ -> vpxzController.getToolbarItems();
+      default -> null;
+    };
+  }
+
+  public HBox getViewActions() {
+    return viewActions;
+  }
+
+  /**
+   * Sets the name of the item selected in the given sidebar, shown in the header of the details panel.
+   */
+  public void setSidebarTitle(Object sidebarController, @Nullable String title) {
+    sidebarTitles.put(sidebarController, title);
+    refreshSidebarTitle();
+  }
+
+  private void refreshSidebarTitle() {
+    Object sidebarController = switch (getSelectedTab()) {
+      case TAB_TABLE -> tablesSideBarController;
+      case TAB_BACKUPS -> backupsSideBarController;
+      case TAB_VPXZ -> vpxzSidebarController;
+      default -> null;
+    };
+    String title = sidebarController != null ? sidebarTitles.get(sidebarController) : null;
+    sidebarTitleLabel.setText(StringUtils.defaultIfBlank(title, "-"));
   }
 
   private void refreshTabSelection(Number oldValue, Number newValue) {
@@ -398,11 +482,13 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
     int selectedTab = getSelectedTab(newValue.intValue());
-    Tab selectedTabItem = tabPane.getSelectionModel().getSelectedItem();
     Platform.runLater(() -> {
-      if (selectedTabItem != null) {
-        pageTitle.setText(selectedTabItem.getText().trim());
-      }
+      attachViewActions(selectedTab);
+      // the VPS sidebar comes with its own header
+      sidebarHeader.setVisible(selectedTab != TAB_VPS);
+      refreshSidebarTitle();
+      refreshSidebarAvailable();
+
       tableOverviewController.setVisible(selectedTab == TAB_TABLE);
       backupsSideBarController.setVisible(selectedTab == TAB_BACKUPS);
       vpxzSidebarController.setVisible(selectedTab == TAB_VPXZ);
@@ -411,32 +497,26 @@ public class TablesController implements Initializable, StudioFXController, Stud
       if (selectedTab == TAB_TABLE) {
         tableOverviewController.onViewActivated(null);
         root.setRight(sidePanelRoot);
-        toggleSidebarBtn.setDisable(false);
       }
       else if (selectedTab == TAB_BACKGLASS) {
         backglassManagerController.onViewActivated(null);
         root.setRight(null);
-        toggleSidebarBtn.setDisable(true);
       }
       else if (selectedTab == TAB_VPS) {
         vpsTablesController.onViewActivated(null);
         root.setRight(sidePanelRoot);
-        toggleSidebarBtn.setDisable(false);
       }
       else if (selectedTab == TAB_STATISTICS) {
         alxController.onViewActivated(null);
         root.setRight(null);
-        toggleSidebarBtn.setDisable(true);
       }
       else if (selectedTab == TAB_BACKUPS) {
         backupsController.onViewActivated(null);
         root.setRight(sidePanelRoot);
-        toggleSidebarBtn.setDisable(false);
       }
       else if (selectedTab == TAB_VPXZ) {
         vpxzController.onViewActivated(null);
         root.setRight(sidePanelRoot);
-        toggleSidebarBtn.setDisable(false);
       }
     });
   }

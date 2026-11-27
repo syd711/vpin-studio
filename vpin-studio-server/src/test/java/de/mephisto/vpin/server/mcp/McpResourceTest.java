@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.mcp;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.mcp.McpAuditEntry;
 import de.mephisto.vpin.restclient.mcp.McpSettings;
+import de.mephisto.vpin.restclient.mcp.McpToolGroup;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +43,11 @@ class McpResourceTest {
   @Mock
   private McpManagementTools managementTools;
 
+  @Mock
+  private McpSettingsTools settingsTools;
+
+  private final McpAuditLog auditLog = new McpAuditLog();
+
   private final List<String> deleted = new ArrayList<>();
 
   @InjectMocks
@@ -50,7 +57,8 @@ class McpResourceTest {
 
   @BeforeEach
   void setUp() {
-    ReflectionTestUtils.setField(resource, "toolProviders", List.of(tableTools, managementTools));
+    ReflectionTestUtils.setField(resource, "toolProviders", List.of(tableTools, managementTools, settingsTools));
+    ReflectionTestUtils.setField(resource, "auditLog", auditLog);
     settings.setEnabled(true);
     when(preferencesService.getJsonPreference(PreferenceNames.MCP_SETTINGS, McpSettings.class)).thenReturn(settings);
     when(systemService.getVersion()).thenReturn("1.0.0");
@@ -58,10 +66,12 @@ class McpResourceTest {
     when(tableTools.getTools()).thenReturn(List.of(
         McpTool.read("echo", "Echo", "Echoes the id", idSchema, args -> Map.of("id", args.requireInt("id")))));
     when(managementTools.getTools()).thenReturn(List.of(
-        McpTool.delete("remove", "Remove", "Removes the id", idSchema, args -> {
+        McpTool.delete(McpToolGroup.TABLES, "remove", "Remove", "Removes the id", idSchema, args -> {
           deleted.add(String.valueOf(args.requireInt("id")));
           return Map.of("deleted", true);
         })));
+    when(settingsTools.getTools()).thenReturn(List.of(
+        McpTool.write(McpToolGroup.SETTINGS, "configure", "Configure", "Changes a setting", idSchema, args -> Map.of("changed", true))));
   }
 
   @Test
@@ -165,7 +175,55 @@ class McpResourceTest {
 
   @Test
   void readOnlyIsTheDefault() {
-    assertThat(new McpSettings().isReadOnly()).isTrue();
+    McpSettings defaults = new McpSettings();
+    assertThat(defaults.isReadOnly()).isTrue();
+    assertThat(defaults.isAllowSettings()).isFalse();
+    assertThat(defaults.isAllowSystem()).isFalse();
+    assertThat(defaults.isAllowTables()).isTrue();
+  }
+
+  @Test
+  void groupsThatAreNotAllowedAreHiddenAndBlocked() {
+    settings.setReadOnly(false);
+    String list = post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\"}").getBody();
+    assertThat(list).contains("\"remove\"").doesNotContain("\"configure\"");
+
+    String call = post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"configure\",\"arguments\":{\"id\":1}}}").getBody();
+    assertThat(call).contains("\\\"settings\\\" are not allowed").contains("\"isError\":true");
+
+    settings.setAllowSettings(true);
+    settings.setAllowTables(false);
+    list = post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/list\"}").getBody();
+    assertThat(list).contains("\"configure\"").doesNotContain("\"remove\"");
+
+    String init = post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":4,\"method\":\"initialize\",\"params\":{}}").getBody();
+    assertThat(init).contains("allowed for these groups: competitions, playlists, media, settings.");
+  }
+
+  @Test
+  void writeCallsAreAudited() {
+    settings.setReadOnly(false);
+    post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"echo\",\"arguments\":{\"id\":1}}}");
+    post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"remove\",\"arguments\":{\"id\":9,\"dryRun\":true}}}");
+    post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"remove\",\"arguments\":{}}}");
+
+    List<McpAuditEntry> entries = auditLog.getEntries();
+    assertThat(entries).hasSize(2);
+    assertThat(entries.get(0).getTool()).isEqualTo("remove");
+    assertThat(entries.get(0).isError()).isTrue();
+    assertThat(entries.get(1).getArguments()).contains("\"id\":9");
+    assertThat(entries.get(1).isDryRun()).isTrue();
+    assertThat(entries.get(1).getGroup()).isEqualTo("TABLES");
+  }
+
+  @Test
+  void noAllowedGroupMeansNoChanges() {
+    settings.setReadOnly(false);
+    for (McpToolGroup group : McpToolGroup.values()) {
+      ReflectionTestUtils.setField(settings, "allow" + group.name().charAt(0) + group.name().substring(1).toLowerCase(), false);
+    }
+    String init = post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}").getBody();
+    assertThat(init).contains("no group of changes is allowed");
   }
 
   private ResponseEntity<String> post(HttpHeaders headers, String body) {

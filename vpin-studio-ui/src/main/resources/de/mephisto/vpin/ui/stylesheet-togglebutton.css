@@ -4,6 +4,12 @@
     -fx-border-color: -c-info;
 }
 
+/* green "on" variant for a mode switch (asset manager view of the table overview), distinct from the blue filter state */
+.toggle-button-selected-alt, .toggle-button-selected-alt:hover {
+    -fx-background-color: -c-toggle-selected;
+    -fx-border-color: -c-toggle-selected-border;
+}
+
 .toggle-selected {
 }
 
@@ -53,16 +59,17 @@
 /* toggle buttons: sm-button look, selected = selection blue (custom-toggle-button* only keep their font size) */
 .toggle-button {
     -fx-text-fill: -c-white;
-    -fx-background-color: -c-control;
+    -fx-background-color: -c-button;
     -fx-background-insets: 0;
     -fx-background-radius: 4;
-    -fx-border-color: -c-border;
+    -fx-border-color: -c-button-border;
     -fx-border-width: 1;
     -fx-border-radius: 4;
 }
 
 .toggle-button:hover {
-    -fx-background-color: -c-control-hover;
+    -fx-background-color: -c-button-hover;
+    -fx-border-color: -c-button-hover-border;
 }
 
 .toggle-button:selected,

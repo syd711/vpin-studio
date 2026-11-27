@@ -41,6 +41,8 @@ import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.commons.io.IOUtils;
@@ -774,6 +776,17 @@ public class TableDialogs {
       stage.setMinWidth(1045);
       stage.setMaxHeight(1060);
       stage.setMinHeight(TableDataController.MIN_HEIGHT);
+
+      // a size restored from an earlier session must not exceed the screen
+      Rectangle2D bounds = Screen.getScreensForRectangle(stage.getX(), stage.getY(), 1, 1).stream().findFirst().orElse(Screen.getPrimary()).getVisualBounds();
+      if (stage.getWidth() > bounds.getWidth()) {
+        stage.setWidth(Math.max(stage.getMinWidth(), bounds.getWidth() - 40));
+        stage.setX(bounds.getMinX() + 20);
+      }
+      if (stage.getHeight() > bounds.getHeight()) {
+        stage.setHeight(Math.max(stage.getMinHeight(), bounds.getHeight() - 40));
+        stage.setY(bounds.getMinY() + 20);
+      }
 
       stage.showAndWait();
     }

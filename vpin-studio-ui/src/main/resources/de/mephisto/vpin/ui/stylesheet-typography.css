@@ -74,3 +74,13 @@
     -fx-font-weight: bold;
     -fx-text-fill: -c-white;
 }
+
+/* file names and paths */
+.sm-mono {
+    -fx-font-family: "Consolas";
+}
+
+/* description below a check box, aligned with the check box text */
+.sm-checkbox-hint {
+    -fx-padding: 0 0 0 28;
+}

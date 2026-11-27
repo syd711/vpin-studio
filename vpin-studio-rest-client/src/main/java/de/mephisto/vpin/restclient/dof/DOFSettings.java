@@ -1,9 +1,12 @@
 package de.mephisto.vpin.restclient.dof;
 
+import de.mephisto.vpin.restclient.Secret;
+
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class DOFSettings extends JsonSettings {
+  @Secret
   private String apiKey;
   private String installationPath;
   private boolean validDOFFolder;

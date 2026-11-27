@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.wovp;
 
+import de.mephisto.vpin.restclient.Secret;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -9,10 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WOVPSettings extends JsonSettings {
+  @Secret
   private String apiKey1;
+  @Secret
   private String apiKey2;
+  @Secret
   private String apiKey3;
+  @Secret
   private String apiKey4;
+  @Secret
   private String apiKey5;
   private boolean badgeEnabled;
   private boolean enabled;

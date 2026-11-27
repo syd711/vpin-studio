@@ -103,7 +103,7 @@
                <children>
                   <HBox spacing="8.0">
                      <children>
-                        <Button fx:id="simBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="sm-simulate-button" text="%components.tab.simulate" HBox.hgrow="ALWAYS">
+                        <Button fx:id="simBtn" maxWidth="Infinity" prefWidth="100.0" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="sm-simulate-button" text="%components.tab.simulate" HBox.hgrow="ALWAYS">
                            <graphic>
                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-flask-outline" iconSize="18" />
                            </graphic>
@@ -111,7 +111,7 @@
                               <Tooltip text="%components.component_update_panel.simulate_installation" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="installBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onInstall" styleClass="sm-install-button" text="%components.component_update_panel.start_installation" HBox.hgrow="ALWAYS">
+                        <Button fx:id="installBtn" maxWidth="Infinity" prefWidth="100.0" mnemonicParsing="false" onAction="#onInstall" styleClass="sm-install-button" text="%components.component_update_panel.start_installation" HBox.hgrow="ALWAYS">
                            <graphic>
                               <FontIcon fx:id="installIcon" styleClass="c-icon-on-warn" iconLiteral="mdi2d-download" iconSize="18" />
                            </graphic>

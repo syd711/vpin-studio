@@ -50,6 +50,7 @@ import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.*;
 import de.mephisto.vpin.ui.vpxz.VPXZDialogs;
+import javafx.collections.ObservableList;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -425,15 +426,15 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       if (assetManagerMode) {
         tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), assetScreenSelection == null ? VPinScreen.Wheel : assetScreenSelection);
         assetManagerViewBtn.getStyleClass().add("toggle-selected");
-        if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected")) {
-          assetManagerViewBtn.getStyleClass().add("toggle-button-selected");
+        if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected-alt")) {
+          assetManagerViewBtn.getStyleClass().add("toggle-button-selected-alt");
         }
         importUploadButtonGroup.setVisible(false);
         validationButtonGroup.setVisible(false);
       }
       else {
         assetManagerViewBtn.getStyleClass().remove("toggle-selected");
-        assetManagerViewBtn.getStyleClass().remove("toggle-button-selected");
+        assetManagerViewBtn.getStyleClass().remove("toggle-button-selected-alt");
         importUploadButtonGroup.setVisible(true);
         validationButtonGroup.setVisible(true);
       }
@@ -1817,6 +1818,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     GameRepresentation game = model != null ? model.getGame() : null;
 
     dismissBtn.setVisible(true);
+    tablesController.setSidebarTitle(tablesController.getTablesSideBarController(), game != null ? game.getGameDisplayName() : null);
 
     setValidationVisible(false);
     validationErrorLabel.setText("");
@@ -2227,7 +2229,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private void addToToolbar(ToolBar toolbar, Parent btn) {
     if (!toolbar.getItems().contains(btn)) {
-      toolbar.getItems().add(btn);
+      // the view actions of the TablesController stay at the end of the row
+      int index = toolbar.getItems().indexOf(tablesController.getViewActions());
+      if (index >= 0) {
+        toolbar.getItems().add(index, btn);
+      }
+      else {
+        toolbar.getItems().add(btn);
+      }
     }
   }
 
@@ -2380,6 +2389,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         // the previous selection is gone after the emulator switch, so reset the sidebar (incl. media preview)
         if (!assetManagerMode) {
           tablesController.getTablesSideBarController().setGames(Optional.empty(), Collections.emptyList());
+          tablesController.setSidebarTitle(tablesController.getTablesSideBarController(), null);
         }
         reloadConsumers.add(selection -> {
           refreshViewForEmulator();
@@ -2440,5 +2450,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     else if (!games.isEmpty() && BulkActions.consume(games, event)) {
       //done
     }
+  }
+
+  /**
+   * The first toolbar row, the TablesController appends the view actions (preferences, show details panel) to it.
+   */
+  public ObservableList<Node> getToolbarItems() {
+    return toolbar.getItems();
   }
 }

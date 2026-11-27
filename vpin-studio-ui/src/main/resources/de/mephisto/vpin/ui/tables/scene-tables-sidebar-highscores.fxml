@@ -264,7 +264,7 @@
     <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
-              <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="base-component">
+              <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent">
                   <items>
                   <SplitMenuButton fx:id="scanHighscoreBtn" mnemonicParsing="false" onAction="#onScan" text="%tables.tables_sidebar_highscores.scan" styleClass="sm-button, c-text-white">
                     <items>
@@ -285,7 +285,7 @@
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-refresh" iconSize="18" />
                      </graphic>
                   </SplitMenuButton>
-                  <Separator layoutX="253.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
+                  <Separator orientation="VERTICAL" />
                   <SplitMenuButton fx:id="backupBtn" mnemonicParsing="false" onAction="#onBackup" text="%backups.tables_backup.backup" styleClass="sm-button">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#onBackAll" text="%tables.tables_sidebar_highscores.backup_all" />
@@ -301,7 +301,7 @@
                   </Button>
                   </items>
               </ToolBar>
-            <ToolBar>
+            <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent">
               <items>
                       <Button fx:id="cardBtn" mnemonicParsing="false" onAction="#onCard" styleClass="sm-button, sm-button-icon, c-text-white">
                           <graphic>
@@ -336,7 +336,7 @@
                         <Tooltip text="%tables.tables_sidebar_highscores.synchronize_table_with_vpin_mania" />
                      </tooltip>
                   </Button>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
+                  <Separator orientation="VERTICAL" />
                       <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onScoreReset" text="%tables.table_data_tab_scoredata.reset_highscores" styleClass="sm-danger-button, c-text-danger">
                           <graphic>
                               <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2r-reload-alert" iconSize="18" />
@@ -348,7 +348,7 @@
                         <Tooltip text="%tables.table_data_tab_scoredata.reset_highscores" />
                      </tooltip>
                       </Button>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
+                  <Separator orientation="VERTICAL" />
                   <Button fx:id="vpSaveEditBtn" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="sm-button, external-component, c-text-white" text="%tables.tables_sidebar_highscores.vpreg_stg">
                      <font>
                         <Font size="14.0" />

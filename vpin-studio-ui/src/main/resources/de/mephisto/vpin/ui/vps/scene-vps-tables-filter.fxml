@@ -1,139 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="300.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesFilterController">
+<!-- filter panel: see UI-STYLEGUIDE.md "Filter panel" -->
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="286.0" styleClass="sm-panel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesFilterController">
    <children>
-      <BorderPane>
-         <left>
-            <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
-               <children>
-                  <Hyperlink onAction="#onReset" text="%backglass.directb2s_admin_filter.reset_all">
-                     <HBox.margin>
-                        <Insets left="-5.0" top="-9.0" />
-                     </HBox.margin>
-                  </Hyperlink>
-               </children>
-               <BorderPane.margin>
-                  <Insets top="7.0" />
-               </BorderPane.margin>
-            </HBox>
-         </left>
-         <right>
-            <Button mnemonicParsing="false" onAction="#toggle" BorderPane.alignment="CENTER" styleClass="sm-button, sm-button-icon">
+      <!-- header -->
+      <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
+         <children>
+            <Label maxWidth="1.7976931348623157E308" styleClass="sm-caption" text="%common.filter" HBox.hgrow="ALWAYS" />
+            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onReset" styleClass="sm-button, sm-button-small" text="%backglass.directb2s_admin_filter.reset_all" />
+            <Button mnemonicParsing="false" onAction="#toggle" styleClass="sm-button, sm-button-small">
                <graphic>
-                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2w-window-close" iconSize="12" />
+                  <FontIcon iconLiteral="mdi2a-arrow-expand-left" iconSize="14" styleClass="c-icon-white" />
                </graphic>
+               <tooltip>
+                  <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
+               </tooltip>
             </Button>
-         </right>
-         <VBox.margin>
-            <Insets bottom="12.0" />
-         </VBox.margin>
-      </BorderPane>
-      <ScrollPane hbarPolicy="NEVER">
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="16.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll" VBox.vgrow="ALWAYS">
          <content>
-            <VBox fx:id="titlePaneRoot" prefWidth="270.0">
+            <VBox spacing="22.0">
                <children>
-
-                  <Label styleClass="default-title" text="%vps.vps_tables_filter.table_filters">
-                     <VBox.margin>
-                        <Insets top="3.0" />
-                     </VBox.margin>
-                  </Label>
-                  <VBox fx:id="tableFilters">
+                  <!-- table filters -->
+                  <VBox spacing="8.0">
                      <children>
-                        <CheckBox fx:id="installedOnlyCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.only_installed_tables" />
-                        <CheckBox fx:id="notInstalledOnlyCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.only_not_installed_tables" />
-
-                        <Label styleClass="preference-checkbox" text="%vps.vps_tables_filter.last_update_date" />
-                        <StackPane alignment="CENTER_LEFT">
+                        <Label styleClass="sm-caption" text="%vps.vps_tables_filter.table_filters" />
+                        <VBox fx:id="tableFilters" spacing="8.0">
                            <children>
-                              <DatePicker fx:id="lastUpdateDate" maxWidth="204.0" styleClass="preference-datepicker" />
-                              <Button fx:id="clearDateBtn" mnemonicParsing="false" onAction="#onClearDate" styleClass="ghost-icon-button, c-text-white" visible="false">
-                                 <graphic>
-                                    <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
-                                 </graphic>
-                                 <StackPane.margin>
-                                    <Insets right="20" />
-                                 </StackPane.margin>
-                              </Button>
+                              <CheckBox fx:id="installedOnlyCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.only_installed_tables" wrapText="true" />
+                              <CheckBox fx:id="notInstalledOnlyCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.only_not_installed_tables" wrapText="true" />
+
+                              <VBox spacing="6.0">
+                                 <children>
+                                    <Label styleClass="sm-small" text="%vps.vps_tables_filter.last_update_date" />
+                                    <StackPane alignment="CENTER_RIGHT">
+                                       <children>
+                                          <DatePicker fx:id="lastUpdateDate" maxWidth="1.7976931348623157E308" />
+                                          <Button fx:id="clearDateBtn" mnemonicParsing="false" onAction="#onClearDate" styleClass="ghost-icon-button" visible="false">
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2c-close-thick" iconSize="16" styleClass="c-icon-muted" />
+                                             </graphic>
+                                             <StackPane.margin>
+                                                <Insets right="30.0" />
+                                             </StackPane.margin>
+                                          </Button>
+                                       </children>
+                                    </StackPane>
+                                 </children>
+                              </VBox>
+
+                              <VBox spacing="6.0">
+                                 <children>
+                                    <Label styleClass="sm-small" text="%tables.autofill_settings.author" />
+                                    <TextField fx:id="author" />
+                                    <CheckBox fx:id="withAuthorInOtherAssetsToo" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.search_author_in_all_assets" wrapText="true" />
+                                 </children>
+                              </VBox>
+
+                              <VBox spacing="6.0">
+                                 <children>
+                                    <Label styleClass="sm-small" text="%tables.autofill_settings.manufacturer" />
+                                    <TextField fx:id="manufacturer" />
+                                 </children>
+                              </VBox>
+
+                              <VBox spacing="6.0">
+                                 <children>
+                                    <Label styleClass="sm-small" text="%vps.vps_tables_filter.theme" />
+                                    <TextField fx:id="theme" />
+                                 </children>
+                              </VBox>
                            </children>
-                        </StackPane>
-
-                        <Label styleClass="preference-checkbox" text="%tables.autofill_settings.author" />
-                        <TextField fx:id="author" maxWidth="204.0">
-                           <Font size="14.0" />
-                        </TextField>
-
-                        <CheckBox fx:id="withAuthorInOtherAssetsToo" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.search_author_in_all_assets" />
-
-                        <Label styleClass="preference-checkbox" text="%tables.autofill_settings.manufacturer" />
-                        <TextField fx:id="manufacturer" maxWidth="204.0">
-                           <Font size="14.0" />
-                        </TextField>
-
-                        <Label styleClass="preference-checkbox" text="%vps.vps_tables_filter.theme" />
-                        <TextField fx:id="theme" maxWidth="204.0">
-                           <Font size="14.0" />
-                        </TextField>
+                        </VBox>
                      </children>
                   </VBox>
 
-                  <Label styleClass="default-title" text="%vps.vps_tables_filter.features_filters">
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </Label>
-                  <FlowPane fx:id="featuresPanel" hgap="3.0" minHeight="150.0" rowValignment="TOP" vgap="3.0">
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </FlowPane>
-
-                  <Label styleClass="default-title" text="%vps.vps_tables_filter.assets_filters">
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </Label>
-
-                  <VBox fx:id="assetFilters">
+                  <!-- features: clickable pills, built in VpsTablesFilterController -->
+                  <VBox spacing="8.0">
                      <children>
-                        <CheckBox fx:id="withAltColor" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.presence_of_alt_color" />
-                        <CheckBox fx:id="withAltSound" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.presence_of_alt_sound" />
-                        <CheckBox fx:id="withDirectB2s" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.presence_of_direct_b2s" />
-                        <CheckBox fx:id="withPov" layoutX="10.0" layoutY="279.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.presence_of_pov" />
-                        <CheckBox fx:id="withPuppack" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.presence_of_pup_pack" />
-                        <CheckBox fx:id="withRom" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.presence_of_rom" />
-                        <CheckBox fx:id="withTopper" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.presence_of_topper" />
-                        <CheckBox fx:id="withTutorial" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.presence_of_tutorial" />
-                        <CheckBox fx:id="withWheel" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.presence_of_wheel_art" />
+                        <Label styleClass="sm-caption" text="%vps.vps_tables_filter.features_filters" />
+                        <FlowPane fx:id="featuresPanel" hgap="6.0" rowValignment="TOP" vgap="6.0" />
+                     </children>
+                  </VBox>
+
+                  <!-- assets -->
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label styleClass="sm-caption" text="%vps.vps_tables_filter.assets_filters" />
+                        <VBox spacing="8.0">
+                           <children>
+                              <CheckBox fx:id="withAltColor" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.presence_of_alt_color" />
+                              <CheckBox fx:id="withAltSound" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.presence_of_alt_sound" />
+                              <CheckBox fx:id="withDirectB2s" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.presence_of_direct_b2s" />
+                              <CheckBox fx:id="withPov" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.presence_of_pov" />
+                              <CheckBox fx:id="withPuppack" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.presence_of_pup_pack" />
+                              <CheckBox fx:id="withRom" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.presence_of_rom" />
+                              <CheckBox fx:id="withTopper" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.presence_of_topper" />
+                              <CheckBox fx:id="withTutorial" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.presence_of_tutorial" />
+                              <CheckBox fx:id="withWheel" mnemonicParsing="false" styleClass="sm-text" text="%vps.vps_tables_filter.presence_of_wheel_art" />
+                           </children>
+                        </VBox>
                      </children>
                   </VBox>
                </children>
+               <padding>
+                  <Insets bottom="18.0" left="16.0" right="16.0" top="16.0" />
+               </padding>
             </VBox>
          </content>
       </ScrollPane>
    </children>
-   <styleClass>
-      <String fx:value="base-component" />
-      <String fx:value="filter-component" />
-   </styleClass>
-   <padding>
-      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-   </padding>
 </VBox>

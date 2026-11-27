@@ -43,7 +43,7 @@ public class McpTableTools implements McpToolProvider {
 
   private static final int MAX_FILES = 100;
 
-  private static final Map<Integer, String> VALIDATION_NAMES = readValidationNames();
+  static final Map<Integer, String> VALIDATION_NAMES = readValidationNames();
 
   @Autowired
   private GameService gameService;
@@ -128,12 +128,25 @@ public class McpTableTools implements McpToolProvider {
   }
 
   private Object searchTables(McpArguments args) {
+    int limit = Math.max(1, Math.min(MAX_LIMIT, args.getInt("limit", DEFAULT_LIMIT)));
+    List<Game> matches = findTables(args);
+
+    Map<String, Object> result = new LinkedHashMap<>();
+    result.put("total", matches.size());
+    result.put("returned", Math.min(limit, matches.size()));
+    result.put("tables", matches.stream().limit(limit).map(this::toSummary).toList());
+    return result;
+  }
+
+  /**
+   * @return all tables matching the search_tables filters of the arguments, sorted by name
+   */
+  List<Game> findTables(McpArguments args) {
     String query = StringUtils.trimToNull(args.getString("query"));
     Integer emulatorId = args.getInt("emulatorId");
     boolean onlyWithIssues = args.getBoolean("onlyWithIssues", false);
     boolean onlyDisabled = args.getBoolean("onlyDisabled", false);
     boolean onlyUpdateAvailable = args.getBoolean("onlyUpdateAvailable", false);
-    int limit = Math.max(1, Math.min(MAX_LIMIT, args.getInt("limit", DEFAULT_LIMIT)));
 
     String tag = StringUtils.trimToNull(args.getString("tag"));
     String pupPack = StringUtils.trimToNull(args.getString("pupPack"));
@@ -157,16 +170,10 @@ public class McpTableTools implements McpToolProvider {
     filters.add(g -> missingMedia == null || frontendService.getMediaFiles(g, missingMedia).isEmpty());
 
     Predicate<Game> filter = filters.stream().reduce(g -> true, Predicate::and);
-    List<Game> matches = gameService.getGames().stream()
+    return gameService.getGames().stream()
         .filter(filter)
         .sorted(Comparator.comparing(g -> StringUtils.defaultString(g.getGameDisplayName()), String.CASE_INSENSITIVE_ORDER))
         .toList();
-
-    Map<String, Object> result = new LinkedHashMap<>();
-    result.put("total", matches.size());
-    result.put("returned", Math.min(limit, matches.size()));
-    result.put("tables", matches.stream().limit(limit).map(this::toSummary).toList());
-    return result;
   }
 
   private Object getTable(McpArguments args) {
@@ -313,7 +320,7 @@ public class McpTableTools implements McpToolProvider {
 
   //-------------------------------- helpers ----------------------------------------------------------
 
-  private static Map<String, Object> searchProperties() {
+  static Map<String, Object> searchProperties() {
     Map<String, Object> p = new LinkedHashMap<>();
     p.put("query", prop("string", "Text to search for, e.g. \"Medieval\" or a ROM name like \"mm_109c\"."));
     p.put("emulatorId", prop("integer", "Only return tables of this emulator, see list_emulators."));
@@ -340,7 +347,7 @@ public class McpTableTools implements McpToolProvider {
     }
   }
 
-  private static List<Integer> getIssueCodes(Game game) {
+  static List<Integer> getIssueCodes(Game game) {
     if (game.getIssueTypes() != null && !game.getIssueTypes().isEmpty()) {
       return game.getIssueTypes();
     }
@@ -442,7 +449,7 @@ public class McpTableTools implements McpToolProvider {
     return t;
   }
 
-  private static Map<String, Object> toValidation(ValidationState state) {
+  static Map<String, Object> toValidation(ValidationState state) {
     Map<String, Object> v = new LinkedHashMap<>();
     v.put("code", state.getCode());
     v.put("name", VALIDATION_NAMES.getOrDefault(state.getCode(), "UNKNOWN"));

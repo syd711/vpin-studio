@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.ui.util.FilterPills;
 import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
@@ -611,7 +612,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     }
 
     ToggleGroup group = new ToggleGroup();
-    filterBox.getChildren().add(createFilterPill(group, null, Messages.get("components.screens.all"), ThemeColors.MUTED, entries.size()));
+    filterBox.getChildren().add(createFilterPill(group, null, Messages.get("components.screens.all"), null, entries.size()));
     for (DiffKind kind : DiffKind.values()) {
       long count = entries.stream().filter(e -> DiffKind.of(e.getState()) == kind).count();
       if (count > 0) {
@@ -620,19 +621,10 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     }
   }
 
-  private ToggleButton createFilterPill(ToggleGroup group, @Nullable DiffKind kind, String label, String color, long count) {
-    ToggleButton pill = new ToggleButton(label + "  " + count);
-    pill.getStyleClass().add("sm-filter-pill");
-    pill.setGraphic(createDot(color));
-    pill.setToggleGroup(group);
+  private ToggleButton createFilterPill(ToggleGroup group, @Nullable DiffKind kind, String label, @Nullable String color, long count) {
+    ToggleButton pill = FilterPills.create(group, label, color, count);
     pill.setSelected(filter == kind);
-    pill.setMinWidth(Region.USE_PREF_SIZE);
     pill.setOnAction(e -> {
-      // a toggle group allows to deselect, keep one filter selected
-      if (!pill.isSelected()) {
-        pill.setSelected(true);
-        return;
-      }
       filter = kind;
       refreshDiffList();
     });
@@ -675,14 +667,6 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
       collapsed.add(kind);
     }
     refreshDiffList();
-  }
-
-  private static Region createDot(String color) {
-    Region dot = new Region();
-    dot.setMinSize(8, 8);
-    dot.setMaxSize(8, 8);
-    dot.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 4;");
-    return dot;
   }
 
   /**
@@ -742,7 +726,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
       Label code = new Label(item.kind() == DiffKind.OTHER ? "" : item.kind().state);
       code.getStyleClass().add("sm-small");
 
-      HBox header = new HBox(10, chevron, createDot(item.kind().color), title, count, spacer, code);
+      HBox header = new HBox(10, chevron, FilterPills.createDot(item.kind().color), title, count, spacer, code);
       header.setAlignment(Pos.CENTER_LEFT);
       header.setPadding(new Insets(7, 14, 7, 14));
       header.getStyleClass().add("sm-log-group");
@@ -783,7 +767,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         }
       }
 
-      HBox row = new HBox(14, createDot(kind.color), names, sizes);
+      HBox row = new HBox(14, FilterPills.createDot(kind.color), names, sizes);
       row.setAlignment(Pos.CENTER_LEFT);
       row.setPadding(new Insets(8, 14, 8, 14));
       row.getStyleClass().add("sm-log-row");

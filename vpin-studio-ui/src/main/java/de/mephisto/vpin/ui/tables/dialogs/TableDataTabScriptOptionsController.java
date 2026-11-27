@@ -84,6 +84,7 @@ public class TableDataTabScriptOptionsController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     placeholderPane.managedProperty().bindBidirectional(placeholderPane.visibleProperty());
+    optionsScrollPane.managedProperty().bindBidirectional(optionsScrollPane.visibleProperty());
     showPlaceholder(Messages.get("dialog.script_options_select_vpx"), false);
   }
 
@@ -217,18 +218,20 @@ public class TableDataTabScriptOptionsController implements Initializable {
    * └─────────────────────────────────────────────────────────┘
    */
   private Node buildOptionRow(TableScriptOption option) {
-    VBox row = new VBox(3);
+    VBox row = new VBox(6);
 
     // ── Name + value label ──────────────────────────────────────────────
     HBox nameRow = new HBox(8);
     nameRow.setAlignment(Pos.CENTER_LEFT);
 
     Label nameLabel = new Label(option.getName());
-    nameLabel.getStyleClass().add("default-text");
+    nameLabel.getStyleClass().add("sm-text");
+    nameLabel.setWrapText(true);
+    nameLabel.setMaxWidth(Double.MAX_VALUE);
     HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
     Label valueLabel = new Label();
-    valueLabel.getStyleClass().add("default-text");
+    valueLabel.getStyleClass().add("sm-text-bold");
     valueLabel.setMinWidth(60);
     valueLabel.setAlignment(Pos.CENTER_RIGHT);
 
@@ -256,7 +259,7 @@ public class TableDataTabScriptOptionsController implements Initializable {
   private void buildComboRow(TableScriptOption option, HBox controlRow) {
     ComboBox<String> combo = new ComboBox<>();
     combo.setMaxWidth(Double.MAX_VALUE);
-//    HBox.setHgrow(combo, Priority.ALWAYS);
+    combo.setPrefWidth(320);
     combo.getItems().addAll(option.getLiteralOptions());
 
     // Select the item matching currentValue
@@ -301,10 +304,10 @@ public class TableDataTabScriptOptionsController implements Initializable {
 
     // Min / max endpoint labels
     Label minLabel = new Label(formatEndpoint(option.getMinValue(), option.getUnit()));
-    minLabel.getStyleClass().add("default-text");
+    minLabel.getStyleClass().add("sm-small");
 
     Label maxLabel = new Label(formatEndpoint(option.getMaxValue(), option.getUnit()));
-    maxLabel.getStyleClass().add("default-text");
+    maxLabel.getStyleClass().add("sm-small");
 
     controlRow.getChildren().addAll(minLabel, slider, maxLabel);
   }

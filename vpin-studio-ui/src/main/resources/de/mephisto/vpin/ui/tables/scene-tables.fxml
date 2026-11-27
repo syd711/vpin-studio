@@ -4,17 +4,42 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="root" styleClass="base-component" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesController">
+
+    <fx:define>
+        <!-- view actions: appended to the first toolbar row of the active page, see TablesController#attachViewActions -->
+        <HBox fx:id="viewActions" alignment="CENTER_RIGHT" spacing="8.0">
+            <children>
+                <Separator orientation="VERTICAL" />
+                <Button mnemonicParsing="false" onAction="#onTableSettings" styleClass="sm-button, sm-button-icon">
+                    <graphic>
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%tables.tables.view_preferences" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="showSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" styleClass="sm-button, sm-button-icon">
+                    <graphic>
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-expand-left" iconSize="18" />
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="%tables.tables.show_details_panel" />
+                    </tooltip>
+                </Button>
+            </children>
+        </HBox>
+    </fx:define>
 
     <center>
         <BorderPane BorderPane.alignment="CENTER">
@@ -22,70 +47,40 @@
                 <StackPane fx:id="editorRootStack" styleClass="sm-tile, sm-tile-bordered" BorderPane.alignment="CENTER">
                     <children>
                         <!-- no BorderPane: editors are added to the stack as BorderPane, see TableOverviewController -->
-                        <VBox>
-                            <children>
-                                <!-- the pages are selected through the navigation, the header shows the active one -->
-                                <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="sm-divider">
-                                    <children>
-                                        <Label fx:id="pageTitle" styleClass="sm-title" text="%tables.alx.alx_delete.all_tables" />
-                                        <Pane HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onTableSettings" styleClass="sm-button, sm-button-icon">
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%components.doftester.dof_toys.open_settings" />
-                                            </tooltip>
-                                        </Button>
-                                        <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" styleClass="sm-button, sm-button-icon">
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%competitions.competitions.toggle_sidebar_f3" />
-                                            </tooltip>
-                                        </Button>
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="10.0" left="16.0" right="14.0" top="10.0" />
-                                    </padding>
-                                </HBox>
-                                <TabPane fx:id="tabPane" styleClass="primary-tabs, tile-tabs, tile-tabs-headless" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                                    <tabs>
-                                        <Tab fx:id="tablesTab" closable="false" text="%tables.alx.alx_delete.all_tables">
-                                            <content>
-                                                <BorderPane />
-                                            </content>
-                                        </Tab>
-                                        <Tab fx:id="backglassManagerTab" closable="false" text="%tables.tables.backglasses">
-                                            <content>
-                                                <BorderPane />
-                                            </content>
-                                        </Tab>
-                                        <Tab fx:id="vpsTablesTab" closable="false" text="%tables.tables.vps_tables">
-                                            <content>
-                                                <BorderPane />
-                                            </content>
-                                        </Tab>
-                                        <Tab fx:id="tablesStatisticsTab" closable="false" text="%tables.tables.table_statistics">
-                                            <content>
-                                                <BorderPane />
-                                            </content>
-                                        </Tab>
-                                        <Tab fx:id="tableBackupsTab" text="%tables.tables.table_backups">
-                                            <content>
-                                                <BorderPane />
-                                            </content>
-                                        </Tab>
-                                        <Tab fx:id="vpxMobileTab" text="%tables.tables.vpx_mobile">
-                                            <content>
-                                                <BorderPane />
-                                            </content>
-                                        </Tab>
-                                    </tabs>
-                                </TabPane>
-                            </children>
-                        </VBox>
+                        <TabPane fx:id="tabPane" styleClass="primary-tabs, tile-tabs, tile-tabs-headless" tabClosingPolicy="UNAVAILABLE">
+                            <tabs>
+                                <Tab fx:id="tablesTab" closable="false" text="%tables.alx.alx_delete.all_tables">
+                                    <content>
+                                        <BorderPane />
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="backglassManagerTab" closable="false" text="%tables.tables.backglasses">
+                                    <content>
+                                        <BorderPane />
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="vpsTablesTab" closable="false" text="%tables.tables.vps_tables">
+                                    <content>
+                                        <BorderPane />
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="tablesStatisticsTab" closable="false" text="%tables.tables.table_statistics">
+                                    <content>
+                                        <BorderPane />
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="tableBackupsTab" text="%tables.tables.table_backups">
+                                    <content>
+                                        <BorderPane />
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="vpxMobileTab" text="%tables.tables.vpx_mobile">
+                                    <content>
+                                        <BorderPane />
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
                     </children>
                 </StackPane>
             </center>
@@ -97,6 +92,28 @@
     <right>
         <VBox styleClass="sm-tile, sm-tile-bordered" BorderPane.alignment="CENTER">
             <children>
+                <!-- the VPS sidebar has its own header with the hide button -->
+                <HBox fx:id="sidebarHeader" alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
+                    <children>
+                        <VBox minWidth="0.0" spacing="4.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label styleClass="sm-caption" text="%vps.vps_tables_sidebar.caption_details" />
+                                <Label fx:id="sidebarTitleLabel" styleClass="sm-title" text="-" />
+                            </children>
+                        </VBox>
+                        <Button mnemonicParsing="false" onAction="#toggleSidebar" styleClass="sm-button, sm-button-icon">
+                            <graphic>
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%tables.tables.hide_details_panel" />
+                            </tooltip>
+                        </Button>
+                    </children>
+                    <padding>
+                        <Insets bottom="14.0" left="18.0" right="18.0" top="16.0" />
+                    </padding>
+                </HBox>
                 <fx:include fx:id="assetViewSideBar" source="scene-tables-assetview-sidebar.fxml" />
                 <fx:include fx:id="tablesSideBar" source="scene-tables-sidebar.fxml" />
                 <fx:include fx:id="backupsSideBar" source="../backups/scene-backups-sidebar.fxml" />

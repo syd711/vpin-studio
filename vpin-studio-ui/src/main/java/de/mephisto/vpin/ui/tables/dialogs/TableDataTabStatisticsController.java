@@ -14,9 +14,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
@@ -34,9 +35,7 @@ public class TableDataTabStatisticsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
-  private VBox col1;
-  @FXML
-  private VBox col2;
+  private HBox tilesBox;
 
   private AlxTileEntryController timesPlayedTile;
   private AlxTileEntryController timePlayedTile;
@@ -123,37 +122,24 @@ public class TableDataTabStatisticsController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    try {
-      FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
-      loader.setResources(Messages.getBundle());
-      Parent builtInRoot = loader.load();
-      timesPlayedTile = loader.getController();
-      col1.getChildren().add(builtInRoot);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load tile: " + e.getMessage(), e);
-    }
+    timesPlayedTile = loadTile();
+    timePlayedTile = loadTile();
+    scoresCountTile = loadTile();
+  }
 
+  private AlxTileEntryController loadTile() {
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
       loader.setResources(Messages.getBundle());
-      Parent builtInRoot = loader.load();
-      timePlayedTile = loader.getController();
-      col1.getChildren().add(builtInRoot);
+      Region tile = loader.load();
+      tile.setMaxWidth(Double.MAX_VALUE);
+      HBox.setHgrow(tile, Priority.ALWAYS);
+      tilesBox.getChildren().add(tile);
+      return loader.getController();
     }
     catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
-    }
-
-    try {
-      FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
-      loader.setResources(Messages.getBundle());
-      Parent builtInRoot = loader.load();
-      scoresCountTile = loader.getController();
-      col2.getChildren().add(builtInRoot);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load tile: " + e.getMessage(), e);
+      return null;
     }
   }
 }

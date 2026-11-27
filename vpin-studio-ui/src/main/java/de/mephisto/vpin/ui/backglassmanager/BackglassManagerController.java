@@ -23,9 +23,13 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
+import de.mephisto.vpin.ui.util.ContextMenus;
+import de.mephisto.vpin.ui.util.FilterPills;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import de.mephisto.vpin.ui.util.WaitProgressModel;
+import javafx.scene.layout.HBox;
+import javafx.scene.Node;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,6 +39,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.apache.commons.io.FilenameUtils;
@@ -64,6 +69,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private static final String EMULATOR_SELECTION = "backglassesEmulatorSelection";
   public static Debouncer debouncer = new Debouncer();
 
+
+  @FXML
+  private HBox toolbar;
 
   @FXML
   private SplitMenuButton resBtn;
@@ -119,11 +127,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   //-------------
 
   @FXML
-  private Label statusReadyLabel;
-  @FXML
-  private Label statusAttentionLabel;
-  @FXML
-  private Label statusDisabledLabel;
+  private HBox statusPills;
+
+  private enum StatusFilter {ALL, READY, ATTENTION, DISABLED}
+
+  private StatusFilter statusFilter = StatusFilter.ALL;
+  /** predicate of the filter panel, the pill counts are based on it */
+  private java.util.function.Predicate<DirectB2SModel> panelPredicate = m -> true;
+  private final Map<StatusFilter, ToggleButton> pills = new EnumMap<>(StatusFilter.class);
 
   //-------------
 
@@ -349,6 +360,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     this.clearBtn.setVisible(false);
 
     bindTable();
+    initStatusPills();
 
     super.loadFilterPanel("scene-directb2s-admin-filter.fxml");
 
@@ -380,6 +392,110 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     // add the overlay for drag and drop
     new BackglassManagerDragDropHandler(this, tableView, tableStack);
+
+    // context menu of the backglass rows, rebuilt on every request (the enabled states follow the selection).
+    // A ContextMenu without items is never shown, so it is filled in a filter before the row opens it.
+    ContextMenu contextMenu = new ContextMenu();
+    tableView.addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED, e -> refreshContextMenu(contextMenu));
+    tableView.setRowFactory(tv -> {
+      TableRow<DirectB2SModel> row = new TableRow<>();
+      row.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> row.setContextMenu(isNowEmpty ? null : contextMenu));
+      return row;
+    });
+  }
+
+  /**
+   * The actions of the toolbar and the sidebar for the selected backglass, with the same enabled states.
+   */
+  private void refreshContextMenu(ContextMenu menu) {
+    menu.getItems().clear();
+    DirectB2SModel model = getSelectedModel();
+    if (model == null) {
+      return;
+    }
+    BackglassManagerSidebarController sidebar = backglassManagerSideBarController;
+    // states that only depend on the selection are computed here, the sidebar loads its data asynchronously
+    boolean hasGame = model.getGameId() > 0;
+    GameEmulatorRepresentation b2sEmulator = client.getEmulatorService().getGameEmulator(model.getEmulatorId());
+
+    menu.getItems().add(ContextMenus.caption(model.getName()));
+
+    // --- backglass file
+    MenuItem uploadItem = ContextMenus.item(Messages.get("backglass.context_menu.upload"), "mdi2u-upload", () -> onUpload(null));
+    uploadItem.setDisable(!hasGame);
+    MenuItem renameItem = ContextMenus.item(Messages.get("backglass.context_menu.rename"), "mdi2s-square-edit-outline", () -> onRename(null));
+    MenuItem activationItem = null;
+    if (sidebar.isActivationAvailable()) {
+      boolean active = sidebar.isActiveVersion();
+      activationItem = ContextMenus.item(Messages.get(active ? "backglass.context_menu.deactivate" : "backglass.context_menu.activate"),
+          active ? "mdi2c-checkbox-blank-off-outline" : "mdi2c-checkbox-marked-outline", sidebar::toggleActivation);
+    }
+    MenuItem reloadItem = ContextMenus.item(Messages.get("backglass.context_menu.reload"), "mdi2r-reload", () -> onBackglassReload(null));
+    MenuItem openItem = null;
+    if (client.getSystemService().isLocal()) {
+      openItem = ContextMenus.item(Messages.get("backglass.context_menu.open_file"), "mdi2f-folder-open", this::onOpen);
+      openItem.setDisable(!sidebar.isFileOpenAvailable());
+    }
+    ContextMenus.section(menu, uploadItem, renameItem, activationItem, reloadItem, openItem);
+
+    // --- images and DMD
+    boolean media = Features.MEDIA_ENABLED;
+    MenuItem bgExport = ContextMenus.item(Messages.get("backglass.context_menu.export_image"), "mdi2d-download", sidebar::onBackglassDownload);
+    bgExport.setDisable(!sidebar.isBackglassImageAvailable());
+    MenuItem bgMedia = null;
+    MenuItem bgBulk = null;
+    if (media) {
+      bgMedia = ContextMenus.item(Messages.get("backglass.context_menu.use_as_media"), "mdi2i-image-plus", sidebar::onBackglassUseAsMedia);
+      bgMedia.setDisable(!sidebar.isBackglassImageAvailable() || !sidebar.isGameAvailable());
+      bgBulk = ContextMenus.item(Messages.get("backglass.context_menu.bulk_import"), "mdi2i-image-multiple", sidebar::onBackglassBulkImport);
+    }
+    Menu backgroundMenu = ContextMenus.menu(Messages.get("backglass.context_menu.backglass_image"), "mdi2i-image-outline",
+        bgExport, bgMedia, new SeparatorMenuItem(), bgBulk);
+
+    MenuItem dmdUpload = ContextMenus.item(Messages.get("backglass.context_menu.upload_image"), "mdi2u-upload", sidebar::onDMDUpload);
+    dmdUpload.setDisable(!sidebar.isDmdUploadAvailable());
+    MenuItem dmdExport = ContextMenus.item(Messages.get("backglass.context_menu.export_image"), "mdi2d-download", sidebar::onDMDDownload);
+    dmdExport.setDisable(!sidebar.isDmdImageAvailable());
+    MenuItem dmdMedia = null;
+    MenuItem dmdBulk = null;
+    if (media) {
+      dmdMedia = ContextMenus.item(Messages.get("backglass.context_menu.use_as_media"), "mdi2i-image-plus", sidebar::onDMDUseAsMedia);
+      dmdMedia.setDisable(!sidebar.isDmdImageAvailable() || !sidebar.isGameAvailable());
+      dmdBulk = ContextMenus.item(Messages.get("backglass.context_menu.bulk_import"), "mdi2i-image-multiple", sidebar::onDMDBulkImport);
+    }
+    MenuItem dmdDelete = ContextMenus.danger(Messages.get("backglass.context_menu.delete_image"), "mdi2d-delete-outline", null, sidebar::onDMDDelete);
+    dmdDelete.setDisable(!sidebar.isDmdImageAvailable());
+    Menu dmdMenu = ContextMenus.menu(Messages.get("backglass.context_menu.dmd_image"), "mdi2m-monitor-dashboard",
+        dmdUpload, dmdExport, dmdMedia, new SeparatorMenuItem(), dmdBulk, new SeparatorMenuItem(), dmdDelete);
+
+    MenuItem dmdPositionItem = ContextMenus.item(Messages.get("backglass.context_menu.dmd_position"), "mdi2t-target-variant", this::onDMDPosition);
+    dmdPositionItem.setDisable(!hasGame || b2sEmulator == null || !b2sEmulator.isVpxEmulator());
+
+    Menu resMenu = null;
+    if (Features.RES_EDITOR) {
+      MenuItem resEdit = ContextMenus.item(Messages.get("backglass.context_menu.res_editor"), "mdi2i-image-edit-outline", () -> onResEdit(null));
+      resEdit.setDisable(b2sEmulator != null && b2sEmulator.isFxEmulator());
+      GameEmulatorRepresentation emulator = emulatorCombo.getValue();
+      MenuItem resBulk = ContextMenus.item(Messages.get("backglass.directb2s_admin.res_bulk_edit"), "mdi2m-monitor-screenshot", () -> onResBulkEdit(null));
+      resBulk.setDisable(emulator == null || emulator.getId() == TableOverviewController.ALL_VPX_ID);
+      resMenu = ContextMenus.menu(Messages.get("backglass.directb2s_admin.res_editor"), "mdi2i-image-edit-outline", resEdit, resBulk);
+    }
+    ContextMenus.section(menu, backgroundMenu, dmdMenu, dmdPositionItem, resMenu);
+
+    // --- matching table
+    MenuItem launchItem = ContextMenus.primary(Messages.get("tables.context_menu.launch"), "mdi2p-play", null, sidebar::onGameLaunch);
+    launchItem.setDisable(!sidebar.isGameAvailable());
+    MenuItem tableItem = ContextMenus.item(Messages.get("backglass.context_menu.show_table"), "mdi2t-table-edit", () -> onOpenTable(null));
+    tableItem.setDisable(!hasGame);
+    MenuItem dataItem = ContextMenus.item(Messages.get("tables.context_menu.edit_table_data"), "mdi2l-lead-pencil", () -> onTableDataManager(null));
+    dataItem.setDisable(!hasGame);
+    MenuItem vpsItem = ContextMenus.item(Messages.get("tables.context_menu.open_vps_entry"), "mdi2o-open-in-new", this::onVpsOpen);
+    vpsItem.setDisable(!sidebar.isVpsAvailable());
+    ContextMenus.section(menu, launchItem, tableItem, dataItem, vpsItem);
+
+    // --- delete
+    MenuItem deleteItem = ContextMenus.danger(Messages.get("backglass.context_menu.delete"), "mdi2d-delete-outline", null, () -> sidebar.onBackglassDelete(null));
+    ContextMenus.section(menu, deleteItem);
   }
 
   @Override
@@ -693,7 +809,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   protected DirectB2SModel toModel(DirectB2S b2s) {
     DirectB2SModel model = new DirectB2SModel(b2s);
     // the status summary depends on the lazily loaded validation state
-    model.addListener(o -> debouncer.debounce("statusSummary", this::applyStatusSummary, 200, true));
+    model.addListener(o -> debouncer.debounce("statusSummary", () -> {
+      if (statusFilter != StatusFilter.ALL) {
+        applyFilter();
+      }
+      else {
+        applyStatusSummary();
+      }
+    }, 200, true));
     return model;
   }
 
@@ -703,32 +826,61 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     applyStatusSummary();
   }
 
+  private void initStatusPills() {
+    ToggleGroup group = new ToggleGroup();
+    pills.put(StatusFilter.ALL, FilterPills.create(group, Messages.get("backglass.directb2s_admin.status_all"), null, 0));
+    pills.put(StatusFilter.READY, FilterPills.create(group, Messages.get("backglass.directb2s_admin.status_ready"), ThemeColors.OK, 0));
+    pills.put(StatusFilter.ATTENTION, FilterPills.create(group, Messages.get("backglass.directb2s_admin.status_attention"), ThemeColors.ERROR, 0));
+    pills.put(StatusFilter.DISABLED, FilterPills.create(group, Messages.get("backglass.directb2s_admin.status_disabled"), ThemeColors.DISABLED, 0));
+    pills.forEach((status, pill) -> pill.setOnAction(e -> {
+      statusFilter = status;
+      applyFilter();
+    }));
+    pills.get(StatusFilter.ALL).setSelected(true);
+    statusPills.getChildren().setAll(pills.values());
+  }
+
+  @Override
+  protected java.util.function.Predicate<DirectB2SModel> buildPredicate() {
+    panelPredicate = super.buildPredicate();
+    StatusFilter status = statusFilter;
+    return panelPredicate.and(m -> status == StatusFilter.ALL || getStatus(m) == status);
+  }
+
   /**
-   * Ready / needs attention / disabled counts of the listed backglasses. Backglasses whose validation is not
-   * loaded yet are only counted when disabled.
+   * Backglasses whose validation is not loaded yet only have a status when disabled.
+   */
+  @Nullable
+  private static StatusFilter getStatus(DirectB2SModel model) {
+    if (!model.getBean().isEnabled()) {
+      return StatusFilter.DISABLED;
+    }
+    if (model.loaded) {
+      return model.getValidationCode() > 0 ? StatusFilter.ATTENTION : StatusFilter.READY;
+    }
+    return null;
+  }
+
+  /**
+   * Counts of the filter pills: all backglasses matching the filter panel, by status.
    */
   private void applyStatusSummary() {
-    int ready = 0;
-    int attention = 0;
-    int disabled = 0;
-    if (filteredModels != null) {
-      for (DirectB2SModel model : filteredModels) {
-        if (!model.getBean().isEnabled()) {
-          disabled++;
-        }
-        else if (model.loaded) {
-          if (model.getValidationCode() > 0) {
-            attention++;
-          }
-          else {
-            ready++;
+    Map<StatusFilter, Integer> counts = new EnumMap<>(StatusFilter.class);
+    for (StatusFilter status : StatusFilter.values()) {
+      counts.put(status, 0);
+    }
+    if (models != null) {
+      for (DirectB2SModel model : models) {
+        if (panelPredicate.test(model)) {
+          counts.merge(StatusFilter.ALL, 1, Integer::sum);
+          StatusFilter status = getStatus(model);
+          if (status != null) {
+            counts.merge(status, 1, Integer::sum);
           }
         }
       }
     }
-    statusReadyLabel.setText(Messages.get("backglass.directb2s_admin.status_ready", ready));
-    statusAttentionLabel.setText(Messages.get("backglass.directb2s_admin.status_attention", attention));
-    statusDisabledLabel.setText(Messages.get("backglass.directb2s_admin.status_disabled", disabled));
+    pills.forEach((status, pill) -> FilterPills.setCount(pill, counts.get(status)));
   }
 
   protected GameRepresentation getGameFromSelection() {
@@ -737,5 +889,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       return client.getGameService().getGame(selection.getGameId());
     }
     return null;
+  }
+
+  /**
+   * The first toolbar row, the TablesController appends the view actions (preferences, show details panel) to it.
+   */
+  public ObservableList<Node> getToolbarItems() {
+    return toolbar.getChildren();
   }
 }

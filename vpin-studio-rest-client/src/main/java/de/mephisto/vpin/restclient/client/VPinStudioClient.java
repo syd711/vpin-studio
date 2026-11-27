@@ -43,6 +43,7 @@ import de.mephisto.vpin.restclient.res.ResServiceClient;
 import de.mephisto.vpin.restclient.system.FolderChooserServiceClient;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.tagging.TaggingServiceClient;
+import de.mephisto.vpin.restclient.mcp.McpServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
@@ -116,6 +117,7 @@ public class VPinStudioClient {
   private final PatcherServiceClient patcherServiceClient;
   private final SystemServiceClient systemServiceClient;
   private final TaggingServiceClient taggingServiceClient;
+  private final McpServiceClient mcpServiceClient;
   private final TextEditorServiceClient textEditorServiceClient;
   private final PinVolServiceClient pinVolServiceClient;
   private final ResServiceClient resServiceClient;
@@ -176,6 +178,7 @@ public class VPinStudioClient {
     this.systemServiceClient = new SystemServiceClient(this);
     this.textEditorServiceClient = new TextEditorServiceClient(this);
     this.taggingServiceClient = new TaggingServiceClient(this);
+    this.mcpServiceClient = new McpServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpsServiceClient = new VpsServiceClient(this);
     this.vpxScriptOptionsServiceClient = new VpxScriptOptionsServiceClient(this);
@@ -203,6 +206,10 @@ public class VPinStudioClient {
 
   public WOVPServiceClient getWovpService() {
     return wovpServiceClient;
+  }
+
+  public McpServiceClient getMcpService() {
+    return mcpServiceClient;
   }
 
   public TaggingServiceClient getTaggingService() {

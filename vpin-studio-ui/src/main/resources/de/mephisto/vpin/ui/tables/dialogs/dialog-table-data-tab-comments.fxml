@@ -1,97 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataTabCommentsController">
-   <center>
-      <VBox BorderPane.alignment="CENTER">
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" styleClass="sm-transparent-scroll" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataTabCommentsController">
+   <content>
+      <VBox maxWidth="1.7976931348623157E308" spacing="14.0">
+         <padding>
+            <Insets bottom="14.0" left="12.0" right="12.0" top="12.0" />
+         </padding>
          <children>
-            <Label styleClass="default-title, c-text-white" text="%tables.table_data_tab_comments.comments">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <Label styleClass="preference-description" text="%tables.table_data_tab_comments.enter_personal_comments_for_this_table" />
-            <Label layoutX="22.0" layoutY="49.0" styleClass="preference-description" text="%tables.table_data_tab_comments.they_will_be_shown_as_colored_markers_in" />
-            <TextArea fx:id="textArea" wrapText="true">
-               <VBox.margin>
-                  <Insets bottom="6.0" top="6.0" />
-               </VBox.margin>
-            </TextArea>
-            <HBox alignment="BASELINE_RIGHT">
+            <!-- tile: comments -->
+            <VBox maxWidth="1.7976931348623157E308" spacing="12.0" styleClass="sm-tile">
                <children>
-                  <Button defaultButton="true" layoutX="422.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" styleClass="default-button" text="%tables.table_data_tab_comments.delete_comment">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                     <graphic>
-                        <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-                     </graphic>
-                  </Button>
-               </children>
-            </HBox>
-            <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description, c-text-white" text="%tables.table_data_tab_comments.tipp">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <Label fx:id="useTodoLabel" layoutX="10.0" layoutY="243.0" styleClass="preference-description, c-text-white" text="%tables.table_data_tab_comments.use_todo_to_mark_a_note_as_a">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <Label fx:id="useErrorLabel" layoutX="10.0" layoutY="264.0" styleClass="preference-description, c-text-white" text="%tables.table_data_tab_comments.use_error_to_mark_a_note_as_an">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <Label fx:id="useOutdatedLabel" layoutX="10.0" layoutY="264.0" styleClass="preference-description, c-text-white" text="%tables.table_data_tab_comments.use_outdated_to_mark_table_as_outdated">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="22.0" layoutY="22.0" styleClass="default-title, c-text-white" text="%tables.autofill_settings.tags">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-               <VBox.margin>
-                  <Insets top="24.0" />
-               </VBox.margin>
-            </Label>
-            <VBox>
-               <children>
-                  <Label styleClass="preference-description" text="%tables.table_data_tab_comments.add_tags_to_the_table_to_allow_better" />
-                  <VBox fx:id="tags" spacing="6.0">
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </VBox>
-                  <HBox alignment="BASELINE_RIGHT">
+                  <HBox spacing="12.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onReload" styleClass="default-button" text="%competitions.competitions.reload">
-                           <HBox.margin>
-                              <Insets top="6.0" />
-                           </HBox.margin>
+                        <VBox maxWidth="1.7976931348623157E308" minWidth="0.0" spacing="4.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="sm-title" text="%tables.table_data_tab_comments.comments" />
+                              <Label styleClass="sm-hint" text="%tables.table_data_tab_comments.enter_personal_comments_for_this_table" wrapText="true" />
+                              <Label styleClass="sm-hint" text="%tables.table_data_tab_comments.they_will_be_shown_as_colored_markers_in" wrapText="true" />
+                           </children>
+                        </VBox>
+                        <Button minWidth="-Infinity" defaultButton="true" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-danger-button" text="%tables.table_data_tab_comments.delete_comment">
                            <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
+                              <FontIcon iconLiteral="mdi2d-delete-outline" iconSize="18" styleClass="c-icon-danger" />
                            </graphic>
                         </Button>
                      </children>
                   </HBox>
+                  <TextArea fx:id="textArea" prefHeight="180.0" wrapText="true" />
+                  <!-- clickable markers, append the keyword to the comment -->
+                  <HBox spacing="10.0" styleClass="sm-inset">
+                     <children>
+                        <FontIcon iconLiteral="mdi2l-lightbulb-on-outline" iconSize="16" styleClass="c-icon-muted" />
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="sm-text-bold" text="%tables.table_data_tab_comments.tipp" />
+                              <Label fx:id="useTodoLabel" styleClass="sm-text" text="%tables.table_data_tab_comments.use_todo_to_mark_a_note_as_a" wrapText="true">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                              <Label fx:id="useErrorLabel" styleClass="sm-text" text="%tables.table_data_tab_comments.use_error_to_mark_a_note_as_an" wrapText="true">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                              <Label fx:id="useOutdatedLabel" styleClass="sm-text" text="%tables.table_data_tab_comments.use_outdated_to_mark_table_as_outdated" wrapText="true">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                     </padding>
+                  </HBox>
                </children>
+               <padding>
+                  <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+               </padding>
+            </VBox>
+            <!-- tile: tags -->
+            <VBox maxWidth="1.7976931348623157E308" spacing="12.0" styleClass="sm-tile">
+               <children>
+                  <HBox spacing="12.0">
+                     <children>
+                        <VBox maxWidth="1.7976931348623157E308" minWidth="0.0" spacing="4.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="sm-title" text="%tables.autofill_settings.tags" />
+                              <Label styleClass="sm-hint" text="%tables.table_data_tab_comments.add_tags_to_the_table_to_allow_better" wrapText="true" />
+                           </children>
+                        </VBox>
+                        <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button" text="%competitions.competitions.reload">
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2r-reload" iconSize="18" styleClass="c-icon-white" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <VBox fx:id="tags" spacing="6.0" />
+               </children>
+               <padding>
+                  <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+               </padding>
             </VBox>
          </children>
-         <padding>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-         </padding>
       </VBox>
-   </center>
-</BorderPane>
+   </content>
+</ScrollPane>

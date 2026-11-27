@@ -179,7 +179,7 @@
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
+            <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent">
               <items>
                   <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" styleClass="sm-button, c-text-white">
                      <font>
@@ -200,7 +200,7 @@
                         <Tooltip text="%tables.tables_sidebar_altsound.create_from_rom_tooltip" />
                      </tooltip>
                   </Button>
-                  <Separator orientation="VERTICAL" prefWidth="12.0" />
+                  <Separator orientation="VERTICAL" />
                   <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
@@ -219,7 +219,7 @@
                   </Button>
               </items>
             </ToolBar>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
+            <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent">
                <items>
                 <Button fx:id="altSoundBtn" mnemonicParsing="false" onAction="#onAltSoundEdit" text="%competitions.competitions_discord.edit" styleClass="sm-button, c-text-white">
                      <font>

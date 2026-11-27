@@ -27,3 +27,12 @@
 .radio-button:disabled {
     -fx-opacity: 0.6;
 }
+
+/* accent radio button (option cards, e.g. the table upload dialog): orange ring and dot when selected */
+.radio-button.sm-accent-radio:selected > .radio {
+    -fx-border-color: -c-warn;
+}
+
+.radio-button.sm-accent-radio:selected > .radio > .dot {
+    -fx-background-color: -c-warn;
+}

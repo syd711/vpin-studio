@@ -8,15 +8,24 @@ import de.mephisto.vpin.connectors.mania.model.AchievementLeaderboardEntry;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.achievements.AchievementsController;
+import de.mephisto.vpin.ui.util.SegmentedToggles;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static de.mephisto.vpin.ui.achievements.AchievementsUI.*;
 
@@ -47,6 +56,9 @@ public class OverviewRankingTileController {
       widgetRoot.setTop(null);
       widgetRoot.setPadding(Insets.EMPTY);
     }
+    playerRankController.useStudioStyle();
+    VBox.setVgrow(cloudBox, Priority.ALWAYS);
+    SegmentedToggles.keepSelected(cabinetBtn, cloudBtn);
   }
 
   public void setAchievementsController(AchievementsController controller) {
@@ -103,35 +115,66 @@ public class OverviewRankingTileController {
           if (player != p) {
             return;
           }
-          cloudBox.getChildren().clear();
           if (board == null || board.entries.isEmpty()) {
-            cloudBox.getChildren().add(muted(Messages.get("achievements.no_cloud_data")));
+            cloudBox.getChildren().setAll(muted(Messages.get("achievements.no_cloud_data")));
             return;
           }
-          int i = 0;
-          boolean ownListed = false;
-          for (AchievementLeaderboardEntry e : board.entries) {
-            boolean own = uuid != null && uuid.equals(e.accountUuid);
-            ownListed |= own;
-            cloudBox.getChildren().add(rankingRow(e, i++, own));
+          List<AchievementLeaderboardEntry> entries = new ArrayList<>(board.entries);
+          AchievementLeaderboardEntry own = entries.stream().filter(e -> isOwn(e, uuid)).findFirst().orElse(null);
+          if (own == null && board.ownEntry != null) {
+            own = board.ownEntry;
+            entries.add(own);
           }
-          if (!ownListed && board.ownEntry != null) {
-            HBox own = rankingRow(board.ownEntry, 0, true);
-            VBox.setMargin(own, new Insets(4, 0, 0, 0));
-            cloudBox.getChildren().add(own);
-          }
+          cloudBox.getChildren().setAll(cloudTable(entries, own));
         })
         .onErrorLater(e -> cloudBox.getChildren().setAll(muted(Messages.get("achievements.cloud_unavailable"))));
   }
 
-  private HBox rankingRow(AchievementLeaderboardEntry e, int index, boolean own) {
-    HBox row = row(index, own);
-    Label pos = bold("#" + e.rank);
-    pos.setMinWidth(44);
-    Label name = bold(e.displayName != null ? e.displayName : e.initials);
-    HBox.setHgrow(name, Priority.ALWAYS);
-    name.setMaxWidth(Double.MAX_VALUE);
-    row.getChildren().addAll(pos, name, muted(Messages.get("achievements.ach_count", number(e.count))));
-    return row;
+  private static boolean isOwn(AchievementLeaderboardEntry e, String uuid) {
+    return uuid != null && uuid.equals(e.accountUuid);
+  }
+
+  /**
+   * Cloud top 5 in the same flat table look as the cabinet ranking; the own entry is shown as the selected row
+   * (appended below the top 5 when it is not part of it).
+   */
+  private TableView<AchievementLeaderboardEntry> cloudTable(List<AchievementLeaderboardEntry> entries, AchievementLeaderboardEntry own) {
+    TableView<AchievementLeaderboardEntry> table = new TableView<>(FXCollections.observableList(entries));
+    table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+    VBox.setVgrow(table, Priority.ALWAYS);
+
+    TableColumn<AchievementLeaderboardEntry, Node> rankColumn = fixedColumn(Messages.get("achievements.rank"), 56);
+    rankColumn.setCellValueFactory(c -> new SimpleObjectProperty<>(bold("#" + c.getValue().rank)));
+
+    TableColumn<AchievementLeaderboardEntry, Node> nameColumn = new TableColumn<>(Messages.get("achievements.player"));
+    nameColumn.setPrefWidth(220);
+    nameColumn.setCellValueFactory(c -> {
+      AchievementLeaderboardEntry e = c.getValue();
+      Label name = text(e.displayName != null ? e.displayName : e.initials);
+      HBox box = new HBox(8, initials(e.initials, 32), name);
+      box.setAlignment(Pos.CENTER_LEFT);
+      return new SimpleObjectProperty<>(box);
+    });
+
+    TableColumn<AchievementLeaderboardEntry, Node> levelColumn = fixedColumn(Messages.get("achievements.lvl"), 56);
+    levelColumn.setCellValueFactory(c -> new SimpleObjectProperty<>(text(String.valueOf(c.getValue().level))));
+
+    TableColumn<AchievementLeaderboardEntry, Node> countColumn = fixedColumn(Messages.get("achievements.unlocked"), 96);
+    countColumn.setCellValueFactory(c -> new SimpleObjectProperty<>(bold(number(c.getValue().count))));
+
+    table.getColumns().setAll(List.of(rankColumn, nameColumn, levelColumn, countColumn));
+    if (own != null) {
+      table.getSelectionModel().select(own);
+    }
+    return table;
+  }
+
+  private static TableColumn<AchievementLeaderboardEntry, Node> fixedColumn(String title, double width) {
+    TableColumn<AchievementLeaderboardEntry, Node> column = new TableColumn<>(title);
+    column.setMinWidth(width);
+    column.setPrefWidth(width);
+    column.setMaxWidth(width);
+    column.setStyle("-fx-alignment: CENTER;");
+    return column;
   }
 }

@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.Settings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.mcp.McpToolGroup;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
@@ -106,7 +107,7 @@ public class McpCompetitionTools implements McpToolProvider {
         "Lists the badges that can be assigned to offline competitions and iScored game rooms.",
         schema(Map.of(), List.of()), args -> systemService.getCompetitionBadges()));
 
-    tools.add(McpTool.write("create_offline_competition", "Create offline competition",
+    tools.add(McpTool.write(McpToolGroup.COMPETITIONS, "create_offline_competition", "Create offline competition",
         "Creates an offline competition for one table of the cabinet. The best score between start and end wins.",
         schema(Map.of(
             "name", prop("string", "Name of the competition, at most 40 characters."),
@@ -118,16 +119,16 @@ public class McpCompetitionTools implements McpToolProvider {
             List.of("name", "tableId", "endDate")),
         this::createOfflineCompetition));
 
-    tools.add(McpTool.write("finish_competition", "Finish competition",
+    tools.add(McpTool.write(McpToolGroup.COMPETITIONS, "finish_competition", "Finish competition",
         "Finishes a running offline competition now and determines the winner.",
         idOnly, this::finishCompetition));
 
-    tools.add(McpTool.delete("delete_competition", "Delete competition",
+    tools.add(McpTool.delete(McpToolGroup.COMPETITIONS, "delete_competition", "Delete competition",
         "Deletes an offline competition. This cannot be undone, so always confirm with the user first. "
             + "Competitions of the other types are synchronized with their online service and can not be deleted.",
         idOnly, this::deleteCompetition));
 
-    tools.add(McpTool.write("add_iscored_game_room", "Add iScored game room",
+    tools.add(McpTool.write(McpToolGroup.COMPETITIONS, "add_iscored_game_room", "Add iScored game room",
         "Adds an iScored game room and enables iScored. The games of the room are then linked with the installed "
             + "tables through the VPS links in their tags, and new highscores are submitted to the room.",
         schema(Map.of(
@@ -138,12 +139,12 @@ public class McpCompetitionTools implements McpToolProvider {
             "badge", prop("string", "Optional badge, see list_competition_badges.")), List.of("url")),
         this::addGameRoom));
 
-    tools.add(McpTool.delete("remove_iscored_game_room", "Remove iScored game room",
+    tools.add(McpTool.delete(McpToolGroup.COMPETITIONS, "remove_iscored_game_room", "Remove iScored game room",
         "Removes an iScored game room and its subscriptions. Scores are no longer submitted to it. Confirm with the user first.",
         schema(Map.of("url", prop("string", "The URL of the game room, see get_iscored_status.")), List.of("url")),
         this::removeGameRoom));
 
-    tools.add(McpTool.write("synchronize_competitions", "Synchronize competitions",
+    tools.add(McpTool.write(McpToolGroup.COMPETITIONS, "synchronize_competitions", "Synchronize competitions",
         "Synchronizes the online competitions with their service: iScored game rooms, World of Virtual Pinball weekly "
             + "challenges and VPin Mania challenges.",
         schema(Map.of("type", enumProp("Only synchronize this type, default all.", List.of("ISCORED", "WEEKLY", "MANIA_CHALLENGE"))), List.of()),

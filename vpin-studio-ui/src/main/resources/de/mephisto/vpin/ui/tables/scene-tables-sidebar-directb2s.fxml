@@ -468,7 +468,7 @@
       </ScrollPane>
     </center>
    <top>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <ToolBar BorderPane.alignment="CENTER" styleClass="floating-toolbar, floating-toolbar-transparent">
         <items>
           <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" styleClass="sm-button">
                <graphic>
@@ -478,7 +478,7 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Separator layoutX="274.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator orientation="VERTICAL" />
             <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" styleClass="sm-button">
                <font>
                   <Font size="14.0" />
@@ -495,7 +495,7 @@
                   <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                </graphic>
             </Button>
-            <Separator layoutX="176.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator orientation="VERTICAL" />
             <Button fx:id="dmdPositionBtn" mnemonicParsing="false" onAction="#onDMDPosition" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
@@ -515,7 +515,7 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Separator layoutX="290.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator orientation="VERTICAL" />
             <Button fx:id="backglassManagerBtn" layoutX="100.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassManager" styleClass="sm-button">
                <font>
                   <Font size="14.0" />

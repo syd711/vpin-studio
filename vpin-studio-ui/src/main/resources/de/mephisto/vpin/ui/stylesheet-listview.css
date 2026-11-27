@@ -107,3 +107,39 @@
     -fx-background-color: -c-selected;
     -fx-text-fill: -c-white;
 }
+
+/* flat row list of the asset manager: no box, 1px dividers, selected row like a table row (amber tint, orange bar) */
+.list-view.am-list {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.list-view.am-list .list-cell {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -c-table-divider transparent;
+    -fx-border-width: 0 0 1 3;
+}
+
+.list-view.am-list .list-cell:empty {
+    -fx-border-color: transparent;
+}
+
+.list-view.am-list .list-cell:filled:hover {
+    -fx-background-color: -c-table-hover;
+}
+
+.list-view.am-list .list-cell:filled:selected,
+.list-view.am-list .list-cell:filled:selected:hover {
+    -fx-font-weight: normal;
+    -fx-background-color: -c-table-selected;
+    -fx-border-color: transparent transparent -c-table-divider -c-warn;
+}
+
+.list-view.am-list .placeholder .label {
+    -fx-text-fill: -c-subtle;
+    -fx-text-alignment: center;
+}

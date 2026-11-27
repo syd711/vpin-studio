@@ -13,6 +13,9 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TablesController;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ToolBar;
+import javafx.scene.Node;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -39,6 +42,9 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class AlxController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(AlxController.class);
+
+  @FXML
+  private ToolBar toolbar;
 
   @FXML
   private StackPane loaderStack;
@@ -241,5 +247,12 @@ public class AlxController implements Initializable, StudioFXController, StudioE
         refreshEmulators();
       }
     }
+  }
+
+  /**
+   * The first toolbar row, the TablesController appends the view actions (preferences, show details panel) to it.
+   */
+  public ObservableList<Node> getToolbarItems() {
+    return toolbar.getItems();
   }
 }

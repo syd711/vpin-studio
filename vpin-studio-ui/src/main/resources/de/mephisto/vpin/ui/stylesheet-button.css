@@ -5,17 +5,18 @@
  */
 .button, .menu-button, .split-menu-button {
     -fx-text-fill: -c-white;
-    -fx-background-color: -c-control;
+    -fx-background-color: -c-button;
     -fx-background-insets: 0;
     -fx-background-radius: 4;
-    -fx-border-color: -c-border;
+    -fx-border-color: -c-button-border;
     -fx-border-width: 1;
     -fx-border-radius: 4;
     -fx-cursor: hand;
 }
 
-.button:hover, .menu-button:hover, .menu-button:showing {
-    -fx-background-color: -c-control-hover;
+.button:hover, .menu-button:hover, .menu-button:showing, .split-menu-button:hover, .split-menu-button:showing {
+    -fx-background-color: -c-button-hover;
+    -fx-border-color: -c-button-hover-border;
 }
 
 .button:disabled, .menu-button:disabled, .split-menu-button:disabled {
@@ -48,13 +49,13 @@
 .split-menu-button > .arrow-button {
     -fx-background-color: transparent;
     -fx-background-radius: 0 4 4 0;
-    -fx-border-color: transparent transparent transparent -c-border;
+    -fx-border-color: transparent transparent transparent -c-button-border;
     -fx-padding: 5 8 5 8;
 }
 
 .split-menu-button > .label:hover,
 .split-menu-button > .arrow-button:hover {
-    -fx-background-color: -c-control-hover;
+    -fx-background-color: -c-button-hover;
 }
 
 .ghost-icon-button, .ghost-icon-button:hover {
@@ -299,9 +300,9 @@
 .button.default-button {
     -fx-font-size: 14px;
     -fx-text-fill: -c-white;
-    -fx-background-color: -c-control;
+    -fx-background-color: -c-button;
     -fx-background-radius: 4;
-    -fx-border-color: -c-border;
+    -fx-border-color: -c-button-border;
     -fx-border-width: 1;
     -fx-border-radius: 4;
     -fx-padding: 5 12 5 12;
@@ -311,7 +312,8 @@
 }
 
 .button.default-button:hover {
-    -fx-background-color: -c-control-hover;
+    -fx-background-color: -c-button-hover;
+    -fx-border-color: -c-button-hover-border;
 }
 
 .warn-button {
@@ -394,9 +396,9 @@
 .sm-button, .sm-actionbar .button {
     -fx-font-size: 14px;
     -fx-text-fill: -c-white;
-    -fx-background-color: -c-control;
+    -fx-background-color: -c-button;
     -fx-background-radius: 4;
-    -fx-border-color: -c-border;
+    -fx-border-color: -c-button-border;
     -fx-border-radius: 4;
     -fx-padding: 5 12 5 12;
     /* same height as a .combo-box-base (stylesheet-combobox.css), so buttons and combos line up in a row */
@@ -406,7 +408,8 @@
 }
 
 .sm-button:hover, .sm-actionbar .button:hover {
-    -fx-background-color: -c-control-hover;
+    -fx-background-color: -c-button-hover;
+    -fx-border-color: -c-button-hover-border;
 }
 
 .sm-button-icon, .sm-actionbar .button.sm-button-icon {
@@ -514,16 +517,19 @@
 .button.sm-simulate-button {
     -fx-font-size: 14px;
     -fx-text-fill: -c-white;
-    -fx-background-color: -c-control;
+    -fx-background-color: -c-button;
     -fx-background-radius: 4;
-    -fx-border-color: -c-border;
+    -fx-border-color: -c-button-border;
     -fx-border-radius: 4;
-    -fx-padding: 5 12 5 12;
+    -fx-border-width: 1;
+    /* same outer size as .sm-install-button (8 14 padding, no border): padding + 1px border */
+    -fx-padding: 7 13 7 13;
     -fx-cursor: hand;
 }
 
 .button.sm-simulate-button:hover {
-    -fx-background-color: -c-control-hover;
+    -fx-background-color: -c-button-hover;
+    -fx-border-color: -c-button-hover-border;
 }
 
 .button.sm-install-button {
@@ -591,6 +597,38 @@
 
 .sm-danger-button .ikonli-font-icon {
     -fx-icon-color: -c-error;
+}
+
+/* destructive SplitMenuButton: no outer padding, so the label and the arrow part each fill their full half of the
+   button (the whole right segment opens the menu); the parts get their own hover and a red divider line */
+.split-menu-button.sm-danger-button, .split-menu-button.sm-danger-button.sm-button-icon {
+    -fx-padding: 0;
+}
+
+.split-menu-button.sm-danger-button > .label {
+    -fx-text-fill: -c-error;
+    -fx-background-radius: 3 0 0 3;
+    -fx-padding: 5 9 5 10;
+}
+
+.split-menu-button.sm-danger-button > .arrow-button {
+    -fx-background-radius: 0 3 3 0;
+    -fx-border-color: transparent transparent transparent -c-error-border;
+    -fx-padding: 5 10 5 9;
+}
+
+.split-menu-button.sm-danger-button > .arrow-button > .arrow {
+    -fx-background-color: -c-error;
+}
+
+.split-menu-button.sm-danger-button:hover {
+    -fx-background-color: -c-error-bg;
+}
+
+.split-menu-button.sm-danger-button > .label:hover,
+.split-menu-button.sm-danger-button > .arrow-button:hover,
+.split-menu-button.sm-danger-button:showing > .arrow-button {
+    -fx-background-color: -c-error-hover;
 }
 
 /* eye / lock buttons in the designer layer headers: bare icons, hover shows a control tile */

@@ -1,6 +1,6 @@
 /**
- * Toolbars and action bars: every ToolBar uses floating-toolbar (flat, no border, radius 6), except the ones in the
- * table sidebars (scene-tables-sidebar-*.fxml) and the sm-actionbar of the System Manager tabs / table overview.
+ * Toolbars and action bars: every ToolBar uses floating-toolbar (flat, no border, radius 6), including the ones in the
+ * table sidebar collapsibles, except the sm-actionbar of the System Manager tabs / table overview.
  */
 .main-toolbar {
     -fx-background-color: -fx-base-6;
@@ -70,4 +70,9 @@
     -fx-min-height: 24;
     -fx-pref-height: 24;
     -fx-padding: 0 12 0 12;
+}
+
+/* toolbars inside a collapsible (table sidebar): no strip on the card, same 12px inset as the panel content below */
+.titled-pane > .content .floating-toolbar.floating-toolbar-transparent {
+    -fx-padding: 8 12 4 12;
 }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.panels;
 
+import java.util.Locale;
 import java.util.function.Predicate;
 
 import de.mephisto.vpin.commons.utils.TransitionUtil;
@@ -16,6 +17,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
@@ -28,12 +33,20 @@ import javafx.scene.layout.VBox;
  */
 public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> {
 
+  /**
+   * The table is moved by this width, the panel itself is 14px narrower (prefWidth in the FXML)
+   * to keep the split view gap between filter panel and table.
+   */
   public static final int FILTER_WIDTH = 300;
 
   protected boolean visible = false;
 
   @FXML
   protected VBox filterRoot;
+
+  /** "Reset All" button in the panel header, enabled while a filter is set */
+  @FXML
+  private Button resetBtn;
 
   private Button filterButton;
 
@@ -101,6 +114,10 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
   
     filterRoot.setVisible(false);
     stackPane.setAlignment(Pos.TOP_LEFT);
+    // the gap between the opened filter panel and the table must show the page background,
+    // not a panel background set on the table stack
+    stackPane.setStyle("-fx-background-color: transparent;");
+    upperCaseCaptions(filterRoot);
 
     stackPane.getChildren().addFirst( filterRoot);
     filterRoot.prefHeightProperty().bind(stackPane.heightProperty());
@@ -136,6 +153,9 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
 
     if (!visible) {
       visible = true;
+      if (resetBtn != null) {
+        resetBtn.setDisable(!hasFilter());
+      }
       filterRoot.setVisible(true);
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
       TranslateTransition filterTransition = TransitionUtil.createTranslateByXTransition(filteredTable, 300, FILTER_WIDTH);
@@ -173,6 +193,9 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
    * @param hasFilter Whether a Filter is set or not 
    */
   public void toggleFilterButton(boolean hasFilter) {
+    if (resetBtn != null) {
+      resetBtn.setDisable(!hasFilter);
+    }
     if (!hasFilter) {
       filterButton.getStyleClass().remove("toggle-button-selected");
       filterRoot.getStyleClass().remove("toggle-selected");
@@ -181,6 +204,24 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
       filterRoot.getStyleClass().add("toggle-selected");
       if (!filterButton.getStyleClass().contains("toggle-button-selected")) {
         filterButton.getStyleClass().add("toggle-button-selected");
+      }
+    }
+  }
+
+  /**
+   * Section captions (sm-caption) are upper case like the captions of the details panels,
+   * the resource bundles keep the title case texts.
+   */
+  private static void upperCaseCaptions(Node node) {
+    if (node instanceof Label label && label.getStyleClass().contains("sm-caption") && label.getText() != null) {
+      label.setText(label.getText().toUpperCase(Locale.getDefault()));
+    }
+    if (node instanceof ScrollPane scrollPane) {
+      upperCaseCaptions(scrollPane.getContent());
+    }
+    else if (node instanceof Parent parent) {
+      for (Node child : parent.getChildrenUnmodifiable()) {
+        upperCaseCaptions(child);
       }
     }
   }

@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.mcp;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mcp.McpSettings;
+import de.mephisto.vpin.restclient.mcp.McpToolGroup;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.slf4j.Logger;
@@ -46,8 +47,14 @@ public class McpResource {
       + WikiHelpIndex.WIKI_URL + ". Answer from the documentation and include the links instead of guessing.";
   private static final String INSTRUCTIONS_READ_ONLY = " The server is in read-only mode: the tools can not change anything on the cabinet. "
       + "The user can allow changes in the VPin Studio preferences (AI Assistants).";
-  private static final String INSTRUCTIONS_WRITE = " Changes are allowed. Deleting tables or backglasses cannot be undone: "
-      + "always name the affected tables and ask the user for confirmation before calling a delete tool.";
+  private static final String INSTRUCTIONS_WRITE = " Changes are allowed for these groups: %s. Tools marked as destructive "
+      + "(deleting tables, backglasses, media, playlists or competitions, resetting highscores, restoring backups, restarting "
+      + "the server, shutting down the cabinet) cannot be undone: always name what is affected and ask the user for "
+      + "confirmation before calling them. Before changing several tables at once or changing settings, call the tool "
+      + "with dryRun=true first where it is offered and show the user the preview. Secret settings (passwords, API keys, "
+      + "tokens, webhook URLs) are masked and can only be changed in VPin Studio.";
+  private static final String INSTRUCTIONS_NO_GROUPS = " The read-only mode is off, but no group of changes is allowed in "
+      + "the VPin Studio preferences (AI Assistants), so the tools can not change anything on the cabinet.";
 
   private final ObjectMapper mapper = JsonMapper.builder().build();
 
@@ -59,6 +66,9 @@ public class McpResource {
 
   @Autowired
   private List<McpToolProvider> toolProviders;
+
+  @Autowired
+  private McpAuditLog auditLog;
 
   @PostMapping
   public ResponseEntity<String> post(@RequestHeader HttpHeaders headers, @RequestBody(required = false) byte[] body) {
@@ -177,18 +187,31 @@ public class McpResource {
     result.put("protocolVersion", version);
     result.put("capabilities", Map.of("tools", Map.of("listChanged", false)));
     result.put("serverInfo", serverInfo);
-    result.put("instructions", INSTRUCTIONS + (settings.isReadOnly() ? INSTRUCTIONS_READ_ONLY : INSTRUCTIONS_WRITE));
+    result.put("instructions", INSTRUCTIONS + getModeInstructions(settings));
     return result;
   }
 
+  static String getModeInstructions(McpSettings settings) {
+    if (settings.isReadOnly()) {
+      return INSTRUCTIONS_READ_ONLY;
+    }
+    List<String> groups = Arrays.stream(McpToolGroup.values()).filter(settings::isAllowed).map(g -> g.name().toLowerCase(Locale.ROOT)).toList();
+    return groups.isEmpty() ? INSTRUCTIONS_NO_GROUPS : String.format(INSTRUCTIONS_WRITE, String.join(", ", groups));
+  }
+
   /**
-   * All tools of the server, the write tools only when the read-only mode is off.
+   * @return true if the tool may be called with the given settings
+   */
+  static boolean isOffered(McpTool tool, McpSettings settings) {
+    return tool.readOnly() || (!settings.isReadOnly() && tool.group() != null && settings.isAllowed(tool.group()));
+  }
+
+  /**
+   * All tools of the server, the write tools only when the read-only mode is off and their group is allowed.
    */
   private List<McpTool> getTools(McpSettings settings) {
     List<McpTool> tools = getAllTools();
-    if (settings.isReadOnly()) {
-      tools.removeIf(t -> !t.readOnly());
-    }
+    tools.removeIf(t -> !isOffered(t, settings));
     return tools;
   }
 
@@ -223,30 +246,42 @@ public class McpResource {
 
   private Map<String, Object> callTool(Object id, Map<String, Object> params, McpSettings settings) {
     Object name = params.get("name");
-    if (settings.isReadOnly() && getAllTools().stream().anyMatch(t -> !t.readOnly() && t.name().equals(name))) {
-      //the client still knows the tool from before the mode was changed
-      return result(id, toolResult("The VPin Studio MCP server is in read-only mode. The user can allow changes in the "
-          + "VPin Studio preferences (AI Assistants).", true));
+    Optional<McpTool> known = getAllTools().stream().filter(t -> t.name().equals(name)).findFirst();
+    if (known.isPresent() && !isOffered(known.get(), settings)) {
+      //the client still knows the tool from before the settings were changed
+      String reason = settings.isReadOnly() ? "The VPin Studio MCP server is in read-only mode."
+          : "Changes of the group \"" + known.get().group().name().toLowerCase(Locale.ROOT) + "\" are not allowed.";
+      return result(id, toolResult(reason + " The user can allow changes in the VPin Studio preferences (AI Assistants).", true));
     }
-    Optional<McpTool> tool = getTools(settings).stream().filter(t -> t.name().equals(name)).findFirst();
-    if (tool.isEmpty()) {
+    if (known.isEmpty()) {
       return error(id, INVALID_PARAMS, "Unknown tool: " + name);
     }
+    McpTool tool = known.get();
 
     Map<String, Object> arguments = params.get("arguments") instanceof Map<?, ?> m ? castMap(m) : Map.of();
+    McpArguments args = new McpArguments(arguments);
     long start = System.currentTimeMillis();
+    String text;
+    boolean isError;
     try {
-      Object value = tool.get().handler().apply(new McpArguments(arguments));
+      Object value = tool.handler().apply(args);
       LOG.info("MCP tool {} executed in {}ms", name, System.currentTimeMillis() - start);
-      return result(id, toolResult(mapper.writeValueAsString(value), false));
+      text = mapper.writeValueAsString(value);
+      isError = false;
     }
     catch (McpToolException e) {
-      return result(id, toolResult(e.getMessage(), true));
+      text = e.getMessage();
+      isError = true;
     }
     catch (Exception e) {
       LOG.error("MCP tool {} failed: {}", name, e.getMessage(), e);
-      return result(id, toolResult("The tool failed: " + e.getMessage(), true));
+      text = "The tool failed: " + e.getMessage();
+      isError = true;
     }
+    if (!tool.readOnly()) {
+      auditLog.add(tool, mapper.writeValueAsString(arguments), text, isError, args.getBoolean("dryRun", false));
+    }
+    return result(id, toolResult(text, isError));
   }
 
   private static Map<String, Object> toolResult(String text, boolean isError) {

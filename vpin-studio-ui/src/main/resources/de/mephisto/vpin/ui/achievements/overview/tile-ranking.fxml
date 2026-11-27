@@ -7,28 +7,23 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <VBox maxHeight="Infinity" maxWidth="Infinity" prefWidth="100.0" spacing="8.0" styleClass="sm-tile" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewRankingTileController">
-   <fx:define>
-      <ToggleGroup fx:id="rankingGroup" />
-   </fx:define>
    <children>
       <HBox alignment="CENTER_LEFT" spacing="8.0">
          <children>
             <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%widgets.widget_player_rank.player_ranking" />
             <Region HBox.hgrow="ALWAYS" />
-            <ToggleButton fx:id="cabinetBtn" mnemonicParsing="false" onAction="#onCabinet" selected="true" text="%achievements.cabinet">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <toggleGroup>
-                  <ToggleGroup fx:id="rankingGroup" />
-               </toggleGroup></ToggleButton>
-            <ToggleButton fx:id="cloudBtn" mnemonicParsing="false" onAction="#onCloud" text="%achievements.cloud" toggleGroup="$rankingGroup">
-               <font>
-                  <Font size="14.0" />
-               </font></ToggleButton>
+            <HBox alignment="CENTER_LEFT" styleClass="sm-segmented">
+               <children>
+                  <ToggleButton fx:id="cabinetBtn" mnemonicParsing="false" onAction="#onCabinet" selected="true" text="%achievements.cabinet">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="rankingGroup" />
+                     </toggleGroup>
+                  </ToggleButton>
+                  <ToggleButton fx:id="cloudBtn" mnemonicParsing="false" onAction="#onCloud" text="%achievements.cloud" toggleGroup="$rankingGroup" />
+               </children>
+            </HBox>
          </children>
       </HBox>
       <VBox VBox.vgrow="ALWAYS">

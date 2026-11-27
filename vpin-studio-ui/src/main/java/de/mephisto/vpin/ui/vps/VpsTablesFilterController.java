@@ -19,6 +19,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -126,7 +127,7 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
       for (Label badge : featureCheckboxes.values())  {
         String feature = badge.getText();
         predicateFactory.registerFeature(feature);
-        badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, false) + ";");
+        updateFeaturePill(badge, false);
       }
     }
 
@@ -265,22 +266,27 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
     featureCheckboxes = new LinkedHashMap<>();
     for (String feature: VpsFeatures.forFilter()) {
 
+      // same pills as the features of the VPS sidebar: selected = sm-pill-ok, otherwise sm-pill-unknown
       Label badge = new Label(feature);
-      badge.getStyleClass().add("white-label");
+      badge.getStyleClass().add("sm-pill");
+      badge.setCursor(Cursor.HAND);
       badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
-      badge.getStyleClass().add("vps-badge-button");
-
-      badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, predicateFactory.isSelectedFeature(feature)) + ";");
+      updateFeaturePill(badge, predicateFactory.isSelectedFeature(feature));
 
       badge.setOnMouseClicked(e -> {
         boolean selected = predicateFactory.toggleFeature(feature);
-        badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, selected) + ";");
+        updateFeaturePill(badge, selected);
         applyFilters();
       });
       predicateFactory.registerFeature(feature);
       featureCheckboxes.put(feature, badge);
       featuresPanel.getChildren().add(badge);
     }
+  }
+
+  private static void updateFeaturePill(Label badge, boolean selected) {
+    badge.getStyleClass().removeAll("sm-pill-ok", "sm-pill-unknown");
+    badge.getStyleClass().add(selected ? "sm-pill-ok" : "sm-pill-unknown");
   }
 
   public void bindEmulatorCombo(ComboBox<VpsTableFormat> emulatorCombo) {

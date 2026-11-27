@@ -2,60 +2,43 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataTabStatisticsController">
-   <center>
-      <HBox>
-         <children>
-            <VBox fx:id="col1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="12.0">
-               <padding>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </padding>
-            </VBox>
-            <VBox fx:id="col2" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="12.0">
-               <padding>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </padding>
-            </VBox>
-         </children>
-      </HBox>
-   </center>
-   <top>
-      <ToolBar styleClass="floating-toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <items>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="%tables.table_data_tab_statistics.delete_statistic" />
-               </tooltip>
-            </Button>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-            <Button mnemonicParsing="false" onAction="#onStatsEdit" styleClass="sm-button, sm-button-icon, c-text-white">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="%tables.table_data_tab_statistics.edit_statistic" />
-               </tooltip>
-            </Button>
-         </items>
-      </ToolBar>
-   </top>
-</BorderPane>
+<VBox maxWidth="1.7976931348623157E308" spacing="14.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataTabStatisticsController">
+   <padding>
+      <Insets bottom="14.0" left="12.0" right="12.0" top="12.0" />
+   </padding>
+   <children>
+      <BorderPane>
+         <left>
+            <Label styleClass="sm-title" text="%tables.table_data.statistics" BorderPane.alignment="CENTER_LEFT" />
+         </left>
+         <right>
+            <HBox alignment="CENTER_RIGHT" spacing="8.0" BorderPane.alignment="CENTER_RIGHT">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#onStatsEdit" styleClass="sm-button" text="%tables.table_data_tab_statistics.edit_statistic">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2l-lead-pencil" iconSize="18" styleClass="c-icon-white" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-danger-button, sm-button-icon">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2d-delete-outline" iconSize="18" styleClass="c-icon-danger" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%tables.table_data_tab_statistics.delete_statistic" />
+                     </tooltip>
+                  </Button>
+               </children>
+            </HBox>
+         </right>
+      </BorderPane>
+      <!-- KPI tiles (alx-tile-entry.fxml), added by the controller -->
+      <HBox fx:id="tilesBox" maxWidth="1.7976931348623157E308" spacing="14.0" />
+   </children>
+</VBox>

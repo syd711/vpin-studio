@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.matcher.TableMatcher;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -32,6 +33,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -39,6 +42,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,16 +155,28 @@ public class TableUploadController implements Initializable, DialogController {
   private Label assetDmdLabel;
 
   @FXML
-  private VBox assetsView;
+  private HBox assetsView;
 
   @FXML
-  private VBox assetsBox;
+  private FlowPane assetsBox;
 
   @FXML
   private Label tableNameLabel;
 
   @FXML
-  private Label tableTitleLabel;
+  private Label vpsMatchLabel;
+
+  @FXML
+  private FontIcon vpsMatchIcon;
+
+  @FXML
+  private Label replaceTargetLabel;
+
+  @FXML
+  private Label cloneTargetLabel;
+
+  @FXML
+  private Label summaryLabel;
 
   @FXML
   private Label readmeLabel;
@@ -179,6 +195,11 @@ public class TableUploadController implements Initializable, DialogController {
   private Stage stage;
   private UISettings uiSettings;
   private Runnable finalizer;
+
+  /**
+   * Incremented with every VPS lookup, so that a slow lookup does not overwrite the result of a newer selection.
+   */
+  private int vpsLookupId = 0;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -323,8 +344,12 @@ public class TableUploadController implements Initializable, DialogController {
   }
 
   private void setSelection(boolean rescan) {
+    this.readmeLabel.setText("–");
     this.readmeLabel.setVisible(true);
     this.readmeBtn.setVisible(false);
+    this.tableNameLabel.setText("–");
+    updateVpsMatch();
+    updateSummary();
 
     subfolderCheckbox.setDisable(true);
     uploadBtn.setDisable(true);
@@ -367,6 +392,7 @@ public class TableUploadController implements Initializable, DialogController {
             }
             else {
               String readmeText = uploaderAnalysis.getReadMeText();
+              this.readmeLabel.setText(Messages.get("tables.table_upload.no_readme_in_archive"));
               if (!StringUtils.isEmpty(readmeText)) {
                 this.readmeBtn.setUserData(readmeText);
                 this.readmeBtn.setVisible(true);
@@ -380,6 +406,8 @@ public class TableUploadController implements Initializable, DialogController {
             }
 
             updateAnalysis();
+            updateVpsMatch();
+            updateSummary();
             this.fileBtn.setDisable(false);
             this.cancelBtn.setDisable(false);
 
@@ -404,9 +432,12 @@ public class TableUploadController implements Initializable, DialogController {
         this.subfolderCheckbox.setDisable(emulatorType == null || !emulatorType.isVpxEmulator());
         this.subfolderText.setDisable(emulatorType == null || !emulatorType.isVpxEmulator() || !subfolderCheckbox.isSelected());
         this.fileNameField.setText(this.selection.getAbsolutePath());
+        this.tableNameLabel.setText(this.selection.getName());
         this.subfolderText.setText(FilenameUtils.getBaseName(this.selection.getName()));
         this.uploadBtn.setDisable(false);
         updateAnalysis();
+        updateVpsMatch();
+        updateSummary();
       }
     }
     else {
@@ -496,44 +527,47 @@ public class TableUploadController implements Initializable, DialogController {
     assetNvRamLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null);
 
 
-    assetCfgLabel.setText(Messages.get("tables.table_upload.cfg_file"));
+    assetAltSoundLabel.setText(pillText(Messages.get("tables.table_upload.alt_sound")));
+    assetAltColorLabel.setText(pillText(Messages.get("tables.table_upload.alt_color")));
+    assetMediaLabel.setText(pillText(Messages.get("tables.table_upload.media_pack_for_popper_screens")));
+    assetMusicLabel.setText(pillText(Messages.get("tables.table_upload.music_pack")));
+    assetBackglassLabel.setText(pillText(Messages.get("tables.table_upload.backglass")));
+    assetPovLabel.setText(pillText(Messages.get("tables.table_upload.pov_file")));
+    FrontendUtil.replaceName(assetMediaLabel, client.getFrontendService().getFrontendCached());
+
+    assetCfgLabel.setText(pillText(Messages.get("tables.table_upload.cfg_file")));
     if (assetCfgLabel.isVisible()) {
-      assetCfgLabel.setText(Messages.get("tables.table_upload.cfg_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.CFG)));
+      assetCfgLabel.setText(pillText(Messages.get("tables.table_upload.cfg_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.CFG))));
     }
 
-    assetDmdLabel.setText(Messages.get("tables.table_upload.dmd_pack"));
+    assetDmdLabel.setText(pillText(Messages.get("tables.table_upload.dmd_pack")));
     if (assetDmdLabel.isVisible()) {
-      assetDmdLabel.setText(Messages.get("tables.table_upload.dmd_pack_named", uploaderAnalysis.getDMDPath()));
+      assetDmdLabel.setText(pillText(Messages.get("tables.table_upload.dmd_pack_named", uploaderAnalysis.getDMDPath())));
     }
 
-    assetNvRamLabel.setText(Messages.get("tables.table_upload.nv_file"));
+    assetNvRamLabel.setText(pillText(Messages.get("tables.table_upload.nv_file")));
     if (assetNvRamLabel.isVisible()) {
-      assetNvRamLabel.setText(Messages.get("tables.table_upload.nv_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.NV)));
+      assetNvRamLabel.setText(pillText(Messages.get("tables.table_upload.nv_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.NV))));
     }
 
-    assetPupPackLabel.setText(Messages.get("tables.table_upload.pup_pack"));
+    assetPupPackLabel.setText(pillText(Messages.get("tables.table_upload.pup_pack")));
     if (assetPupPackLabel.isVisible()) {
-      assetPupPackLabel.setText(Messages.get("tables.table_upload.pup_pack_named", uploaderAnalysis.getRomFromPupPack()));
+      assetPupPackLabel.setText(pillText(Messages.get("tables.table_upload.pup_pack_named", uploaderAnalysis.getRomFromPupPack())));
     }
 
-    assetIniLabel.setText(Messages.get("tables.table_upload.ini_file"));
+    assetIniLabel.setText(pillText(Messages.get("tables.table_upload.ini_file")));
     if (assetIniLabel.isVisible()) {
-      assetIniLabel.setText(Messages.get("tables.table_upload.ini_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.INI)));
+      assetIniLabel.setText(pillText(Messages.get("tables.table_upload.ini_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.INI))));
     }
 
-    assetResLabel.setText(Messages.get("tables.table_upload.res_file"));
+    assetResLabel.setText(pillText(Messages.get("tables.table_upload.res_file")));
     if (assetResLabel.isVisible()) {
-      assetResLabel.setText(Messages.get("tables.table_upload.res_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.RES)));
+      assetResLabel.setText(pillText(Messages.get("tables.table_upload.res_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.RES))));
     }
 
-    assetRomLabel.setText(Messages.get("tables.table_upload.rom"));
+    assetRomLabel.setText(pillText(Messages.get("tables.table_upload.rom")));
     if (assetRomLabel.isVisible()) {
-      assetRomLabel.setText(Messages.get("tables.table_upload.rom_named", uploaderAnalysis.getRomFromArchive()));
-    }
-
-    assetAltSoundLabel.setText(Messages.get("tables.table_upload.alt_sound"));
-    if (assetAltSoundLabel.isVisible()) {
-      assetAltSoundLabel.setText(Messages.get("tables.table_upload.alt_sound"));
+      assetRomLabel.setText(pillText(Messages.get("tables.table_upload.rom_named", uploaderAnalysis.getRomFromArchive())));
     }
 
     assetsView.setVisible(assetBackglassLabel.isVisible()
@@ -553,6 +587,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    assetsView.managedProperty().bindBidirectional(assetsView.visibleProperty());
     assetsView.setVisible(false);
     readmeLabel.managedProperty().bindBidirectional(readmeLabel.visibleProperty());
     readmeBtn.managedProperty().bindBidirectional(readmeBtn.visibleProperty());
@@ -573,7 +608,8 @@ public class TableUploadController implements Initializable, DialogController {
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
-    tableNameLabel.setText("-");
+    tableNameLabel.setText("–");
+    readmeLabel.setText("–");
 
     this.selection = null;
     this.uploadBtn.setDisable(true);
@@ -593,12 +629,9 @@ public class TableUploadController implements Initializable, DialogController {
       if (this.game != null) {
         boolean sameEmulator = t1.getId() == game.getEmulatorId();
         uploadAndImportRadio.setSelected(true);
-        uploadAndReplaceRadio.setDisable(!sameEmulator);
-        uploadAndCloneRadio.setDisable(!sameEmulator);
-        keepDisplayNamesCheckbox.setDisable(!sameEmulator);
-        keepNamesCheckbox.setDisable(!sameEmulator);
-        backupTableOnOverwriteCheckbox.setDisable(!sameEmulator);
+        setTableOptionsEnabled(sameEmulator);
       }
+      updateVpsMatch();
 
       EmulatorType emulatorType = emulatorRepresentation.getType();
       if (this.uploaderAnalysis != null) {
@@ -615,7 +648,6 @@ public class TableUploadController implements Initializable, DialogController {
     uploadAndCloneRadio.setToggleGroup(toggleGroup);
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
 
-    FrontendUtil.replaceName(uploadAndImportRadio, frontend);
     FrontendUtil.replaceName(uploadAndImportDescription, frontend);
     FrontendUtil.replaceName(uploadAndReplaceDescription, frontend);
     FrontendUtil.replaceName(uploadAndCloneDescription, frontend);
@@ -639,7 +671,15 @@ public class TableUploadController implements Initializable, DialogController {
       uploadAndReplaceRadio.setSelected(true);
       serverSettings.setBackupTableOnOverwrite(t1);
       client.getPreferenceService().setJsonPreference(serverSettings);
+      updateSummary();
     });
+
+    autofillCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> updateVpsMatch());
+
+    // the whole option card selects its radio button
+    uploadImportBox.setOnMouseClicked(e -> selectOption(uploadAndImportRadio));
+    uploadReplaceBox.setOnMouseClicked(e -> selectOption(uploadAndReplaceRadio));
+    uploadCloneBox.setOnMouseClicked(e -> selectOption(uploadAndCloneRadio));
 
     subfolderCheckbox.setSelected(serverSettings.isUseSubfolders());
     subfolderText.setDisable(!subfolderCheckbox.isSelected());
@@ -653,12 +693,13 @@ public class TableUploadController implements Initializable, DialogController {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          uploadCloneBox.getStyleClass().add("selection-panel-selected");
+          uploadCloneBox.getStyleClass().add("sm-option-card-selected");
           uploadType = UploadType.uploadAndClone;
           uiSettings.setDefaultUploadMode(UploadType.uploadAndClone.name());
+          updateSummary();
         }
         else {
-          uploadCloneBox.getStyleClass().remove("selection-panel-selected");
+          uploadCloneBox.getStyleClass().remove("sm-option-card-selected");
         }
       }
     });
@@ -667,12 +708,13 @@ public class TableUploadController implements Initializable, DialogController {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          uploadReplaceBox.getStyleClass().add("selection-panel-selected");
+          uploadReplaceBox.getStyleClass().add("sm-option-card-selected");
           uploadType = UploadType.uploadAndReplace;
           uiSettings.setDefaultUploadMode(UploadType.uploadAndReplace.name());
+          updateSummary();
         }
         else {
-          uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
+          uploadReplaceBox.getStyleClass().remove("sm-option-card-selected");
         }
       }
     });
@@ -681,17 +723,18 @@ public class TableUploadController implements Initializable, DialogController {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
-          uploadImportBox.getStyleClass().add("selection-panel-selected");
+          uploadImportBox.getStyleClass().add("sm-option-card-selected");
           uploadType = UploadType.uploadAndImport;
           uiSettings.setDefaultUploadMode(UploadType.uploadAndImport.name());
+          updateSummary();
         }
         else {
-          uploadImportBox.getStyleClass().remove("selection-panel-selected");
+          uploadImportBox.getStyleClass().remove("sm-option-card-selected");
         }
       }
     });
 
-    uploadImportBox.getStyleClass().add("selection-panel-selected");
+    uploadImportBox.getStyleClass().add("sm-option-card-selected");
 
     assetPupPackLabel.managedProperty().bindBidirectional(assetPupPackLabel.visibleProperty());
     assetMusicLabel.managedProperty().bindBidirectional(assetMusicLabel.visibleProperty());
@@ -738,18 +781,16 @@ public class TableUploadController implements Initializable, DialogController {
     this.game = game;
 
     if (game != null) {
-      this.uploadAndReplaceRadio.setText(Messages.get("tables.table_upload.upload_and_replace_named", game.getGameDisplayName()));
-      this.uploadAndCloneRadio.setText(Messages.get("tables.table_upload.upload_and_clone_named", game.getGameDisplayName()));
+      this.replaceTargetLabel.setText(game.getGameDisplayName());
+      this.cloneTargetLabel.setText(game.getGameDisplayName());
 
       GameEmulatorRepresentation gameEmulator = Studio.client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       emulatorCombo.setValue(gameEmulator);
     }
     else {
-      this.uploadAndReplaceRadio.setDisable(true);
-      this.keepDisplayNamesCheckbox.setDisable(true);
-      this.backupTableOnOverwriteCheckbox.setDisable(true);
-      this.keepNamesCheckbox.setDisable(true);
-      this.uploadAndCloneRadio.setDisable(true);
+      this.replaceTargetLabel.setText(Messages.get("tables.table_upload.no_table_selected"));
+      this.cloneTargetLabel.setText(Messages.get("tables.table_upload.no_table_selected"));
+      setTableOptionsEnabled(false);
     }
 
     switch (uploadType) {
@@ -770,6 +811,119 @@ public class TableUploadController implements Initializable, DialogController {
     if (this.uploaderAnalysis != null) {
       this.selection = uploaderAnalysis.getFile();
       setSelection(false);
+    }
+    updateSummary();
+  }
+
+  private void selectOption(RadioButton radio) {
+    if (!radio.isDisabled()) {
+      radio.setSelected(true);
+    }
+  }
+
+  /**
+   * "Replace" and "Clone" need a selected table of the same emulator, the whole card is disabled otherwise.
+   */
+  private void setTableOptionsEnabled(boolean enabled) {
+    uploadReplaceBox.setDisable(!enabled);
+    uploadCloneBox.setDisable(!enabled);
+    uploadAndReplaceRadio.setDisable(!enabled);
+    uploadAndCloneRadio.setDisable(!enabled);
+  }
+
+  /**
+   * The asset texts are shared with list views ("- ROM"), the pills show them without the list dash.
+   */
+  private static String pillText(String listEntry) {
+    return StringUtils.removeStart(listEntry, "- ");
+  }
+
+  @Nullable
+  private String getUploadTableName() {
+    if (selection == null) {
+      return null;
+    }
+    String tableFile = uploaderAnalysis != null ? uploaderAnalysis.getTableFileName(selection.getName()) : selection.getName();
+    return FilenameUtils.getBaseName(tableFile);
+  }
+
+  /**
+   * Shows the VPS entry the uploaded table will most likely be matched with by the auto-fill.
+   */
+  private void updateVpsMatch() {
+    int lookupId = ++vpsLookupId;
+    vpsMatchLabel.setGraphic(null);
+    vpsMatchLabel.getStyleClass().removeAll("sm-hint", "sm-text", "sm-version-ok");
+    vpsMatchLabel.getStyleClass().add("sm-hint");
+
+    String tableName = getUploadTableName();
+    if (tableName == null) {
+      vpsMatchLabel.setText("–");
+      return;
+    }
+    if (!autofillCheckbox.isSelected()) {
+      vpsMatchLabel.setText(Messages.get("tables.table_upload.vps_match_disabled"));
+      return;
+    }
+
+    vpsMatchLabel.setText(Messages.get("tables.table_upload.vps_match_searching"));
+    String[] formats = emulatorRepresentation != null ? emulatorRepresentation.getVpsEmulatorFeatures() : null;
+    JFXFuture.supplyAsync(() -> {
+          List<VpsTable> tables = client.getVpsService().getTables();
+          return new TableMatcher(null).findClosest(formats, tableName, null, null, null, 0, tables);
+        })
+        .thenAcceptLater(vpsTable -> {
+          if (lookupId != vpsLookupId) {
+            return;
+          }
+          if (vpsTable == null) {
+            vpsMatchLabel.setText(Messages.get("tables.table_upload.vps_match_none"));
+            return;
+          }
+          vpsMatchLabel.setText(vpsTable.getDisplayName());
+          vpsMatchLabel.getStyleClass().remove("sm-hint");
+          vpsMatchLabel.getStyleClass().addAll("sm-text", "sm-version-ok");
+          vpsMatchLabel.setGraphic(vpsMatchIcon);
+        })
+        .onErrorLater(e -> {
+          LOG.warn("VPS lookup for upload failed: {}", e.getMessage(), e);
+          if (lookupId == vpsLookupId) {
+            vpsMatchLabel.setText(Messages.get("tables.table_upload.vps_match_none"));
+          }
+        });
+  }
+
+  /**
+   * Upload button text and the one line summary in the footer, both follow the selected option.
+   */
+  private void updateSummary() {
+    String tableName = getUploadTableName();
+    String gameName = game != null ? game.getGameDisplayName() : "";
+    switch (uploadType) {
+      case uploadAndReplace: {
+        uploadBtn.setText(Messages.get("tables.table_upload.upload_and_replace"));
+        if (tableName != null) {
+          String key = backupTableOnOverwriteCheckbox.isSelected() ? "tables.table_upload.summary_replace_backup" : "tables.table_upload.summary_replace";
+          summaryLabel.setText(Messages.get(key, gameName, tableName));
+        }
+        break;
+      }
+      case uploadAndClone: {
+        uploadBtn.setText(Messages.get("tables.table_upload.upload_and_clone_short"));
+        if (tableName != null) {
+          summaryLabel.setText(Messages.get("tables.table_upload.summary_clone", gameName, tableName));
+        }
+        break;
+      }
+      default: {
+        uploadBtn.setText(Messages.get("tables.table_upload.upload_and_add"));
+        if (tableName != null) {
+          summaryLabel.setText(Messages.get("tables.table_upload.summary_add", tableName));
+        }
+      }
+    }
+    if (tableName == null) {
+      summaryLabel.setText(Messages.get("tables.table_upload.select_or_drop_a_table_or_archive_file"));
     }
   }
 

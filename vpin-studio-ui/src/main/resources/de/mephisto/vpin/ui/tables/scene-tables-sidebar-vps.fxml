@@ -335,7 +335,7 @@
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <ToolBar>
+            <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent">
               <items>
                 <Button mnemonicParsing="false" onAction="#onUpdate" styleClass="sm-button, sm-button-icon">
                      <font>
@@ -392,7 +392,7 @@
                   </SplitMenuButton>
               </items>
             </ToolBar>
-            <ToolBar>
+            <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent">
                <items>
                   <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%tables.tables_sidebar_vps.filter_existing_assets" styleClass="c-text-white">
                      <font>

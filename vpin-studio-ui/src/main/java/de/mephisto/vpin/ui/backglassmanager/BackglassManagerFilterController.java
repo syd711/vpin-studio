@@ -120,8 +120,7 @@ public class BackglassManagerFilterController extends BaseFilterController<Direc
     List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getBackglassGameEmulators();
     for (GameEmulatorRepresentation gameEmulator: emulators) {
       CheckBox checkBox = new CheckBox(gameEmulator.getName());
-      checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
-      checkBox.setPrefHeight(30);
+      checkBox.getStyleClass().add("sm-text");
       checkBox.setSelected(true);
       checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override

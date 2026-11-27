@@ -66,42 +66,52 @@
     -fx-background-color: -c-control;
 }
 
-/* filter pill: a ToggleButton that keeps its own outline look instead of the toggle button look */
+/* filter pill: a rounded ToggleButton above a list, built with FilterPills (optional status dot, label, muted count),
+   also used text-only for option toggles; unselected = faint outline, selected = button-hover fill */
 .sm-filter-pill {
-    -fx-font-size: 12px;
-    -fx-text-fill: -c-muted;
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-text-secondary;
     -fx-background-color: transparent;
-    -fx-background-radius: 14;
-    -fx-border-color: -c-selected;
-    -fx-border-radius: 14;
-    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 15;
+    -fx-border-color: -c-pill-border;
+    -fx-border-radius: 15;
+    -fx-padding: 3 12 3 12;
     -fx-graphic-text-gap: 6;
     -fx-cursor: hand;
 }
 
-.sm-filter-pill:hover {
-    -fx-text-fill: -c-white;
+.sm-filter-pill .sm-filter-pill-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-text-secondary;
 }
 
-.sm-filter-pill:selected {
-    -fx-text-fill: -c-white;
-    -fx-background-color: -c-control;
-    -fx-border-color: -c-border-strong;
+.sm-filter-pill .sm-filter-pill-count {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-subtle;
 }
 
-.toggle-button.sm-filter-pill:hover {
-    -fx-background-color: transparent;
-}
-
+.toggle-button.sm-filter-pill:hover,
 .toggle-button.sm-filter-pill:focused {
-    -fx-border-color: -c-selected;
+    -fx-text-fill: -c-white;
+    -fx-background-color: -c-button;
+    -fx-border-color: -c-pill-border;
+}
+
+.toggle-button.sm-filter-pill:hover .sm-filter-pill-label {
+    -fx-text-fill: -c-white;
 }
 
 .toggle-button.sm-filter-pill:selected,
 .toggle-button.sm-filter-pill:selected:hover,
 .toggle-button.sm-filter-pill:selected:focused {
-    -fx-background-color: -c-control;
-    -fx-border-color: -c-border-strong;
+    -fx-text-fill: -c-white;
+    -fx-background-color: -c-button-hover;
+    -fx-border-color: -c-button-hover-border;
+}
+
+.toggle-button.sm-filter-pill:selected .sm-filter-pill-label {
+    -fx-text-fill: -c-white;
+    -fx-font-weight: bold;
 }
 
 /* VPS: small square source tag ("IPDB"), entry count of a download section and the link pill of a download entry */

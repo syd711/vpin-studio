@@ -52,7 +52,7 @@
       </StackPane>
    </center>
    <top>
-      <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent" BorderPane.alignment="CENTER">
+      <ToolBar fx:id="toolbar" styleClass="floating-toolbar, floating-toolbar-transparent" BorderPane.alignment="CENTER">
          <items>
             <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>

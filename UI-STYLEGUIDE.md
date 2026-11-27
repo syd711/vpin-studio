@@ -35,10 +35,12 @@ The token names below are the `-c-*` tokens of `stylesheet-colors.css` (e.g. `in
 | footer | `#1C1C1C` | Pinned action footer of a panel (`sm-footer`), log group rows |
 | panel | `#1A1A1A` | Page background, panels of a split view (`sm-panel`), chips, selected detail boxes |
 | tile | `#232323` | Cards / tiles on the page background (`sm-tile`, `AchievementsUI.CARD`) |
-| control | `#333333` | Buttons, list-row hover, neutral pill background |
-| control hover | `#3D3D3D` | Button hover |
+| button | `#FFFFFF08` (3% white) | Buttons, toggle buttons, combo boxes: translucent, `#2A2A2A` on a tile, `#232323` on the page |
+| button border | `#FFFFFF12` (7% white) | Their 1px border; hover = `#FFFFFF12` fill + `#FFFFFF1F` border |
+| control | `#333333` | List-row hover, neutral pill background |
+| control hover | `#3D3D3D` | Hover of other controls (tabs) |
 | selected | `#3A3A3A` | Selected list row, borders of panels / dividers |
-| border | `#444444` | Button, chip and text-field borders |
+| border | `#444444` | Chip and text-field borders |
 
 Table-like row lists in the Achievements view use `ROW_EVEN #283335` / `ROW_ODD #303733` / `ROW_SELECTED #333344`
 with a 3px `#8C8CE0` left border for the selected row (`AchievementsUI.row()`). Do not mix this striped style with
@@ -116,7 +118,7 @@ and 30px height, so always set the class. `sm-button` on a MenuButton / SplitMen
 
 | Class | Look | Use |
 |-------|------|-----|
-| `sm-button` | `#333333` fill, `#444444` border, white 14px, padding `5 12` | Default action, also every button in an `sm-actionbar` (styled automatically) |
+| `sm-button` | `-c-button` fill, `-c-button-border` border, white 14px, padding `5 12` | Default action, also every button in an `sm-actionbar` (styled automatically) |
 | `sm-button, sm-button-icon` | same, square padding `5 7` | Icon-only actions (refresh, copy) next to inputs |
 | `sm-collapsible-button` | default button look, 10px font, default padding (no fixed height) | Icon actions in a collapsible header, optionally with `folder-component` / `external-component` / `link-component` |
 | `sm-button, sm-button-small` | same look, 12px, padding `3 9` | Secondary inline actions next to small text / pills, e.g. "Set as installed", "Reset version", "Ignore version" |
@@ -129,7 +131,7 @@ and 30px height, so always set the class. `sm-button` on a MenuButton / SplitMen
 | `sm-button, external-component` | `#338800` fill (green), white text and icon | Starts a **system program** (setup exe, config tool), icon `mdi2o-open-in-new` |
 | `sm-button, link-component` | `#3399FF` fill (blue), white text and icon | Opens a **website or file** (ini editor), files use icon `mdi2c-card-text-outline` |
 | `sm-alert-button` / `sm-alert-close` | transparent with red border | Only inside `sm-alert` |
-| `sm-filter-pill` (ToggleButton) | round outline, 12px, selected = `#333333` fill | Filters / toggles in a panel header |
+| `sm-filter-pill` (ToggleButton) | round, 14px, faint `#FFFFFF0A` outline; hover `-c-button`, selected = `-c-button-hover` fill + border, bold white label | Status filters above a list (built with `FilterPills`: dot + label + `#9A9A9A` count), option toggles |
 | `sm-chip` | round `#222222` with border, 12px | Small clickable tags (e.g. screen shortcuts) |
 | `sm-link` (Hyperlink) | `#7FB2FF`, underline on hover | External links, with `mdi2o-open-in-new` 14px icon |
 | `sm-section-header` | transparent, hand cursor | Show / hide toggle of a section inside a card (chevron + `sm-text` + `sm-small` state); whole collapsible panels use the common look of section 6 |
@@ -153,8 +155,8 @@ no class needed: `#161616` fill, `#444444` 1px border, radius 4, white 14px text
 `sm-text-field` is the same look and stays valid for explicitness. Full-width log / script areas use
 `sm-log-text` / `sm-script-text`.
 
-`ComboBox`, `DatePicker` and `ColorPicker` (`.combo-box-base`) use the same dark box: `#161616` fill, `#444444` border,
-radius 4, white 14px text, `#BDBDBD` arrow (white on hover), `#1C1C1C` on hover, `#7A7A7A` border when focused or open.
+`ComboBox`, `DatePicker` and `ColorPicker` (`.combo-box-base`) use the button look: `-c-button` fill, `-c-button-border` border,
+radius 4, white 14px text, `#BDBDBD` arrow (white on hover), `-c-button-hover` fill + border on hover, `#7A7A7A` border when focused or open.
 The popup list is `#161616` with white cells and `#333366` for hover / selection. Editable combos have no extra
 inner box — the editor is transparent inside the combo's border.
 
@@ -163,9 +165,9 @@ inner box — the editor is transparent inside the combo's border.
 `#7A7A7A` on hover/focus) and a white check mark; `sm-accent-checkbox` = orange `#DD9646` box with a dark mark when selected (the "Auto-save" check box of dialog headers); `RadioButton` circles look the same with a white dot and have
 the same outer size as the check box (~21px at 14px font) — keep both in sync when changing paddings.
 `ScrollBar`: 10px, no arrow buttons, transparent track, rounded `#444444` thumb (`#5A5A5A` hover, `#7A7A7A` drag).
-`ToggleButton` has the `sm-button` look (`#333333`, `#444444` border, `#3D3D3D` hover); selected = `#333366` fill
+`ToggleButton` has the `sm-button` look (`-c-button`, `-c-button-border`, `-c-button-hover`); selected = `#333366` fill
 with an `#8C8CE0` border. Add `sm-button` for the 30px height. A Button showing an "on" state uses `toggle-button-selected`
-(same look); a ToggleButton flagging a problem (maintenance mode) adds `sm-danger-button`. `sm-filter-pill` toggles keep their round outline look.
+(same look), a mode switch (asset manager view) uses the green `toggle-button-selected-alt` (`#116611`, `#44AA44` border); a ToggleButton flagging a problem (maintenance mode) adds `sm-danger-button`. `sm-filter-pill` toggles keep their round outline look.
 `Slider`: `#161616` track with `#444444` border, round `#BDBDBD` thumb (white on hover/drag, `#8C8CE0` border when
 focused), tick marks `#444444`, tick labels 12px `#9A9A9A`.
 `ListView`: `#161616` box with `#444444` border (radius 4, `#7A7A7A` when focused), transparent white 14px cells with
@@ -243,8 +245,9 @@ Every `Accordion` / `TitledPane` gets this look automatically:
 - **Collapsed** = a transparent row with a 1px `-c-panel-border` divider below, hover `-c-row-hover`, thin `-c-subtle`
   chevron on the left (points right), hand cursor.
 - **Expanded** = a `-c-row-hover` card (1px `-c-selected` border, radius 8, 4px air above and below), chevron points
-  down, the header flows into the content without a divider and its leading `c-icon-muted` icon turns orange
-  (`-c-warn`). The content is transparent (scroll panes and `accordion-container` inside included), so
+  down, the header becomes a lighter `-c-collapsible-header` band (hover `-c-collapsible-header-hover`, radius
+  `7 7 0 0`) with a 1px `-c-selected` divider below, so it stands apart from the transparent toolbars of the content,
+  and its leading `c-icon-muted` icon turns orange (`-c-warn`). The content is transparent (scroll panes and `accordion-container` inside included), so
   the card color shows through.
 - **Header** = a Region in the `graphic`, never the plain `text` attribute (the text can not be made bold):
   `HBox` (spacing 10, `CENTER_LEFT`) with an 18px `c-icon-muted` icon + `Label` `sm-collapsible-title` (14px bold white),
@@ -265,7 +268,11 @@ Every `Accordion` / `TitledPane` gets this look automatically:
 - **Level tile** (`overview/tile-level.fxml`, `badges/tile-level.fxml`): `levelCircle()` with orange ring, 20px level name,
   14px orange prestige text, `progress()` bar to the next level.
 - **List tile** (`tile-recent-unlocks`, `tile-latest-scores`, `tile-ranking`, `tables/tile-table-list`): headline + striped
-  `AchievementsUI.row()` rows, rank medals via `rank()`, avatars via `initials()`.
+  `AchievementsUI.row()` rows, rank medals via `rank()`, avatars via `initials()`. Exception: the cabinet ranking of
+  `tile-ranking` embeds the commons `widget-player-rank` table, switched to the flat Studio table look with
+  `WidgetPlayerRankController#useStudioStyle()` (the overlays keep the big widget look); the cloud top 5 is a plain
+  `TableView` in the same look (own entry = selected row, appended when outside the top 5); Cabinet / Cloud is an
+  `sm-segmented` toggle.
 - **Badge grid** (`badges/tile-badges.fxml`, `badge-group.fxml`): `medal()` per badge, selected badge shown in a `#222222`
   detail box with an `#8C8CE0` left border and a 16px bold name.
 - **Progress row** (`tile-closest.fxml`, `leaderboards/tile-table.fxml`): label, 12px `#9A9A9A` caption, flat `progress()` bar
@@ -326,10 +333,41 @@ Every `Accordion` / `TitledPane` gets this look automatically:
   the tab content, 12px gap below. `sm-actionbar-flush` / `-inset` rows use the same inset. Spacing is identical in all of
   them: 8px between items, vertical `Separator`s get 4px on each side from the CSS and carry no `prefWidth` / `prefHeight`
   in FXML; an `HBox` group inside a toolbar uses `spacing="8.0"`. Search field / combo groups are framed by separators
-  the same way as in the table overview (filter, reload | search | emulator | playlist). Exceptions: the toolbars in the table sidebars (`tables/scene-tables-sidebar-*.fxml`) and `sm-actionbar`.
+  the same way as in the table overview (filter, reload | search | emulator | playlist). This includes the toolbars in the table sidebar collapsibles (`floating-toolbar, floating-toolbar-transparent`, inset `8 12 4 12` on the card; `tables/scene-tables-sidebar-*.fxml`, no fixed
+  `prefWidth` / `prefHeight`); the only exception is `sm-actionbar`.
 - **Action bar** (`sm-actionbar`): top bar of a component tab and of the table overview; any Button and SplitMenuButton
   inside gets the `sm-button` look automatically. Destructive buttons add `sm-danger-button`, the clear button of a
   search field keeps `ghost-icon-button`.
+- **View actions** (pages of the Tables section): no page header, the breadcrumb names the page. The gear (view
+  preferences) and, while the details panel is hidden, the "show details panel" button sit at the right end of the first
+  toolbar row behind a vertical `Separator` (`TablesController#attachViewActions`). The details panel starts with an
+  `sm-divider` header: `sm-caption` "TABLE DETAILS", `sm-title` name of the selection, hide button right.
+
+### Context menus (`stylesheet-menu.css`, `util/ContextMenus`)
+- Every popup menu (context menus, MenuButton / SplitMenuButton drop-downs) gets the look globally: `-c-tile` popup
+  with a 1px `-c-border` frame, radius 6, padding 4 and a `-c-shadow` drop shadow; rows padding `6 12 6 10`, radius 4,
+  14px white labels, `-c-control` on hover / focus / open sub menu, disabled rows `-c-disabled`; shortcuts 12px
+  `-c-subtle` on the right; separators are a 1px `-c-panel-border` line.
+- Build context menus with `ContextMenus` (examples: `TableOverviewContextMenu`, `BackglassManagerController#refreshContextMenu`):
+  `caption()` first (12px bold `-c-subtle`, the name of the selection or "N tables selected"), then `section()`s of
+  `item()`s with a 16px muted mdi2 icon (`ctx-icon`, white on the focused row). Order: primary action (`primary()`,
+  green icon, e.g. Launch), edit actions, online / navigation, files, maintenance, and the destructive action last
+  (`danger()`, red text and icon, `-c-error-bg` on focus). Secondary or long lists go into a `menu()` sub menu
+  (Upload, Maintenance, VPin Mania, Backglass Image / DMD Image) so the menu stays short.
+- Rebuild the menu when it opens or the selection changes and disable, rather than hide, actions that don't apply.
+  Accelerators of a context menu are not registered in the scene: forward key events with `ContextMenus.fireAccelerator()`
+  (sub menus included, disabled items are skipped).
+
+### Filter panel (`tables/scene-tables-overview-filter.fxml`, `backglassmanager/scene-directb2s-admin-filter.fxml`, `vps/scene-vps-tables-filter.fxml`)
+- Slides in left of the table (`BaseFilterController`): an `sm-panel` of 286px, the table moves by `FILTER_WIDTH` 300px,
+  so the 14px split view gap stays between panel and table.
+- Header like the details panel: `sm-divider` row (padding `10 10 10 16`) with `sm-caption` "FILTER", `sm-button-small`
+  "Reset All" (`resetBtn`, disabled while no filter is set) and an `sm-button-icon` `mdi2a-arrow-expand-left` hide button.
+- Body: `sm-transparent-scroll` ScrollPane (`fitToWidth`), content padding `16 16 18 16`, 22 between sections. A
+  section = `sm-caption` heading (upper-cased by `BaseFilterController`, the bundles keep title case) + its controls
+  with spacing 8; check boxes are `sm-text` (`wrapText`), field labels above inputs `sm-small` (6 to the field), inputs and
+  combos fill the width. Help icons next to a label are 14px `c-icon-muted` with a tooltip.
+- Clickable VPS feature filters are `sm-pill`s with a hand cursor: `sm-pill-ok` when selected, `sm-pill-unknown` otherwise.
 
 ### VPS sidebar (`vps/scene-vps-tables-sidebar.fxml`)
 - `sm-panel` with a `sm-divider` header: `sm-caption` "TABLE DETAILS", 20px `vps-sidebar-title` name, `sm-hint`
@@ -340,18 +378,35 @@ Every `Accordion` / `TitledPane` gets this look automatically:
   collapsible (`sm-collapsible`, see "Collapsible panels"), header = 18px icon + title + `vps-count` + chevron, skeleton bars while loading; rows
   (`VpsEntry`) = orange Consolas `vps-entry-version` + authors (green `vps-entry-installed` link when installed) +
   `vps-link-pill` (source dot, abbreviation, arrow) and an `sm-small` "Updated …" line.
+- VPS table version combos (`tables/vps/VpsTableVersionCell`): popup rows like a download entry (version + authors,
+  `sm-small` date + `sm-pill-ok` features, comment); the button cell is `new VpsTableVersionCell(true)`, one line that
+  fits the 30px combo. Never put a multi-line graphic into a combo's button cell.
+- Table data manager (`tables/dialogs/dialog-table-data*.fxml`, `tables/panels/propper-renaming.fxml`): every tab is
+  an `sm-transparent-scroll` page (padding `12 12 14 12`) of `sm-tile` cards (gap 14). A card = header row (`sm-title`,
+  optional `sm-hint` lines below it, the card's action right-aligned: `sm-button`, destructive ones `sm-danger-button`)
+  + a 3-column grid (hgap / vgap 8): 200px `sm-text` labels, growing field column, 180px column for 16px muted help
+  icons and `sm-button-icon` link / folder buttons; `sm-caption` sub-headings and `sm-small` notes below a field.
+  The auto-naming options are `sm-filter-pill` toggles, name previews / comment tips / screen check boxes sit in an
+  `sm-inset`. Tabs with a page action instead of a card (Options, Statistics) start with an `sm-title` row + buttons
+  right; the statistics are three equal-width `alx-tile-entry` KPI tiles in one row.
 
 ### Backglass manager (`backglassmanager/scene-directb2s-admin.fxml`, `scene-directb2s-sidebar.fxml`)
 - Split view as `SplitPane` with `sm-split` (transparent, the divider is the 14px gap) holding two `sm-panel`s.
 - List panel: two `sm-actionbar` HBox rows (filters / search / emulator / playlist, then the backglass actions + `sm-hint`
-  count right-aligned), a status summary row of `sm-hint` labels with a 10px `mdi2c-circle` dot
-  (`c-icon-ok` ready, `c-icon-error` needs attention, `c-icon-disabled` disabled), then the table.
+  count right-aligned), a row of `sm-filter-pill`s (`FilterPills`: All, Ready `-c-ok`, Needs attention `-c-error`,
+  Disabled `-c-disabled` dot; counts over the filter panel result, the selected pill narrows the list), then the table.
 - Sidebar: `sm-divider` header like the VPS sidebar (`sm-caption`, 20px `vps-sidebar-title`, `sm-hint` file name or a version
   combo, "Active" check box in an `sm-button` box + colored icon buttons); then the `sm-alert` of the selected backglass,
   two `sm-tile` image tiles (`sm-caption`, `sm-inset` image box with an empty state, `sm-small` resolution +
   `sm-button-icon` actions) and `primary-tabs` whose pages are `sm-tile` cards: `sm-divider` header with `sm-title`
   (+ `sm-small` hint right), body grid of `sm-text` labels and right-aligned 240px controls, or an `sm-inset` fact grid
   (`sm-hint` keys, `sm-text` values).
+
+### Status footer (`vpxz/scene-vpxz.fxml`)
+- Status of a page below its table: one `sm-inset` HBox row (12px gap above, padding `8 8 8 12`, spacing 8): muted 18px
+  icon + `sm-text` subject + `sm-pill-ok` / `sm-pill-error` state, vertical `Separator`, `sm-hint` key + `sm-text` value,
+  spacer, `sm-hint` item count and an `sm-button-icon` settings button. The state is a pill class, never an inline
+  background color.
 
 ### Media recorder (`recorder/scene-recorder.fxml`, `recorder/panels/screen-recorder-panel.fxml`)
 - Same split view as the backglass manager: table list with two `sm-actionbar` rows (filter / reload / search /
@@ -381,6 +436,40 @@ Every `Accordion` / `TitledPane` gets this look automatically:
   lock icons (locked = orange `mdi2l-lock-outline`); hidden layers get `designer-layer-hidden` (struck through,
   `-c-disabled`). Field labels inside are 12px `-c-subtle`, values `sm-text`.
   Missing media = dashed `sm-inset, designer-empty-state` box with icon, `sm-hint` text and an `sm-button-small` action.
+
+### Upload dialogs (`tables/dialogs/dialog-table-upload.fxml`)
+- Numbered `sm-caption` sections ("1 · FILE", "2 · WHAT SHOULD HAPPEN?"). The file section is one `sm-tile, sm-tile-bordered`:
+  `sm-small` field labels above emulator combo / file field (`sm-mono`) / `sm-button` "Choose file…"; a one-row
+  `sm-inset, vps-facts` grid with what was found (table file, VPS match in `sm-version-ok` with a check icon, README with
+  an `sm-button-small` that only shows when the archive has one); the bundled assets as `sm-pill-unknown` pills in an
+  `sm-inset` row (hidden when there are none) with the `sm-button-small` asset filter; then `sm-accent-checkbox` options,
+  each with an `sm-small, sm-checkbox-hint` description below.
+- **Option cards** (`sm-option-card`): the choices of one radio group as equal-width cards (HBox, gap 14). Header row =
+  `sm-accent-radio` + 18px `c-icon-muted, sm-option-card-icon` + `sm-title`; the content below gets `sm-option-card-body`
+  (aligned with the title). Selected card = `sm-option-card-selected` (warn banner fill, orange border and icon), a click
+  anywhere on the card selects it. Options that only apply to one choice live inside its card below an `sm-divider`;
+  cards that don't apply are disabled as a whole.
+- Footer = `sm-footer` with an `sm-hint` one-line summary of what will happen, `default-button` Cancel and a
+  `submit-button` whose text names the chosen action ("Upload & replace").
+
+### Asset manager (`tables/dialogs/dialog-table-asset-manager.fxml`)
+- Selection bar (`sm-divider` row): `sm-segmented` Tables / Playlists, prev / next `sm-button-icon`s around the table
+  combo, "VPS assets" `sm-button`, `sm-chip, am-frontend-chip` with a `-c-info` dot right-aligned.
+- Split view of `sm-panel`s (gap 14): Screens panel (`sm-caption` + `sm-small` "N of M have media", the screen map, a
+  legend of `am-legend` swatches) and a column with the search and the installed panels.
+- Screen tiles (`AssetScreenTile`): `am-screen-tile` = `-c-panel-border` fill (one step lighter than the tile it sits on,
+  `-c-control` on hover) with a dashed `-c-border` outline; `am-screen-tile-filled` = `-c-ok-bg` fill + round
+  `am-screen-check` badge, status line in `-c-ok`; `am-screen-tile-selected` = 2px orange border (`-c-warn-bg` fill
+  when empty).
+  The embedded tables sidebar keeps the old media panes.
+- Panel header = `sm-divider` row: `sm-caption` ("FIND WHEEL" / "INSTALLED" + `sm-title` screen name), then the actions:
+  icon-only `sm-button-icon`s with tooltips (only Upload keeps its text), `folder-component` + reload right-aligned.
+- Lists are `am-list`: flat rows with 1px `-c-table-divider` lines and the table selection look (amber tint, 3px
+  `-c-warn` bar). Search rows = `am-format-badge` (MP4, PNG) + `sm-mono` name + `sm-small` "emulator · author";
+  installed rows = `am-file-icon` type icon + `sm-mono` name + `sm-small` "PNG · 214 KB" + `sm-pill-ok` "Default".
+- Preview column (`am-preview-column`, hairline left border): `am-preview` inset box with an `sm-hint` / `sm-small`
+  empty state, then `sm-accent-button` Download (+ web preview) or the `sm-small` "PNG · 512 × 512 · 214 KB" meta line.
+- Footer = `sm-footer`: `default-button`s left, `submit-button` "Done" right.
 
 ## 7. Checklist for a new view
 

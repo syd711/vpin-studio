@@ -309,7 +309,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   //------------------------------------------------ OPERATIONS ON BACKGLASS ---
 
   @FXML
-  private void onBackglassDelete(Event e) {
+  void onBackglassDelete(Event e) {
     try {
       DirectB2SModel selection = backglassManagerController.getSelectedModel();
       String selectedVersion = getSelectedVersion();
@@ -327,7 +327,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   @FXML
-  private void onBackglassDownload() {
+  void onBackglassDownload() {
     if (tableData != null && tableData.isBackgroundAvailable()) {
       try (InputStream in = client.getBackglassServiceClient().getDirectB2sPreviewBackground(tableData, true)) {
         export(in);
@@ -339,7 +339,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   @FXML
-  private void onDMDUpload() {
+  void onDMDUpload() {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle(Messages.get("dialog.select_dmd_image"));
     fileChooser.getExtensionFilters().addAll(
@@ -352,7 +352,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   @FXML
-  private void onDMDDownload() {
+  void onDMDDownload() {
     if (tableData != null && tableData.isDmdImageAvailable()) {
       try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
         export(in);
@@ -364,7 +364,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   @FXML
-  private void onBackglassUseAsMedia() {
+  void onBackglassUseAsMedia() {
     if (tableData != null && tableData.isBackgroundAvailable() && game != null) {
       try (InputStream in = client.getBackglassServiceClient().getDirectB2sPreviewBackground(tableData, false)) {
         Image img = new Image(in);
@@ -377,17 +377,17 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   @FXML
-  private void onBackglassBulkImport() {
+  void onBackglassBulkImport() {
     BackglassManagerDialogs.openBulkImport(getEmulatorId(), BackglassBulkImportType.BACKGLASS);
   }
 
   @FXML
-  private void onDMDBulkImport() {
+  void onDMDBulkImport() {
     BackglassManagerDialogs.openBulkImport(getEmulatorId(), BackglassBulkImportType.DMD);
   }
 
   @FXML
-  private void onDMDUseAsMedia() {
+  void onDMDUseAsMedia() {
     if (tableData != null && tableData.isDmdImageAvailable() && game != null) {
       try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
         Image img = new Image(in);
@@ -436,7 +436,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   @FXML
-  private void onDMDDelete() {
+  void onDMDDelete() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_dmd_image"),
         Messages.get("msg.delete_dmd_image_from_backglass", tableData.getFilename()), null, Messages.get("common.delete"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -445,7 +445,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   @FXML
-  private void onGameLaunch() {
+  void onGameLaunch() {
     if (game != null) {
       PlayButtonController.onPlay(game, null, null);
     }
@@ -499,6 +499,45 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         }
       }
     }
+  }
+
+  //------------------------------------------------ CONTEXT MENU STATE ---
+  // the context menu of the backglass list offers the actions of this sidebar with the same enabled state
+
+  boolean isActivationAvailable() {
+    return activateCheckbox.isVisible() && !activateCheckbox.isDisable();
+  }
+
+  boolean isActiveVersion() {
+    return activateCheckbox.isSelected();
+  }
+
+  void toggleActivation() {
+    activateCheckbox.setSelected(!activateCheckbox.isSelected());
+  }
+
+  boolean isBackglassImageAvailable() {
+    return !downloadBackglassBtn.isDisable();
+  }
+
+  boolean isDmdUploadAvailable() {
+    return !uploadDMDBtn.isDisable();
+  }
+
+  boolean isDmdImageAvailable() {
+    return !downloadDMDBtn.isDisable();
+  }
+
+  boolean isGameAvailable() {
+    return game != null;
+  }
+
+  boolean isVpsAvailable() {
+    return !vpsOpenBtn.isDisable();
+  }
+
+  boolean isFileOpenAvailable() {
+    return openBtn.isVisible() && !openBtn.isDisable();
   }
 
   //------------------------------------------------ EVENT CASCADING ---

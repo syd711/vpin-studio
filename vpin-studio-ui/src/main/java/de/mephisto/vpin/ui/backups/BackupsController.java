@@ -20,6 +20,7 @@ import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import org.jspecify.annotations.NonNull;
+import javafx.scene.Node;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -610,6 +611,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME, descriptorRepresentation.getFilename()));
     }
     tablesController.getRepositorySideBarController().setArchiveDescriptor(newSelection);
+    tablesController.setSidebarTitle(tablesController.getRepositorySideBarController(), newSelection.map(BackupDescriptorRepresentation::getFilename).orElse(null));
   }
 
   private List<BackupDescriptorRepresentation> filterArchives(List<BackupDescriptorRepresentation> archives) {
@@ -699,5 +701,12 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
   @Override
   protected BackupModel toModel(BackupDescriptorRepresentation backupDescriptorRepresentation) {
     return new BackupModel(backupDescriptorRepresentation);
+  }
+
+  /**
+   * The first toolbar row, the TablesController appends the view actions (preferences, show details panel) to it.
+   */
+  public ObservableList<Node> getToolbarItems() {
+    return toolbar.getItems();
   }
 }

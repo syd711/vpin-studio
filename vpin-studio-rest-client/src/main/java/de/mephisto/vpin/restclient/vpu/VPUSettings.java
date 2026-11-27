@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.vpu;
 
+import de.mephisto.vpin.restclient.Secret;
+
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vpauthenticators.CredentialSettings;
@@ -9,6 +11,7 @@ import de.mephisto.vpin.restclient.vpauthenticators.CredentialSettings;
  */
 public class VPUSettings extends JsonSettings implements CredentialSettings {
   private String login;
+  @Secret
   private String password;
   private boolean passwordSet;
 

@@ -74,6 +74,9 @@ public class WidgetPlayerRankController extends WidgetController implements Init
   @FXML
   private StackPane tableStack;
 
+  /** compact Studio look (Achievements overview) instead of the big overlay look */
+  private boolean studioStyle = false;
+
   // Add a public no-args constructor
   public WidgetPlayerRankController() {
   }
@@ -84,7 +87,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
     columnRank.setCellValueFactory(cellData -> {
       RankedPlayerRepresentation value = cellData.getValue();
-      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
+      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, fontSize());
       Label label = new Label("#" + value.getRank());
       label.setFont(defaultFont);
       return new SimpleObjectProperty<>(label);
@@ -92,7 +95,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
     columnPoints.setCellValueFactory(cellData -> {
       RankedPlayerRepresentation value = cellData.getValue();
-      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
+      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, fontSize());
       Label label = new Label(String.valueOf(value.getPoints()));
       label.setFont(defaultFont);
       return new SimpleObjectProperty<>(label);
@@ -106,14 +109,15 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       ImageView view = new ImageView(image);
 
       view.setPreserveRatio(true);
-      view.setFitWidth(50);
-      view.setFitHeight(50);
+      int avatarSize = studioStyle ? 32 : 50;
+      view.setFitWidth(avatarSize);
+      view.setFitHeight(avatarSize);
 
       hBox.setAlignment(Pos.CENTER_LEFT);
       hBox.getChildren().add(view);
       hBox.setSpacing(6);
 
-      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
+      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, fontSize());
       Label label = new Label(value.getName());
       label.setFont(defaultFont);
       hBox.getChildren().add(label);
@@ -157,7 +161,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
     columnFirst.setCellValueFactory(cellData -> {
       RankedPlayerRepresentation value = cellData.getValue();
-      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
+      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, fontSize());
       Label label = new Label(String.valueOf(value.getFirst()));
       label.setFont(defaultFont);
       return new SimpleObjectProperty<>(label);
@@ -165,7 +169,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
     columnSecond.setCellValueFactory(cellData -> {
       RankedPlayerRepresentation value = cellData.getValue();
-      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
+      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, fontSize());
       Label label = new Label(String.valueOf(value.getSecond()));
       label.setFont(defaultFont);
       return new SimpleObjectProperty<>(label);
@@ -173,7 +177,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
     columnThird.setCellValueFactory(cellData -> {
       RankedPlayerRepresentation value = cellData.getValue();
-      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
+      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, fontSize());
       Label label = new Label(String.valueOf(value.getThird()));
       label.setFont(defaultFont);
       return new SimpleObjectProperty<>(label);
@@ -181,7 +185,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
     columnComps.setCellValueFactory(cellData -> {
       RankedPlayerRepresentation value = cellData.getValue();
-      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
+      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, fontSize());
       Label label = new Label(String.valueOf(value.getCompetitionsWon()));
       label.setFont(defaultFont);
       return new SimpleObjectProperty<>(label);
@@ -197,6 +201,35 @@ public class WidgetPlayerRankController extends WidgetController implements Init
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
+  }
+
+  private int fontSize() {
+    return studioStyle ? 14 : 18;
+  }
+
+  /**
+   * Switches to the compact Studio look: drops the overlay stylesheet and the inline table styling so that the
+   * table gets the common flat table look of the Studio (stylesheet-tableview.css), smaller fonts, avatars and medals.
+   */
+  public void useStudioStyle() {
+    this.studioStyle = true;
+    root.getStylesheets().clear();
+    root.getStyleClass().remove("subpanel");
+    tableView.setStyle(null);
+    tableView.getStyleClass().remove("base-component");
+    tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+    columnName.setPrefWidth(220);
+    for (TableColumn<RankedPlayerRepresentation, ?> column : List.of(columnRank, columnPoints, columnFirst, columnSecond, columnThird, columnComps)) {
+      // fixed width, only the name column grows with the tile
+      column.setMinWidth(56);
+      column.setPrefWidth(56);
+      column.setMaxWidth(56);
+      if (column.getGraphic() instanceof ImageView medal) {
+        medal.setFitWidth(20);
+        medal.setFitHeight(20);
+      }
+    }
+    tableView.refresh();
   }
 
   public void refresh() {

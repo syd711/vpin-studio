@@ -5,39 +5,53 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox spacing="0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataTabScriptOptionsController">
-   <ToolBar styleClass="floating-toolbar" prefHeight="40.0" prefWidth="200.0">
-     <items>
-   
-       <!-- Reset to defaults -->
-       <Button fx:id="resetButton" disable="true" onAction="#onResetClicked" styleClass="default-text" text="%tables.table_data_tab_script_options.reset_to_defaults" />
-     </items>
-   </ToolBar>
+<VBox maxWidth="1.7976931348623157E308" spacing="14.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataTabScriptOptionsController">
+   <padding>
+      <Insets bottom="14.0" left="12.0" right="12.0" top="12.0" />
+   </padding>
+   <children>
+      <BorderPane>
+         <left>
+            <Label styleClass="sm-title" text="%pref.pinemhi.options" BorderPane.alignment="CENTER_LEFT" />
+         </left>
+         <right>
+            <Button fx:id="resetButton" disable="true" mnemonicParsing="false" onAction="#onResetClicked" styleClass="sm-button" text="%tables.table_data_tab_script_options.reset_to_defaults" BorderPane.alignment="CENTER_RIGHT">
+               <graphic>
+                  <FontIcon iconLiteral="mdi2r-restore" iconSize="18" styleClass="c-icon-white" />
+               </graphic>
+            </Button>
+         </right>
+      </BorderPane>
 
-  <!-- ── Loading / empty placeholder ─────────────────────────────────────── -->
-  <StackPane fx:id="placeholderPane" visible="true" VBox.vgrow="ALWAYS">
-    <VBox alignment="CENTER" maxWidth="500.0" spacing="12.0">
-      <Label fx:id="placeholderLabel" styleClass="default-text" text="%tables.table_data_tab_script_options.select_a_vpx_table_to_see_its_script" textAlignment="CENTER" wrapText="true" />
-      <ProgressIndicator fx:id="loadingSpinner" maxHeight="40" maxWidth="40" visible="false" />
+      <!-- loading / empty placeholder -->
+      <StackPane fx:id="placeholderPane" styleClass="sm-tile" visible="true" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox alignment="CENTER" maxWidth="500.0" spacing="12.0">
+               <children>
+                  <Label fx:id="placeholderLabel" styleClass="sm-hint" text="%tables.table_data_tab_script_options.select_a_vpx_table_to_see_its_script" textAlignment="CENTER" wrapText="true" />
+                  <ProgressIndicator fx:id="loadingSpinner" maxHeight="40" maxWidth="40" visible="false" />
+               </children>
+            </VBox>
+         </children>
          <padding>
-            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+            <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
          </padding>
-    </VBox>
-  </StackPane>
+      </StackPane>
 
-  <!-- ── Options list ──────────────────────────────────────────────────────── -->
-  <!--
-    Each option is rendered as a row inside optionsVBox (created programmatically
-    by the controller so we can generate the right control type — slider vs combo).
-    The ScrollPane makes it handle long lists gracefully.
-  -->
-  <ScrollPane fx:id="optionsScrollPane" fitToWidth="true" hbarPolicy="NEVER" visible="false" VBox.vgrow="ALWAYS">
-    <padding><Insets bottom="16" left="16" right="16" top="8" /></padding>
-    <VBox fx:id="optionsVBox" spacing="16.0" />
-  </ScrollPane>
-
+      <!-- options list, one row per option is built by the controller (slider or combo) -->
+      <ScrollPane fx:id="optionsScrollPane" fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll" visible="false" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox fx:id="optionsVBox" maxWidth="1.7976931348623157E308" spacing="18.0" styleClass="sm-tile">
+               <padding>
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="14.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
 </VBox>

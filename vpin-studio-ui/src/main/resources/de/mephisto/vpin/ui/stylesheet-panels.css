@@ -149,3 +149,159 @@
     -fx-font-size: 12px;
     -fx-padding: 1 6 1 6;
 }
+
+/* option card: one choice of a radio group drawn as a clickable card (table upload dialog);
+   the selected card gets the accent border and a warm tint, its header icon turns orange */
+.sm-option-card {
+    -fx-background-color: -c-tile;
+    -fx-background-radius: 6;
+    -fx-border-color: -c-panel-border;
+    -fx-border-radius: 6;
+    -fx-padding: 16 18 16 18;
+    -fx-cursor: hand;
+}
+
+.sm-option-card:hover {
+    -fx-border-color: -c-border;
+}
+
+.sm-option-card-selected, .sm-option-card-selected:hover {
+    -fx-background-color: -c-warn-banner;
+    -fx-border-color: -c-warn;
+}
+
+.sm-option-card:disabled {
+    -fx-opacity: 0.5;
+}
+
+.sm-option-card-selected .sm-option-card-icon {
+    -fx-icon-color: -c-warn;
+}
+
+/* content below the card header, aligned with the title next to the radio button */
+.sm-option-card-body {
+    -fx-padding: 0 0 0 31;
+}
+
+/* asset manager (tables/dialogs/dialog-table-asset-manager.fxml): screen tiles, legend swatches and preview boxes.
+   Empty screen = dashed outline, screen with media = green tint + check badge, selected screen = orange border */
+.am-screen-tile {
+    -fx-background-color: -c-panel-border;
+    -fx-background-radius: 6;
+    -fx-border-color: -c-border;
+    -fx-border-style: segments(4, 4);
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+
+.am-screen-tile:hover {
+    -fx-background-color: -c-control;
+}
+
+.am-screen-tile-filled {
+    -fx-background-color: -c-ok-bg;
+    -fx-border-color: derive(-c-ok, -45%);
+    -fx-border-style: solid;
+}
+
+.am-screen-tile-filled:hover {
+    -fx-background-color: derive(-c-ok-bg, 15%);
+}
+
+.am-screen-tile-selected, .am-screen-tile-selected:hover {
+    -fx-background-color: -c-warn-bg;
+    -fx-border-color: -c-warn;
+    -fx-border-style: solid;
+    -fx-border-width: 2;
+}
+
+.am-screen-tile-selected.am-screen-tile-filled {
+    -fx-background-color: -c-ok-bg;
+}
+
+.am-screen-status {
+    -fx-font-size: 12px;
+    -fx-text-fill: -c-subtle;
+}
+
+.am-screen-tile-filled .am-screen-status {
+    -fx-text-fill: -c-ok;
+    -fx-font-weight: bold;
+}
+
+.am-screen-check {
+    -fx-background-color: -c-ok;
+    -fx-background-radius: 12;
+    -fx-min-width: 24;
+    -fx-min-height: 24;
+    -fx-max-width: 24;
+    -fx-max-height: 24;
+}
+
+.am-screen-check .ikonli-font-icon {
+    -fx-icon-color: -c-white;
+}
+
+.am-legend {
+    -fx-background-color: -c-panel-border;
+    -fx-min-width: 14;
+    -fx-min-height: 14;
+    -fx-max-width: 14;
+    -fx-max-height: 14;
+    -fx-background-radius: 3;
+    -fx-border-color: -c-border;
+    -fx-border-style: segments(2, 2);
+    -fx-border-radius: 3;
+}
+
+.am-legend-filled {
+    -fx-background-color: -c-ok-bg;
+    -fx-border-color: derive(-c-ok, -45%);
+    -fx-border-style: solid;
+}
+
+/* right column of a list: preview box + actions / meta line, separated from the list by a hairline */
+.am-preview-column {
+    -fx-border-color: transparent transparent transparent -c-panel-border;
+    -fx-border-width: 0 0 0 1;
+}
+
+.am-preview {
+    -fx-background-color: -c-inset;
+    -fx-background-radius: 4;
+    -fx-border-color: -c-panel-border;
+    -fx-border-radius: 4;
+    -fx-padding: 4;
+}
+
+/* file type badge of a search result (MP4, PNG, …) and the type icon box of an installed file */
+.am-format-badge {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-text-light;
+    -fx-background-color: -c-control;
+    -fx-background-radius: 4;
+    -fx-padding: 3 6 3 6;
+    -fx-min-width: 46;
+    -fx-alignment: center;
+}
+
+.am-file-icon {
+    -fx-background-color: -c-inset;
+    -fx-background-radius: 4;
+    -fx-border-color: -c-panel-border;
+    -fx-border-radius: 4;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-max-width: 40;
+    -fx-max-height: 40;
+}
+
+/* frontend chip in the selection bar, the dot uses the frontend color */
+.am-frontend-chip {
+    -fx-font-size: 14px;
+    -fx-padding: 4 12 4 10;
+    -fx-graphic-text-gap: 8;
+    -fx-text-fill: -c-muted;
+}

@@ -43,6 +43,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -264,6 +265,12 @@ public class TableDataController extends BasePrevNextController implements AutoC
   private Tab customizationTab;
   @FXML
   private VBox customizationRoot;
+
+  @FXML
+  private VBox customFieldsPanel;
+
+  @FXML
+  private VBox pinVolTile;
 
   @FXML
   private Tab scoreDataTab;
@@ -651,6 +658,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
     openAssetMgrBtn.managedProperty().bindBidirectional(openAssetMgrBtn.visibleProperty());
     patchVersionPanel.managedProperty().bindBidirectional(patchVersionPanel.visibleProperty());
     customizationPane.managedProperty().bindBidirectional(customizationPane.visibleProperty());
+    customFieldsPanel.managedProperty().bindBidirectional(customFieldsPanel.visibleProperty());
     vpsPanel.managedProperty().bindBidirectional(vpsPanel.visibleProperty());
 
     try {
@@ -661,6 +669,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       if (!Features.FIELDS_EXTENDED) {
         tabPane.getTabs().remove(extrasTab);
         customizationPane.setVisible(false);
+        customFieldsPanel.setVisible(false);
       }
 
       if (!Features.MEDIA_ENABLED) {
@@ -678,7 +687,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       hintWebId.setVisible(false);
 
       tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
-      tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
+      tableVersionsCombo.setButtonCell(new VpsTableVersionCell(true));
       tableVersionsCombo.setVisibleRowCount(5);
 
       // when a value changes, mark the dialog dirty
@@ -799,7 +808,13 @@ public class TableDataController extends BasePrevNextController implements AutoC
         tablesSidebarPlaylistsController = loader.getController();
         tablesSidebarPlaylistsController.setTableOverviewController(this.tableOverviewController);
         tablesSidebarPlaylistsController.setDialogMode();
-        playlistsTab.setContent(playlistsRoot);
+        VBox playlistsTile = new VBox(playlistsRoot);
+        playlistsTile.getStyleClass().add("sm-tile");
+        playlistsTile.setPadding(new Insets(2, 4, 2, 4));
+        VBox.setVgrow(playlistsTile, Priority.ALWAYS);
+        VBox playlistsPage = new VBox(playlistsTile);
+        playlistsPage.setPadding(new Insets(12, 12, 14, 12));
+        playlistsTab.setContent(playlistsPage);
       }
 
       if (Features.STATISTICS_ENABLED) {
@@ -827,7 +842,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       pinVolController = loader.getController();
-      customizationRoot.getChildren().add(builtInRoot);
+      pinVolTile.getChildren().add(builtInRoot);
       pinVolController.dirtyProperty().addListener((obs, oldValue, newValue) -> {
         if (newValue) {
           setDialogDirty(true);

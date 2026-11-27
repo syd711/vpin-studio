@@ -117,7 +117,7 @@ public interface PreferenceNames {
       case PreferenceNames.ISCORED_SETTINGS -> IScoredSettings.class;
       case PreferenceNames.VPS_SETTINGS -> VpsSettings.class;
       case PreferenceNames.AUTHENTICATION_SETTINGS -> AuthenticationSettings.class;
-      case PreferenceNames.ASSET_SOURCES_SETTINGS -> AuthenticationSettings.class;
+      case PreferenceNames.ASSET_SOURCES_SETTINGS -> de.mephisto.vpin.restclient.assets.TableAssetSourcesSettings.class;
       case PreferenceNames.TAGGING_SETTINGS -> TaggingSettings.class;
       case PreferenceNames.WOVP_SETTINGS -> WOVPSettings.class;
       case PreferenceNames.VPXZ_SETTINGS -> VPXZSettings.class;

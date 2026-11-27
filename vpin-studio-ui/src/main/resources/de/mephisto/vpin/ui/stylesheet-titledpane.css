@@ -1,8 +1,9 @@
 /**
  * Accordion & Titled Pane = the common collapsible panel.
  * Collapsed: a transparent row with a 1px -c-panel-border divider below, hover = -c-row-hover, chevron on the left.
- * Expanded: a -c-row-hover card (1px -c-selected border, radius 8, 4px air above and below), the header flows into
- * the content without a divider and its muted icon turns orange. Header = optional 18px muted icon + bold
+ * Expanded: a -c-row-hover card (1px -c-selected border, radius 8, 4px air above and below), the header becomes a
+ * lighter -c-collapsible-header band with a 1px -c-selected divider below (so it stands apart from the transparent
+ * toolbars in the content) and its muted icon turns orange. Header = optional 18px muted icon + bold
  * sm-collapsible-title label (+ sm-collapsible-button actions right aligned). Accordions get an 8px padding inside
  * their tile.
  */
@@ -52,12 +53,15 @@
 
 .titled-pane:expanded > .title,
 .accordion > .titled-pane:expanded > .title {
-    -fx-background-radius: 8 8 0 0;
+    -fx-background-color: -c-collapsible-header;
+    -fx-background-radius: 7 7 0 0;
+    -fx-border-color: transparent transparent -c-selected transparent;
+    -fx-border-width: 0 0 1 0;
 }
 
 .titled-pane:expanded > .title:hover,
 .accordion > .titled-pane:expanded > .title:hover {
-    -fx-background-color: transparent;
+    -fx-background-color: -c-collapsible-header-hover;
 }
 
 /* thin chevron instead of the filled triangle, the skin rotates it (right = collapsed, down = expanded) */
@@ -132,11 +136,14 @@
 }
 
 .sm-collapsible:expanded > .sm-collapsible-header {
-    -fx-background-radius: 8 8 0 0;
+    -fx-background-color: -c-collapsible-header;
+    -fx-background-radius: 7 7 0 0;
+    -fx-border-color: transparent transparent -c-selected transparent;
+    -fx-border-width: 0 0 1 0;
 }
 
 .sm-collapsible:expanded > .sm-collapsible-header:hover {
-    -fx-background-color: transparent;
+    -fx-background-color: -c-collapsible-header-hover;
 }
 
 .sm-collapsible:expanded > .sm-collapsible-header > .ikonli-font-icon.c-icon-muted {

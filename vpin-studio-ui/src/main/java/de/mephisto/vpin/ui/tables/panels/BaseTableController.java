@@ -308,10 +308,17 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   public void applyFilter() {
     // mind that it can be called by threads before data is even initialized
     if (this.filteredModels != null) {
-      this.filteredModels.setPredicate(filterController.buildPredicate());
+      this.filteredModels.setPredicate(buildPredicate());
       // update data count
       applyTableCount();
     }
+  }
+
+  /**
+   * The predicate of the listed models, subclasses can narrow the predicate of the filter panel (e.g. filter pills)
+   */
+  protected Predicate<M> buildPredicate() {
+    return filterController.buildPredicate();
   }
 
   public BaseFilterController<T, M> getFilterController() {
@@ -453,7 +460,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
     // Wrap games in a FilteredList
     if (filterController != null) {
-      this.filteredModels = new FilteredList<>(models, filterController.buildPredicate());
+      this.filteredModels = new FilteredList<>(models, buildPredicate());
 
       // Wrap the FilteredList in a SortedList
       SortedList<M> sortedData = new SortedList<>(this.filteredModels);

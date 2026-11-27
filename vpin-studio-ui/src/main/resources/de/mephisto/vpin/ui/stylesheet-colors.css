@@ -19,14 +19,23 @@
     -c-selection-panel-hover: #272B3F;      /* hovered / selected selection panel */
     -c-tile: #232323;                       /* cards / tiles on the page background */
     -c-panel-border: #2E2E2E;               /* border of a panel inside a panel */
-    -c-control: #333333;                    /* buttons, list-row hover, neutral pill */
+    -c-collapsible-header: #2E2E2E;         /* header band of an expanded collapsible */
+    -c-collapsible-header-hover: #333333;   /* hovered header band of an expanded collapsible */
+    -c-control: #333333;                    /* list-row hover, neutral pill */
+    /* buttons, toggle buttons and combo boxes: translucent white over the surface they sit on, so the same control
+       is a bit lighter than a tile (#2A2A2A on #232323) and than the page / window header (#232323 on #1A1A1A) */
+    -c-button: #FFFFFF08;
+    -c-button-border: #FFFFFF12;
+    -c-button-hover: #FFFFFF12;
+    -c-button-hover-border: #FFFFFF1F;
+    -c-pill-border: #FFFFFF0A;              /* outline of an unselected filter pill */
     -c-bar-button-border: #373737;
     -c-selected: #3A3A3A;                   /* selected list row, dividers */
     -c-control-hover: #3D3D3D;              /* button hover */
     -c-border: #444444;                     /* button, chip and text-field borders */
     -c-bar-button: #494949;
     -c-monitor-border: #4A4A4A;             /* monitor outline in the screens map */
-    -c-border-strong: #5A5A5A;              /* hovered scroll thumb, selected filter pill */
+    -c-border-strong: #5A5A5A;              /* hovered scroll thumb, column resize line */
 
     /* Text and neutral icons */
     -c-disabled: #7A7A7A;                   /* disabled / hidden entries */
@@ -142,6 +151,7 @@
     -c-row-hover-faint: #33333311;
     -c-row-odd-tint: #93F9B911;
     -c-row-even-tint: #1DBBDD11;
+    -c-shadow: #000000AA;                   /* drop shadow of popup / context menus */
 
     /* VPS link and format badges */
     -c-vps-blue: #3182CE;

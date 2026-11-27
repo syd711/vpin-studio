@@ -204,6 +204,10 @@
                      </children>
                   </VBox>
                </items>
+               <!-- tile padding, see UI-STYLEGUIDE.md: the wrapping tile itself has none -->
+               <BorderPane.margin>
+                  <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+               </BorderPane.margin>
             </SplitPane>
          </center>
       </BorderPane>

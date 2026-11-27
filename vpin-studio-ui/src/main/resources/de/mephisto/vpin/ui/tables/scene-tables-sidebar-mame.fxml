@@ -380,7 +380,7 @@
       <Insets left="1.0" right="1.0" />
    </padding>
    <top>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <ToolBar BorderPane.alignment="CENTER" styleClass="floating-toolbar, floating-toolbar-transparent">
          <items>
             <Button fx:id="applyDefaultsBtn" mnemonicParsing="false" onAction="#onApplyDefaults" text="%tables.pinvol_settings.apply_defaults" styleClass="sm-button, c-text-white">
                <font>
@@ -390,7 +390,7 @@
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-save-move-outline" iconSize="18" />
                </graphic>
             </Button>
-            <Separator layoutX="234.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator orientation="VERTICAL" />
             <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" styleClass="sm-button">
                <font>
                   <Font size="14.0" />
@@ -399,7 +399,7 @@
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator orientation="VERTICAL" />
             <Button fx:id="aliasBtn" mnemonicParsing="false" onAction="#onVPMAlias" styleClass="text-button, c-text-white" text="%tables.tables_sidebar_mame.vpmalias_txt">
                <font>
                   <Font size="14.0" />

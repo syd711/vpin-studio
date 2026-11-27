@@ -35,7 +35,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="18" styleClass="c-icon-white" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip prefWidth="300.0" text="%competitions.competitions_iscored.only_the_first_table_match_is_shown_here" wrapText="true" />
@@ -54,14 +54,14 @@
                 </StackPane>
             </center>
             <top>
-                <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent" fx:id="toolbar" BorderPane.alignment="CENTER">
+                <ToolBar fx:id="toolbar" styleClass="floating-toolbar, floating-toolbar-transparent" BorderPane.alignment="CENTER">
                     <items>
                         <Button fx:id="reloadBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
+                                <FontIcon iconLiteral="mdi2r-reload" iconSize="18" styleClass="c-icon-white" />
                             </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.reload_and_invalidate_game_room_caches" />
@@ -80,7 +80,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                              <FontIcon iconLiteral="mdi2c-close-thick" iconSize="18" styleClass="c-icon-panel" />
                            </graphic>
                         </Button>
                      </children>
@@ -92,7 +92,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-sync" iconSize="18" />
+                        <FontIcon iconLiteral="mdi2s-sync" iconSize="18" styleClass="c-icon-white" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.synchronize_the_iscored_game_room_games_with_the" />
@@ -103,7 +103,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
+                        <FontIcon iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" styleClass="c-icon-white" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.edit_game_room_settings" />
@@ -114,7 +114,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
+                        <FontIcon iconLiteral="mdi2c-cog" iconSize="18" styleClass="c-icon-white" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.open_game_room_preferences" />
@@ -126,7 +126,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2s-stop" iconSize="18" />
+                        <FontIcon iconLiteral="mdi2s-stop" iconSize="18" styleClass="c-icon-danger" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.kill_all_emulator_and_frontend_processes_ctrl_k" />
@@ -138,7 +138,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                                <FontIcon iconLiteral="mdi2p-plus-circle-outline" iconSize="18" styleClass="c-icon-white" />
                             </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.create_a_new_competition_for_the_selected_game" />
@@ -149,7 +149,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                <FontIcon iconLiteral="mdi2d-delete-outline" iconSize="18" styleClass="c-icon-danger" />
                             </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.delete_the_selected_competition_note_that_it_might" />
@@ -161,7 +161,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                        <FontIcon iconLiteral="mdi2l-lead-pencil" iconSize="18" styleClass="c-icon-white" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
@@ -172,7 +172,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                        <FontIcon iconLiteral="mdi2t-table-edit" iconSize="18" styleClass="c-icon-white" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
@@ -184,13 +184,16 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
+                        <FontIcon iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" styleClass="c-icon-white" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="%competitions.competitions_iscored.open_event_log" />
                      </tooltip>
                   </Button>
                     </items>
+               <BorderPane.margin>
+                  <Insets top="6.0" />
+               </BorderPane.margin>
                 </ToolBar>
             </top>
             <bottom>

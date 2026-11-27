@@ -32,6 +32,7 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerPane.MediaPane;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.SegmentedToggles;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
@@ -47,8 +48,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -59,6 +63,15 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import org.kordamp.ikonli.javafx.FontIcon;
+import java.util.stream.Stream;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.commons.io.FilenameUtils;
@@ -90,6 +103,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
    * Source id of the client-side drop-in folder, which is not known to the server
    */
   public static final String DROP_IN_SOURCE_ID = "dropin-folder";
+  /**
+   * Lower bound of the dialog width, the real minimum is computed from the content in {@link #updateMinWidth()}
+   */
+  private static final double MIN_DIALOG_WIDTH = 860;
 
   @FXML
   private BorderPane root;
@@ -119,10 +136,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private BorderPane mediaPane;
 
   @FXML
-  private TableAssetManagerPane<TableAssetManagerMediaPane> mediaRootPane;
-
-  @FXML
-  private ToolBar installedAssetsToolbar;
+  private TableAssetManagerPane<MediaPane> mediaRootPane;
 
   @FXML
   private MenuButton addToPlaylistBtn;
@@ -170,7 +184,25 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Separator folderSeparator;
 
   @FXML
-  private ImageView frontendImage;
+  private Label frontendLabel;
+
+  @FXML
+  private Label screensCaption;
+
+  @FXML
+  private Label screensCountLabel;
+
+  @FXML
+  private Label resultsLabel;
+
+  @FXML
+  private Label installedCaption;
+
+  @FXML
+  private Label installedTitleLabel;
+
+  @FXML
+  private Label mediaInfoLabel;
 
   @FXML
   private ListView<FrontendMediaItemRepresentation> assetList;
@@ -209,10 +241,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Label previewTitleLabel;
 
   @FXML
-  private RadioButton playlistsRadio;
+  private ToggleButton playlistsRadio;
 
   @FXML
-  private RadioButton tablesRadio;
+  private ToggleButton tablesRadio;
 
   @FXML
   private Pane tableSelection;
@@ -786,6 +818,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       serverAssetsList.setPlaceholder(new Label(noSourceSelected ? Messages.get("tables.table_asset_manager_embedded.no_asset_source")
           : Messages.get("tables.table_asset_manager.enter_search_term")));
       serverAssetsList.refresh();
+      setResultsText(null);
     });
   }
 
@@ -794,10 +827,52 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
     serverAssetsList.setItems(assets);
     serverAssetsList.refresh();
+    setResultsText(Messages.get("tables.table_asset_manager.results_for", assets.size(), searchField.getText().trim()));
 
     if (assets.isEmpty()) {
       serverAssetsList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.no_matching_assets_found")));
     }
+  }
+
+  private void setResultsText(@Nullable String text) {
+    if (resultsLabel != null) {
+      resultsLabel.setText(text);
+      resultsLabel.setVisible(text != null);
+    }
+  }
+
+  /**
+   * Enables the download / web preview actions of the search result preview. The embedded view hides them,
+   * the dialog keeps them in place and only disables them.
+   */
+  private void setServerAssetActionsEnabled(boolean enabled) {
+    if (isEmbeddedMode()) {
+      downloadBtn.setVisible(enabled);
+      webPreviewBtn.setVisible(enabled);
+    }
+    else {
+      downloadBtn.setDisable(!enabled);
+      webPreviewBtn.setDisable(!enabled);
+    }
+  }
+
+  /**
+   * Empty state of a preview box: muted title and an optional hint, centered.
+   */
+  private static Node createEmptyState(String title, @Nullable String hint) {
+    Label titleLabel = new Label(title);
+    titleLabel.getStyleClass().add("sm-hint");
+    VBox box = new VBox(4, titleLabel);
+    if (hint != null) {
+      Label hintLabel = new Label(hint);
+      hintLabel.getStyleClass().add("sm-small");
+      hintLabel.setWrapText(true);
+      hintLabel.setTextAlignment(TextAlignment.CENTER);
+      box.getChildren().add(hintLabel);
+    }
+    box.setAlignment(Pos.CENTER);
+    box.setPadding(new Insets(12));
+    return box;
   }
 
   /**
@@ -969,8 +1044,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       return;
     }
 
-    downloadBtn.setVisible(true);
-    webPreviewBtn.setVisible(true);
+    setServerAssetActionsEnabled(true);
     serverAssetMediaPane.setCenter(new ProgressIndicator());
 
     Platform.runLater(() -> {
@@ -1103,6 +1177,20 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       playlistsRadio.setToggleGroup(toggleGroup);
       tablesRadio.setToggleGroup(toggleGroup);
       tablesRadio.setSelected(true);
+      SegmentedToggles.keepSelected(tablesRadio, playlistsRadio);
+
+      screensCaption.setText(screensCaption.getText().toUpperCase());
+      installedCaption.setText(installedCaption.getText().toUpperCase());
+      resultsLabel.managedProperty().bind(resultsLabel.visibleProperty());
+      setResultsText(null);
+
+      Circle dot = new Circle(4);
+      dot.setFill(ThemeColors.color(ThemeColors.INFO));
+      frontendLabel.setGraphic(dot);
+      frontendLabel.setText(Messages.get("tables.table_asset_manager.frontend", client.getFrontendService().getFrontendCached().getName()));
+
+      serverAssetsList.setCellFactory(list -> new SearchResultCell());
+      assetList.setCellFactory(list -> new InstalledAssetCell());
 
       playlistsRadio.setDisable(!Features.PLAYLIST_ENABLED);
       if (Features.PLAYLIST_ENABLED) {
@@ -1116,6 +1204,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       tablesRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          if (!newValue) {
+            return;
+          }
           if (game != null) {
             setGame(localStage, overviewController, game, screen, embedded);
           }
@@ -1131,6 +1222,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       playlistsRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          if (!newValue) {
+            return;
+          }
           if (playlist != null) {
             setPlaylist(localStage, overviewController, playlist, screen);
           }
@@ -1151,10 +1245,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           }
         }
       });
-
-      installedAssetsToolbar.widthProperty().addListener((obs, o, n) -> {
-        reshapeToolbar(n);
-      });
     }
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
@@ -1169,13 +1259,17 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.folderBtn.setVisible(SystemUtil.isFolderActionSupported());
     this.folderSeparator.setVisible(SystemUtil.isFolderActionSupported());
 
-    mediaRootPane.createPanes((rootPane, text, screen, suffixes) -> new TableAssetManagerMediaPane(rootPane, text, screen, suffixes), isEmbeddedMode());
+    if (isEmbeddedMode()) {
+      mediaRootPane.createPanes((rootPane, text, screen, suffixes) -> new TableAssetManagerMediaPane(rootPane, text, screen, suffixes), true);
+    }
+    else {
+      mediaRootPane.createPanes((rootPane, text, screen, suffixes) -> new AssetScreenTile(rootPane, text, screen, suffixes), false);
+    }
 
     mediaRootPane.addListeners(this);
     mediaRootPane.setPanesVisibility(supportedScreens);
 
-    downloadBtn.setVisible(false);
-    webPreviewBtn.setVisible(false);
+    setServerAssetActionsEnabled(false);
 
     this.setDefaultBtn.setDisable(true);
     this.renameBtn.setDisable(true);
@@ -1214,20 +1308,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       EventManager.getInstance().addListener(this);
     }
 
-    Label label = new Label(Messages.get("tables.table_asset_manager.no_preview_activated"));
-    label.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.BORDER + ";");
-    serverAssetMediaPane.setCenter(label);
+    serverAssetMediaPane.setCenter(createServerPreviewEmptyState());
 
     this.serverAssetsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TableAsset>() {
       @Override
       public void changed(ObservableValue<? extends TableAsset> observable, TableAsset oldValue, TableAsset tableAsset) {
         WidgetFactory.disposeMediaPane(serverAssetMediaPane);
-        downloadBtn.setVisible(false);
-        webPreviewBtn.setVisible(false);
-
-        Label label = new Label(Messages.get("tables.table_asset_manager.no_preview_activated"));
-        label.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.BORDER + ";");
-        serverAssetMediaPane.setCenter(label);
+        setServerAssetActionsEnabled(false);
+        serverAssetMediaPane.setCenter(createServerPreviewEmptyState());
 
         onPreview();
       }
@@ -1252,11 +1340,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         if (list.isEmpty()) {
           conversionMenu.setDisable(true);
-
-          Label label = new Label(Messages.get("tables.table_asset_manager.no_media_selected"));
-          label.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.BORDER + ";");
-          label.setUserData(null);
-          mediaPane.setCenter(label);
+          mediaPane.setCenter(createEmptyState(Messages.get("tables.table_asset_manager.no_media_selected"),
+              isEmbeddedMode() ? null : Messages.get("tables.table_asset_manager.no_media_selected_hint")));
+          updateMediaInfo(null);
           return;
         }
         // else
@@ -1282,6 +1368,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         mediaPane.setCenter(assetMediaPlayer);
 
         Tooltip.install(mediaPane, WidgetFactory.createMediaItemTooltip(mediaItem));
+        updateMediaInfo(mediaItem);
       }
     });
 
@@ -1290,13 +1377,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
     else {
       clearCacheBtn.setVisible(Features.MEDIA_CACHE || !client.getAssetSourcesService().getAssetSources().isEmpty());
-
-      if (tableAssetSource != null && tableAssetSource.getAssetSearchIcon() != null) {
-        frontendImage.setImage(new Image(Studio.class.getResourceAsStream(tableAssetSource.getAssetSearchIcon())));
-      }
-      //if (tableAssetConf != null && tableAssetConf.getAssetSearchLabel() != null) {
-      //    assetSearchLabel.setText(tableAssetConf.getAssetSearchLabel());
-      //}
     }
 
     infoBtn.setDisable(true);
@@ -1360,15 +1440,232 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   /**
-   * Called when the toolbar is resized
+   * Screen tile of the dialog: screen name + "Empty" / "N files" bottom left, check badge top right when the screen
+   * has media. Empty, filled and selected states are style classes, the hover state is CSS only.
    */
-  private void reshapeToolbar(Number w) {
-    boolean small = w.intValue() < 725;
-    uploadBtn.setText(small ? "" : Messages.get("dialog.upload"));
-    downloadAssetBtn.setText(small ? "" : Messages.get("common.download"));
-    setDefaultBtn.setText(small ? "" : Messages.get("tables.table_asset_manager.set_as_default"));
-    renameBtn.setText(small ? "" : Messages.get("dialog.rename"));
-    reloadBtn.setText(small ? "" : Messages.get("tables.context_menu.reload"));
+  private static class AssetScreenTile extends MediaPane {
+    /**
+     * Below this height the name and the status share one line and the check badge is hidden (e.g. the Logo tile)
+     */
+    private static final double COMPACT_HEIGHT = 64;
+
+    private final Label statusLabel = new Label();
+    private final Label separatorLabel = new Label("·");
+    private final StackPane checkBadge;
+    private final VBox labels;
+    private final HBox nameRow;
+    private boolean compact = false;
+    private int fileCount = 0;
+
+    AssetScreenTile(TableAssetManagerPane<?> rootPane, String text, VPinScreen screen, String[] suffix) {
+      super(rootPane, text, screen, suffix);
+      getStyleClass().add("am-screen-tile");
+
+      Label nameLabel = new Label(text);
+      nameLabel.getStyleClass().add("sm-text-bold");
+      nameLabel.setMinWidth(0);
+      statusLabel.getStyleClass().add("am-screen-status");
+      statusLabel.setMinWidth(Region.USE_PREF_SIZE);
+      separatorLabel.getStyleClass().add("am-screen-status");
+      separatorLabel.managedProperty().bind(separatorLabel.visibleProperty());
+      separatorLabel.setVisible(false);
+
+      // the status label moves between the second line (regular) and the name row (compact)
+      nameRow = new HBox(6, nameLabel, separatorLabel);
+      nameRow.setAlignment(Pos.BASELINE_LEFT);
+      labels = new VBox(2, nameRow, statusLabel);
+      labels.setPadding(new Insets(0, 10, 10, 14));
+      labels.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+      labels.setMinWidth(0);
+
+      FontIcon check = new FontIcon("mdi2c-check");
+      check.setIconSize(16);
+      checkBadge = new StackPane(check);
+      checkBadge.getStyleClass().add("am-screen-check");
+
+      // badge and labels are layered, so the badge takes no height from the labels
+      StackPane content = new StackPane(checkBadge, labels);
+      content.setMinSize(0, 0);
+      StackPane.setAlignment(checkBadge, Pos.TOP_RIGHT);
+      StackPane.setMargin(checkBadge, new Insets(10, 10, 0, 0));
+      StackPane.setAlignment(labels, Pos.BOTTOM_LEFT);
+      setCenter(content);
+
+      // never draw outside of the tile, however small it gets
+      Rectangle clip = new Rectangle();
+      clip.widthProperty().bind(widthProperty());
+      clip.heightProperty().bind(heightProperty());
+      clip.setArcWidth(12);
+      clip.setArcHeight(12);
+      setClip(clip);
+
+      heightProperty().addListener((obs, oldValue, newValue) -> {
+        boolean newCompact = newValue.doubleValue() < COMPACT_HEIGHT;
+        if (newCompact != compact) {
+          compact = newCompact;
+          // not during the layout pass
+          Platform.runLater(this::applyCompact);
+        }
+      });
+
+      setFileCount(0);
+    }
+
+    private void applyCompact() {
+      if (compact) {
+        labels.getChildren().remove(statusLabel);
+        nameRow.getChildren().add(statusLabel);
+        labels.setPadding(new Insets(0, 10, 0, 14));
+        StackPane.setAlignment(labels, Pos.CENTER_LEFT);
+      }
+      else {
+        nameRow.getChildren().remove(statusLabel);
+        labels.getChildren().add(statusLabel);
+        labels.setPadding(new Insets(0, 10, 10, 14));
+        StackPane.setAlignment(labels, Pos.BOTTOM_LEFT);
+      }
+      separatorLabel.setVisible(compact);
+      checkBadge.setVisible(fileCount > 0 && !compact);
+    }
+
+    void setFileCount(int count) {
+      if (count == 0) {
+        statusLabel.setText(Messages.get("tables.table_asset_manager.empty"));
+      }
+      else if (count == 1) {
+        statusLabel.setText(Messages.get("tables.table_asset_manager.one_file"));
+      }
+      else {
+        statusLabel.setText(Messages.get("tables.table_asset_manager.n_files", count));
+      }
+      fileCount = count;
+      checkBadge.setVisible(count > 0 && !compact);
+      setStyleClass("am-screen-tile-filled", count > 0);
+    }
+
+    void setSelected(boolean selected) {
+      setStyleClass("am-screen-tile-selected", selected);
+    }
+
+    private void setStyleClass(String styleClass, boolean enabled) {
+      getStyleClass().remove(styleClass);
+      if (enabled) {
+        getStyleClass().add(styleClass);
+      }
+    }
+  }
+
+  /**
+   * Row of the search result list: file type badge, monospaced file name, "emulator · author".
+   */
+  private static class SearchResultCell extends ListCell<TableAsset> {
+    private final Label badge = new Label();
+    private final Label nameLabel = new Label();
+    private final Label metaLabel = new Label();
+    private final HBox box;
+
+    SearchResultCell() {
+      badge.getStyleClass().add("am-format-badge");
+      badge.setMinWidth(Region.USE_PREF_SIZE);
+      nameLabel.getStyleClass().addAll("sm-text", "sm-mono");
+      nameLabel.setMinWidth(0);
+      metaLabel.getStyleClass().add("sm-small");
+      metaLabel.setMinWidth(0);
+      metaLabel.managedProperty().bind(metaLabel.visibleProperty());
+      VBox text = new VBox(2, nameLabel, metaLabel);
+      text.setMinWidth(0);
+      HBox.setHgrow(text, Priority.ALWAYS);
+      box = new HBox(12, badge, text);
+      box.setAlignment(Pos.CENTER_LEFT);
+      box.setPadding(new Insets(9, 14, 9, 11));
+      // keep the cells as wide as the list, long names are truncated instead of scrolling
+      setPrefWidth(0);
+    }
+
+    @Override
+    protected void updateItem(TableAsset item, boolean empty) {
+      super.updateItem(item, empty);
+      setText(null);
+      if (empty || item == null) {
+        setGraphic(null);
+        return;
+      }
+      String suffix = item.getFileSuffix();
+      badge.setText(StringUtils.isEmpty(suffix) ? "?" : suffix.toUpperCase());
+      nameLabel.setText(item.getName());
+      String meta = Stream.of(item.getEmulator(), item.getAuthor())
+          .filter(StringUtils::isNotEmpty)
+          .collect(Collectors.joining(" · "));
+      metaLabel.setText(meta);
+      metaLabel.setVisible(!meta.isEmpty());
+      setGraphic(box);
+    }
+  }
+
+  /**
+   * Row of the installed files list: type icon, monospaced file name, "PNG · 214 KB" and a "Default" pill for the
+   * file the frontend uses.
+   */
+  private class InstalledAssetCell extends ListCell<FrontendMediaItemRepresentation> {
+    private final FontIcon typeIcon = new FontIcon();
+    private final Label nameLabel = new Label();
+    private final Label metaLabel = new Label();
+    private final Label defaultPill = new Label(Messages.get("tables.table_asset_manager.default"));
+    private final HBox box;
+
+    InstalledAssetCell() {
+      typeIcon.setIconSize(18);
+      typeIcon.getStyleClass().add("c-icon-muted");
+      StackPane iconBox = new StackPane(typeIcon);
+      iconBox.getStyleClass().add("am-file-icon");
+
+      nameLabel.getStyleClass().addAll("sm-text", "sm-mono");
+      nameLabel.setMinWidth(0);
+      metaLabel.getStyleClass().add("sm-small");
+      VBox text = new VBox(2, nameLabel, metaLabel);
+      text.setMinWidth(0);
+      HBox.setHgrow(text, Priority.ALWAYS);
+
+      defaultPill.getStyleClass().addAll("sm-pill", "sm-pill-ok");
+      defaultPill.setMinWidth(Region.USE_PREF_SIZE);
+      defaultPill.managedProperty().bind(defaultPill.visibleProperty());
+
+      box = new HBox(12, iconBox, text, defaultPill);
+      box.setAlignment(Pos.CENTER_LEFT);
+      box.setPadding(new Insets(8, 14, 8, 11));
+      setPrefWidth(0);
+    }
+
+    @Override
+    protected void updateItem(FrontendMediaItemRepresentation item, boolean empty) {
+      super.updateItem(item, empty);
+      setText(null);
+      if (empty || item == null) {
+        setGraphic(null);
+        return;
+      }
+      String mimeType = item.getMimeType();
+      if (mimeType != null && MimeTypeUtil.isVideo(mimeType)) {
+        typeIcon.setIconLiteral("mdi2f-filmstrip");
+      }
+      else if (mimeType != null && MimeTypeUtil.isAudio(mimeType)) {
+        typeIcon.setIconLiteral("mdi2m-music-note");
+      }
+      else if (mimeType != null && MimeTypeUtil.isImage(mimeType)) {
+        typeIcon.setIconLiteral("mdi2i-image-outline");
+      }
+      else {
+        typeIcon.setIconLiteral("mdi2f-file-outline");
+      }
+
+      String name = item.getName();
+      nameLabel.setText(name);
+      metaLabel.setText(FilenameUtils.getExtension(name).toUpperCase() + " · " + FileUtils.readableFileSize(item.getSize()));
+
+      String objectName = isPlaylistMode() ? playlist.getName() : (game != null ? game.getGameName() : null);
+      defaultPill.setVisible(objectName != null && FilenameUtils.getBaseName(name).equalsIgnoreCase(objectName));
+      setGraphic(box);
+    }
   }
 
   private boolean isEmbeddedMode() {
@@ -1379,6 +1676,31 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     List<FrontendMediaItemRepresentation> mediaItems = new ArrayList<>();
     if (frontendMedia != null) {
       mediaItems = frontendMedia.getMediaItems(s);
+    }
+
+    if (borderPane instanceof AssetScreenTile tile) {
+      // hover is styled by CSS, only the file count and the selection are set here
+      tile.setFileCount(mediaItems.size());
+      if (clicked) {
+        if (this.lastSelected instanceof AssetScreenTile previous && previous != tile) {
+          previous.setSelected(false);
+        }
+        tile.setSelected(true);
+        this.lastSelected = tile;
+        if (!this.screen.equals(s)) {
+          this.screen = s;
+          refreshTableMediaView();
+          if (isAutoSearchEnabled()) {
+            onSearch();
+          }
+          else {
+            serverAssetsList.setItems(FXCollections.emptyObservableList());
+            serverAssetsList.refresh();
+            setResultsText(null);
+          }
+        }
+      }
+      return;
     }
 
     if (mediaItems.isEmpty()) {
@@ -1650,6 +1972,80 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private void refreshTableView() {
     mediaRootPane.refreshPanes(this, this.screen);
+    if (screensCountLabel != null) {
+      long total = mediaRootPane.getMediaPanes().stream().filter(Node::isVisible).count();
+      long withMedia = mediaRootPane.getMediaPanes().stream()
+          .filter(Node::isVisible)
+          .filter(p -> frontendMedia != null && !frontendMedia.getMediaItems(p.getScreen()).isEmpty())
+          .count();
+      screensCountLabel.setText(Messages.get("tables.table_asset_manager.screens_with_media", withMedia, total));
+    }
+  }
+
+  /**
+   * The panel header rows never shrink below their content (minWidth = USE_PREF_SIZE in the FXML), so the minimum
+   * width of the scene root is the width where nothing is cut off. The visible toolbar buttons depend on the screen,
+   * so this is updated whenever the screen changes.
+   */
+  private void updateMinWidth() {
+    if (isEmbeddedMode() || localStage == null) {
+      return;
+    }
+    Platform.runLater(() -> {
+      Scene scene = installedTitleLabel.getScene();
+      if (scene == null) {
+        return;
+      }
+      Parent sceneRoot = scene.getRoot();
+      sceneRoot.applyCss();
+      double minWidth = Math.max(MIN_DIALOG_WIDTH, Math.ceil(sceneRoot.minWidth(-1)));
+      localStage.setMinWidth(minWidth);
+      if (localStage.getWidth() < minWidth) {
+        localStage.setWidth(minWidth);
+      }
+    });
+  }
+
+  private Node createServerPreviewEmptyState() {
+    if (isEmbeddedMode()) {
+      return createEmptyState(Messages.get("tables.table_asset_manager.no_preview_activated"), null);
+    }
+    return createEmptyState(Messages.get("tables.table_asset_manager.no_result_selected"),
+        Messages.get("tables.table_asset_manager.select_result_for_preview"));
+  }
+
+  /**
+   * Meta line below the preview of an installed file: "PNG · 512 × 512 · 214 KB", the resolution is loaded afterwards.
+   */
+  private void updateMediaInfo(@Nullable FrontendMediaItemRepresentation item) {
+    if (mediaInfoLabel == null) {
+      return;
+    }
+    if (item == null) {
+      mediaInfoLabel.setText("");
+      return;
+    }
+    String type = FilenameUtils.getExtension(item.getName()).toUpperCase();
+    String size = FileUtils.readableFileSize(item.getSize());
+    mediaInfoLabel.setText(type + " · " + size);
+
+    if (game == null && playlist == null) {
+      return;
+    }
+    int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
+    boolean playlistMode = isPlaylistMode();
+    VPinScreen itemScreen = screen;
+    JFXFuture.supplyAsync(() -> client.getGameMediaService().getMetadata(objectId, playlistMode, itemScreen, item.getName()))
+        .thenAcceptLater(metadata -> {
+          if (metadata == null || metadata.getData() == null || assetList.getSelectionModel().getSelectedItem() != item) {
+            return;
+          }
+          int width = toInt(metadata.getData().get("Width"));
+          int height = toInt(metadata.getData().get("Height"));
+          if (width > 0 && height > 0) {
+            mediaInfoLabel.setText(type + " · " + width + " × " + height + " · " + size);
+          }
+        });
   }
 
   public void refreshTableMediaView() {
@@ -1674,6 +2070,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       this.frontendMedia = media;
 
       if (!isEmbeddedMode()) {
+        String screenLabel = TableAssetManagerPane.getScreenLabel(screen, false);
+        installedTitleLabel.setText(screenLabel);
+        assetSearchLabel.setText(Messages.get("tables.table_asset_manager.find_screen", screenLabel).toUpperCase());
+      }
+
+      if (!isEmbeddedMode()) {
         this.helpBtn.setDisable(!VPinScreen.Loading.equals(screen));
       }
       if (screen.equals(VPinScreen.Wheel)) {
@@ -1685,6 +2087,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
       this.addToPlaylistBtn.setVisible(screen.equals(VPinScreen.Loading));
       this.addAudioBlank.setVisible(screen.equals(VPinScreen.AudioLaunch));
+      updateMinWidth();
 
 
       if (frontendMedia != null) {

@@ -69,17 +69,13 @@
             </VBox>
             <VBox fx:id="dataRoot">
                <children>
-                  <Label fx:id="dialogTitleLabel" styleClass="default-title, c-text-white" text="%tables.table_asset_manager.playlists">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="dialogCommentLabel" text="%tables.tables_sidebar_playlists.changes_in_this_tab_will_be_stored_immediately" wrapText="true">
+                  <Label fx:id="dialogTitleLabel" styleClass="sm-title" text="%tables.table_asset_manager.playlists" />
+                  <Label fx:id="dialogCommentLabel" graphicTextGap="8.0" styleClass="sm-hint" text="%tables.tables_sidebar_playlists.changes_in_this_tab_will_be_stored_immediately" wrapText="true">
                      <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-alert-rhombus-outline" iconSize="18" />
+                        <FontIcon styleClass="c-icon-muted" iconLiteral="mdi2i-information-outline" iconSize="16" />
                      </graphic>
                      <VBox.margin>
-                        <Insets top="6.0" />
+                        <Insets top="4.0" />
                      </VBox.margin>
                   </Label>
                </children>
@@ -102,7 +98,7 @@
       </VBox>
    </center>
    <top>
-      <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <ToolBar fx:id="toolbar" BorderPane.alignment="CENTER" styleClass="floating-toolbar, floating-toolbar-transparent">
          <items>
             <Button fx:id="playlistManagerBtn" layoutX="26.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" text="%tables.tables_sidebar_playlists.playlist_manager" styleClass="sm-button, c-text-white">
                <graphic>
@@ -115,7 +111,7 @@
                   <Tooltip text="%tables.tables_sidebar_playlists.edit_playlist_assets" />
                </tooltip>
             </Button>
-            <Separator fx:id="playlistManagerSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator fx:id="playlistManagerSeparator" orientation="VERTICAL" />
             <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" text="%tables.tables_sidebar_playlists.edit_playlist_assets" styleClass="sm-button, c-text-white">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />

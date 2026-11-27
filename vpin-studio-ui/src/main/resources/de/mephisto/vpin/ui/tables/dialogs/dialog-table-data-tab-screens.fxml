@@ -3,117 +3,81 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="12.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataTabScreensController">
-   <padding>
-      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-   </padding>
-   <children>
-      <Label styleClass="default-title, c-text-white" text="%tables.table_data_tab_screens.screen_settings">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
-      <Label styleClass="preference-description, c-text-white" text="%tables.table_data_tab_screens.all_screens_hide_during_gameplay_you_can_keep">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
-      <VBox prefHeight="200.0" prefWidth="100.0" spacing="6.0">
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" styleClass="sm-transparent-scroll" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataTabScreensController">
+   <content>
+      <VBox fx:id="root" maxWidth="1.7976931348623157E308" spacing="14.0">
+         <padding>
+            <Insets bottom="14.0" left="12.0" right="12.0" top="12.0" />
+         </padding>
          <children>
-            <CheckBox fx:id="useEmuDefaultsCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.use_emulator_defaults">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <CheckBox fx:id="hideAllCheckbox" mnemonicParsing="false" prefHeight="20.0" prefWidth="198.0" text="%tables.table_data_tab_screens.hide_all">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <VBox.margin>
-                  <Insets bottom="12.0" />
-               </VBox.margin>
-            </CheckBox>
-            <Label styleClass="default-text, c-text-white" text="%tables.table_data_tab_screens.keep_the_following_displays_on">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <CheckBox fx:id="topperCheckbox" mnemonicParsing="false" text="%pref.validators_screens.topper">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </CheckBox>
-            <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.dmd_4_1_slim">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <CheckBox fx:id="backglassCheckbox" mnemonicParsing="false" text="%backglass.directb2s_admin.backglass">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <CheckBox fx:id="playfieldCheckbox" mnemonicParsing="false" text="%pref.validators_screens.playfield">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <HBox alignment="CENTER_LEFT" spacing="6.0">
+            <VBox maxWidth="1.7976931348623157E308" spacing="12.0" styleClass="sm-tile">
                <children>
-                  <CheckBox fx:id="musicCheckbox" mnemonicParsing="false" text="%backups.backup_restore.music">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </CheckBox>
-                  <Label>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <tooltip>
-                        <Tooltip prefWidth="300.0" text="%tables.table_data_tab_screens.check_this_only_if_your_table_uses_files" wrapText="true" />
-                     </tooltip>
-                  </Label>
+                  <VBox spacing="4.0">
+                     <children>
+                        <Label styleClass="sm-title" text="%tables.table_data_tab_screens.screen_settings" />
+                        <Label styleClass="sm-hint" text="%tables.table_data_tab_screens.all_screens_hide_during_gameplay_you_can_keep" wrapText="true" />
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER_LEFT" spacing="22.0">
+                     <children>
+                        <CheckBox fx:id="useEmuDefaultsCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%tables.table_data_tab_screens.use_emulator_defaults" />
+                        <CheckBox fx:id="hideAllCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%tables.table_data_tab_screens.hide_all" />
+                     </children>
+                  </HBox>
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label styleClass="sm-caption" text="%tables.table_data_tab_screens.keep_the_following_displays_on" />
+                        <GridPane hgap="22.0" styleClass="sm-inset" vgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="ALWAYS" percentWidth="33.3" />
+                              <ColumnConstraints hgrow="ALWAYS" percentWidth="33.3" />
+                              <ColumnConstraints hgrow="ALWAYS" percentWidth="33.3" />
+                           </columnConstraints>
+                           <children>
+                              <CheckBox fx:id="playfieldCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%pref.validators_screens.playfield" />
+                              <CheckBox fx:id="backglassCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%backglass.directb2s_admin.backglass" GridPane.columnIndex="1" />
+                              <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%tables.table_data_tab_screens.dmd_4_1_slim" GridPane.columnIndex="2" />
+                              <CheckBox fx:id="topperCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%pref.validators_screens.topper" GridPane.rowIndex="1" />
+                              <CheckBox fx:id="apronCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%tables.table_data_tab_screens.full_dmd_apron" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <CheckBox fx:id="wheelbarCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%tables.table_data_tab_screens.wheelbar" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              <CheckBox fx:id="loadingCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%pref.validators_screens.loading" GridPane.rowIndex="2" />
+                              <CheckBox fx:id="flyerCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%tables.table_data_tab_screens.flyer" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <CheckBox fx:id="helpCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%launcher.launcher.help" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                              <CheckBox fx:id="otherCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%tables.table_data_tab_screens.other" GridPane.rowIndex="3" />
+                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <children>
+                                    <CheckBox fx:id="musicCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%backups.backup_restore.music" />
+                                    <Label>
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="14" styleClass="c-icon-muted" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="%tables.table_data_tab_screens.check_this_only_if_your_table_uses_files" wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                           </padding>
+                        </GridPane>
+                     </children>
+                  </VBox>
                </children>
-            </HBox>
-            <CheckBox fx:id="apronCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.full_dmd_apron">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <CheckBox fx:id="wheelbarCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.wheelbar">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <CheckBox fx:id="loadingCheckbox" mnemonicParsing="false" text="%pref.validators_screens.loading">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <CheckBox fx:id="otherCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.other">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <CheckBox fx:id="flyerCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.flyer">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <CheckBox fx:id="helpCheckbox" mnemonicParsing="false" text="%launcher.launcher.help">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
+               <padding>
+                  <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+               </padding>
+            </VBox>
          </children>
       </VBox>
-   </children>
-</VBox>
+   </content>
+</ScrollPane>

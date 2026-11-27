@@ -1,12 +1,16 @@
 package de.mephisto.vpin.restclient.webhooks;
 
+import de.mephisto.vpin.restclient.Secret;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
 public class Webhook {
+  @Secret
   private String endpoint;
   private List<WebhookEventType> subscribe = new ArrayList<>(Arrays.asList(WebhookEventType.create, WebhookEventType.update, WebhookEventType.delete));
+  @Secret
   private Map<String, Object> parameters = new HashMap<>();
 
   public Map<String, Object> getParameters() {

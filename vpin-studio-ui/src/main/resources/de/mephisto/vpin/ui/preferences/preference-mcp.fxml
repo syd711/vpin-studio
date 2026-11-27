@@ -6,10 +6,13 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -46,6 +49,53 @@
                            </font>
                         </CheckBox>
                         <Label maxWidth="620.0" styleClass="checkbox-description, c-text-white" text="%pref.mcp.read_only_description" wrapText="true" />
+
+                        <VBox fx:id="groupsPanel" spacing="6.0">
+                           <VBox.margin>
+                              <Insets left="24.0" top="6.0" />
+                           </VBox.margin>
+                           <children>
+                              <Label styleClass="sm-small" text="%pref.mcp.groups" />
+                              <Label maxWidth="596.0" styleClass="preference-description, c-text-white" text="%pref.mcp.groups_description" wrapText="true" />
+                              <CheckBox fx:id="tablesCheckbox" styleClass="c-text-white" text="%pref.mcp.group.tables">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label maxWidth="596.0" styleClass="checkbox-description, c-text-white" text="%pref.mcp.group.tables_description" wrapText="true" />
+                              <CheckBox fx:id="competitionsCheckbox" styleClass="c-text-white" text="%pref.mcp.group.competitions">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label maxWidth="596.0" styleClass="checkbox-description, c-text-white" text="%pref.mcp.group.competitions_description" wrapText="true" />
+                              <CheckBox fx:id="playlistsCheckbox" styleClass="c-text-white" text="%pref.mcp.group.playlists">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label maxWidth="596.0" styleClass="checkbox-description, c-text-white" text="%pref.mcp.group.playlists_description" wrapText="true" />
+                              <CheckBox fx:id="mediaCheckbox" styleClass="c-text-white" text="%pref.mcp.group.media">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label maxWidth="596.0" styleClass="checkbox-description, c-text-white" text="%pref.mcp.group.media_description" wrapText="true" />
+                              <CheckBox fx:id="settingsCheckbox" styleClass="c-text-white" text="%pref.mcp.group.settings">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label maxWidth="596.0" styleClass="checkbox-description, c-text-white" text="%pref.mcp.group.settings_description" wrapText="true" />
+                              <CheckBox fx:id="systemCheckbox" styleClass="c-text-white" text="%pref.mcp.group.system">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label maxWidth="596.0" styleClass="checkbox-description, c-text-white" text="%pref.mcp.group.system_description" wrapText="true" />
+                           </children>
+                        </VBox>
+
                         <Label styleClass="sm-small" text="%pref.mcp.url">
                            <VBox.margin>
                               <Insets top="12.0" />
@@ -97,6 +147,36 @@
                            </VBox.margin>
                         </Label>
                         <Label maxWidth="620.0" styleClass="preference-description, c-text-white" text="%pref.mcp.tools_description" wrapText="true" />
+
+                        <Label styleClass="preference-subtitle" text="%pref.mcp.audit">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label maxWidth="620.0" styleClass="preference-description, c-text-white" text="%pref.mcp.audit_description" wrapText="true" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onAuditRefresh" styleClass="sm-button, sm-button-icon">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2r-refresh" iconSize="18" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%pref.mcp.audit.refresh" />
+                                 </tooltip>
+                              </Button>
+                              <Pane HBox.hgrow="ALWAYS" />
+                              <Button fx:id="auditClearBtn" mnemonicParsing="false" onAction="#onAuditClear" styleClass="sm-button" text="%pref.mcp.audit.clear" />
+                           </children>
+                        </HBox>
+                        <TableView fx:id="auditTable" prefHeight="300.0" prefWidth="800.0">
+                           <columns>
+                              <TableColumn fx:id="auditTimeColumn" prefWidth="130.0" text="%pref.mcp.audit.time" />
+                              <TableColumn fx:id="auditToolColumn" prefWidth="170.0" text="%pref.mcp.audit.tool" />
+                              <TableColumn fx:id="auditStatusColumn" prefWidth="100.0" text="%pref.mcp.audit.status" />
+                              <TableColumn fx:id="auditArgumentsColumn" prefWidth="190.0" text="%pref.mcp.audit.arguments" />
+                              <TableColumn fx:id="auditResultColumn" prefWidth="200.0" text="%pref.mcp.audit.result" />
+                           </columns>
+                        </TableView>
                      </children>
                   </VBox>
                </children>

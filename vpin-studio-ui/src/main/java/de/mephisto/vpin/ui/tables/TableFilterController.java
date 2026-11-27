@@ -464,8 +464,8 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     List<String> initialTags = client.getTaggingService().getTags();
     tagField = new TagField(initialTags);
     tagField.setAllowCustomTags(false);
-    tagField.setPreferredWidth(200);
-    tagField.setPreferredTagWidth(200);
+    tagField.setPreferredWidth(240);
+    tagField.setPreferredTagWidth(240);
     tagField.addListener(new ListChangeListener<String>() {
       @Override
       public void onChanged(Change<? extends String> c) {

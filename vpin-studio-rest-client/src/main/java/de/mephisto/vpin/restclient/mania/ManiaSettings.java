@@ -1,9 +1,12 @@
 package de.mephisto.vpin.restclient.mania;
 
+import de.mephisto.vpin.restclient.Secret;
+
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class ManiaSettings extends JsonSettings {
+  @Secret
   private String apiKey;
   private String cabinetUuid;
 

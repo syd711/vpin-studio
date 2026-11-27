@@ -129,3 +129,8 @@
 .text-field.designer-search {
     -fx-padding: 4 30 4 34;
 }
+
+/* search field with the media search hint icon laid over its right edge (asset manager) */
+.text-field.am-search-field {
+    -fx-padding: 5 30 5 8;
+}

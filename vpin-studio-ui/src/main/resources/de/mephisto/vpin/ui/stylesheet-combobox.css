@@ -15,26 +15,6 @@
     -fx-text-fill: -c-black;
 }
 
-#tableVersionsCombo .combo-box-popup .list-view .list-cell:odd {
-    -fx-background-color: -c-tile;
-}
-
-#tableVersionsCombo .combo-box-popup .list-view .list-cell:even {
-    -fx-background-color: -c-panel;
-}
-
-#tableVersionsCombo .combo-box-popup .list-view .list-cell:filled:hover{
-    -fx-background-color: -c-highlight-translucent;
-    -fx-text-fill: -c-white;
-}
-
-#tableVersionsCombo .combo-box-popup .list-view .list-cell:selected{
-    -fx-background-color: -c-primary;
-    -fx-text-fill: -c-white;
-}
-
-
-
 .combo-box .list-cell:hover {
     -fx-text-fill: -c-white;
     -fx-background-color: -c-primary;
@@ -45,21 +25,22 @@
     -fx-text-fill: -c-white;
 }
 
-/* combo boxes, date pickers and color pickers: same dark box as the text inputs,
+/* combo boxes, date pickers and color pickers: same translucent box as the buttons,
    30px high like the sm-button family (stylesheet-button.css) and the buttons of a floating toolbar */
 .combo-box-base {
     -fx-font-size: 14px;
     -fx-min-height: 30;
     -fx-pref-height: 30;
-    -fx-background-color: -c-inset;
+    -fx-background-color: -c-button;
     -fx-background-insets: 0;
     -fx-background-radius: 4;
-    -fx-border-color: -c-border;
+    -fx-border-color: -c-button-border;
     -fx-border-radius: 4;
 }
 
 .combo-box-base:hover {
-    -fx-background-color: -c-footer;
+    -fx-background-color: -c-button-hover;
+    -fx-border-color: -c-button-hover-border;
 }
 
 .combo-box-base:focused,

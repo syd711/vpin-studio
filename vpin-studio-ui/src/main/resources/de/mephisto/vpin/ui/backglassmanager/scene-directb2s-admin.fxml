@@ -29,7 +29,7 @@
                   <!-- toolbar rows: no extra spacing between them, like the table overview -->
                   <VBox>
                      <children>
-                        <HBox alignment="CENTER_LEFT" styleClass="sm-actionbar, sm-actionbar-flush">
+                        <HBox fx:id="toolbar" alignment="CENTER_LEFT" styleClass="sm-actionbar, sm-actionbar-flush">
                            <children>
                               <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="sm-button-icon">
                                  <graphic>
@@ -124,26 +124,8 @@
                      </children>
                   </VBox>
       
-                  <!-- status summary of the listed backglasses -->
-                  <HBox alignment="CENTER_LEFT" spacing="18.0">
-                     <children>
-                        <Label fx:id="statusReadyLabel" styleClass="sm-hint">
-                           <graphic>
-                              <FontIcon iconLiteral="mdi2c-circle" iconSize="10" styleClass="c-icon-ok" />
-                           </graphic>
-                        </Label>
-                        <Label fx:id="statusAttentionLabel" styleClass="sm-hint">
-                           <graphic>
-                              <FontIcon iconLiteral="mdi2c-circle" iconSize="10" styleClass="c-icon-error" />
-                           </graphic>
-                        </Label>
-                        <Label fx:id="statusDisabledLabel" styleClass="sm-hint">
-                           <graphic>
-                              <FontIcon iconLiteral="mdi2c-circle" iconSize="10" styleClass="c-icon-disabled" />
-                           </graphic>
-                        </Label>
-                     </children>
-                  </HBox>
+                  <!-- status filter pills of the listed backglasses (FilterPills) -->
+                  <HBox fx:id="statusPills" alignment="CENTER_LEFT" spacing="8.0" />
       
                   <StackPane fx:id="loaderStack" VBox.vgrow="ALWAYS">
                      <children>

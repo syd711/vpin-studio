@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.vpauthenticators;
 
+import de.mephisto.vpin.restclient.Secret;
+
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 
@@ -9,6 +11,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 public class AuthenticationSettings extends JsonSettings {
   private AuthenticationProvider authenticationProvider;
   private boolean authenticated;
+  @Secret
   private String token;
 
   public String getToken() {

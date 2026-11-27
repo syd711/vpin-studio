@@ -394,7 +394,7 @@
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
+            <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent">
                <items>
                   <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" styleClass="sm-button, c-text-white">
                      <font>
@@ -404,7 +404,7 @@
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+                  <Separator orientation="VERTICAL" />
                   <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
@@ -423,7 +423,7 @@
                   </Button>
                </items>
             </ToolBar>
-            <ToolBar>
+            <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent">
               <items>
                   <SplitMenuButton fx:id="pupPackEditorBtn" mnemonicParsing="false" onAction="#onPupPackEditor" styleClass="sm-button, external-component, c-text-white" text="%tables.tables_sidebar_pup_pack.pup_pack_editor">
                     <items>
@@ -440,7 +440,7 @@
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                      </graphic>
                   </SplitMenuButton>
-                  <Separator orientation="VERTICAL" prefWidth="12.0" />
+                  <Separator orientation="VERTICAL" />
                   <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onPupPackEnable" text="%pref.webhook_set.enabled" styleClass="c-text-white">
                      <font>
                         <Font size="14.0" />

@@ -22,6 +22,7 @@ import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import de.mephisto.vpin.ui.vpxz.dialogs.VPXZInstallationProgressModel;
+import javafx.scene.Node;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -31,7 +32,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -79,9 +79,6 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
   @FXML
   private Label labelCount;
-
-  @FXML
-  private Pane infoContainer;
 
   @FXML
   private Label connectionStatusLabel;
@@ -301,7 +298,6 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("vpxz", "vpxz", new VPXZColumnSorter(this));
 
-    infoContainer.setStyle("-fx-background-color: " + ThemeColors.DANGER);
     labelCount.managedProperty().bindBidirectional(labelCount.visibleProperty());
 
     openFolderButton.setDisable(true);
@@ -506,13 +502,13 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     }).thenAcceptLater(version -> {
       if (version == null) {
         connectionVersionLabel.setText("-");
-        connectionStatusLabel.setText("-");
-        infoContainer.setStyle("-fx-background-color: " + ThemeColors.DANGER);
+        connectionStatusLabel.setText(Messages.get("vpxz.vpxz.not_connected"));
+        connectionStatusLabel.getStyleClass().setAll("label", "sm-pill", "sm-pill-error");
       }
       else {
         connectionVersionLabel.setText(version.getVersion());
         connectionStatusLabel.setText(Messages.get("vpxz.vpxz.connected"));
-        infoContainer.setStyle("-fx-background-color: " + ThemeColors.SUCCESS_DARKER);
+        connectionStatusLabel.getStyleClass().setAll("label", "sm-pill", "sm-pill-ok");
       }
 
       if (version != null) {
@@ -560,6 +556,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME, descriptorRepresentation.getFilename()));
     }
     tablesController.getVpxzSidebarController().setVPXZDescriptor(newSelection);
+    tablesController.setSidebarTitle(tablesController.getVpxzSidebarController(), newSelection.map(VPXZDescriptorRepresentation::getFilename).orElse(null));
   }
 
   private List<VPXZDescriptorRepresentation> filterFiles(List<VPXZDescriptorRepresentation> descriptors) {
@@ -640,5 +637,12 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   @Override
   protected VPXZModel toModel(VPXZDescriptorRepresentation VPXZDescriptorRepresentation) {
     return new VPXZModel(VPXZDescriptorRepresentation);
+  }
+
+  /**
+   * The first toolbar row, the TablesController appends the view actions (preferences, show details panel) to it.
+   */
+  public ObservableList<Node> getToolbarItems() {
+    return toolbar.getItems();
   }
 }

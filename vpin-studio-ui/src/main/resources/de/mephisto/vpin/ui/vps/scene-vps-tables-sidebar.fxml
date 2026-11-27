@@ -43,6 +43,14 @@
                   <Tooltip text="%vps.vps_tables_sidebar.copy_vps_link" />
                </tooltip>
             </Button>
+            <Button mnemonicParsing="false" onAction="#onHideSidebar" styleClass="sm-button, sm-button-icon">
+               <graphic>
+                  <FontIcon iconLiteral="mdi2a-arrow-expand-right" iconSize="18" styleClass="c-icon-white" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="%tables.tables.hide_details_panel" />
+               </tooltip>
+            </Button>
          </children>
          <padding>
             <Insets bottom="14.0" left="18.0" right="18.0" top="16.0" />

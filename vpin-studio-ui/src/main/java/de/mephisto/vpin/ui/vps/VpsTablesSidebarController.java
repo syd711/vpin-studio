@@ -9,6 +9,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarVpsController;
 import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
 import javafx.beans.value.ChangeListener;
@@ -101,6 +102,11 @@ public class VpsTablesSidebarController extends BaseSideBarController<VpsTable> 
   @FXML
   private void onVpsBtn() {
     selection.ifPresent(table -> Studio.browse(VPS.getVpsTableUrl(table.getId())));
+  }
+
+  @FXML
+  private void onHideSidebar() {
+    TablesController.INSTANCE.toggleSidebar();
   }
 
   @FXML

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.mcp;
 
+import de.mephisto.vpin.restclient.mcp.McpToolGroup;
+
 import java.util.Map;
 import java.util.function.Function;
 
@@ -13,6 +15,7 @@ import java.util.function.Function;
  * @param readOnly    true if the tool does not change anything on the cabinet; the other tools are only offered when
  *                    the read-only mode is switched off in the MCP settings
  * @param destructive true if the tool deletes data that cannot be restored
+ * @param group       the permission group of a changing tool, null for reading tools
  * @param handler     executes the tool with the given arguments and returns a JSON serializable result
  */
 public record McpTool(String name,
@@ -21,17 +24,18 @@ public record McpTool(String name,
                       Map<String, Object> inputSchema,
                       boolean readOnly,
                       boolean destructive,
+                      McpToolGroup group,
                       Function<McpArguments, Object> handler) {
 
   public static McpTool read(String name, String title, String description, Map<String, Object> inputSchema, Function<McpArguments, Object> handler) {
-    return new McpTool(name, title, description, inputSchema, true, false, handler);
+    return new McpTool(name, title, description, inputSchema, true, false, null, handler);
   }
 
-  public static McpTool write(String name, String title, String description, Map<String, Object> inputSchema, Function<McpArguments, Object> handler) {
-    return new McpTool(name, title, description, inputSchema, false, false, handler);
+  public static McpTool write(McpToolGroup group, String name, String title, String description, Map<String, Object> inputSchema, Function<McpArguments, Object> handler) {
+    return new McpTool(name, title, description, inputSchema, false, false, group, handler);
   }
 
-  public static McpTool delete(String name, String title, String description, Map<String, Object> inputSchema, Function<McpArguments, Object> handler) {
-    return new McpTool(name, title, description, inputSchema, false, true, handler);
+  public static McpTool delete(McpToolGroup group, String name, String title, String description, Map<String, Object> inputSchema, Function<McpArguments, Object> handler) {
+    return new McpTool(name, title, description, inputSchema, false, true, group, handler);
   }
 }

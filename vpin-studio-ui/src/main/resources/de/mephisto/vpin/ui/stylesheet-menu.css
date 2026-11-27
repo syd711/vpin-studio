@@ -1,9 +1,30 @@
+/*
+ * Popup menus: context menus and the drop-downs of MenuButton / SplitMenuButton (UI-STYLEGUIDE.md, "Context menus").
+ * Context menus built in Java use de.mephisto.vpin.ui.util.ContextMenus (ctx-* classes below).
+ */
+.context-menu {
+    -fx-min-width: 160px;
+    -fx-background-color: -c-border, -c-tile;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 6, 5;
+    -fx-padding: 4;
+    -fx-effect: dropshadow(gaussian, -c-shadow, 16, 0.2, 0, 4);
+}
+
+.context-menu .separator {
+    -fx-padding: 4 6 4 6;
+}
+
+.context-menu .separator:horizontal .line {
+    -fx-border-color: -c-panel-border transparent transparent transparent;
+    -fx-border-insets: 0;
+}
+
 .menu-item {
     -fx-min-width: 160px;
-    -fx-padding: 6 6 6 6;
-    -fx-text-fill: -c-white;
-    -fx-background: -c-darkest;
-    -fx-background-color: -c-darkest;
+    -fx-padding: 6 12 6 10;
+    -fx-background-color: transparent;
+    -fx-background-radius: 4;
 }
 
 .menu-item .label {
@@ -11,24 +32,111 @@
     -fx-text-fill: -c-white;
 }
 
-.menu-item .label:hover {
-    -fx-font-size: 14px;
-    -fx-background: -c-panel;
-    -fx-background-color: -c-panel;
-    -fx-text-fill: -c-white;
+.menu-item:focused, .menu-item:hover, .menu:showing {
+    -fx-background-color: -c-control;
 }
 
-.custom-menu-item, .custom-menu-item:hover{
-   -fx-background-color: -c-panel;
-   -fx-padding: 0 0 0 0;
+.menu-item:disabled {
+    -fx-opacity: 1;
+}
+
+.menu-item:disabled .label {
+    -fx-text-fill: -c-disabled;
+}
+
+/* shortcut hint on the right */
+.menu-item .accelerator-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: -c-subtle;
+    -fx-padding: 0 0 0 28;
+}
+
+.menu-item:focused .accelerator-text {
+    -fx-text-fill: -c-muted;
+}
+
+.menu-item:disabled .accelerator-text {
+    -fx-text-fill: -c-disabled;
+}
+
+/* sub menu arrow */
+.menu > .right-container > .arrow {
+    -fx-background-color: -c-muted;
+}
+
+.menu:focused > .right-container > .arrow, .menu:showing > .right-container > .arrow {
+    -fx-background-color: -c-white;
+}
+
+.check-menu-item:checked > .left-container > .check,
+.radio-menu-item:checked > .left-container > .radio {
+    -fx-background-color: -c-warn;
+}
+
+/* --- ContextMenus builder --- */
+
+/* 16px item icon, muted, white on the focused row */
+.menu-item .ctx-icon {
+    -fx-icon-color: -c-muted;
+    -fx-icon-size: 16px;
+}
+
+.menu-item:focused .ctx-icon, .menu:showing .ctx-icon {
+    -fx-icon-color: -c-white;
+}
+
+.menu-item:disabled .ctx-icon {
+    -fx-icon-color: -c-disabled;
+}
+
+/* the primary action of a menu (launch) */
+.menu-item .ctx-icon.ctx-icon-ok, .menu-item:focused .ctx-icon.ctx-icon-ok {
+    -fx-icon-color: -c-ok;
+}
+
+.menu-item:disabled .ctx-icon.ctx-icon-ok {
+    -fx-icon-color: -c-disabled;
+}
+
+/* destructive actions (delete) */
+.menu-item.ctx-danger .label, .menu-item.ctx-danger .ctx-icon {
+    -fx-text-fill: -c-error;
+    -fx-icon-color: -c-error;
+}
+
+.menu-item.ctx-danger:focused {
+    -fx-background-color: -c-error-bg;
+}
+
+.menu-item.ctx-danger:disabled .label, .menu-item.ctx-danger:disabled .ctx-icon {
+    -fx-text-fill: -c-disabled;
+    -fx-icon-color: -c-disabled;
+}
+
+/* header row naming the selection, never focusable (the item is disabled) */
+.menu-item.ctx-caption-item {
+    -fx-padding: 4 12 6 10;
+}
+
+.menu-item.ctx-caption-item .label, .menu-item.ctx-caption-item:disabled .label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-subtle;
+}
+
+/* --- custom items (job and drop-in lists in MenuButton popups) --- */
+
+.custom-menu-item, .custom-menu-item:hover {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 0 0;
 }
 
 .custom-menu-item .label:hover {
-    -fx-background-color: -c-panel;
+    -fx-background-color: transparent;
 }
 
-.dropin-menu-item, .dropin-menu-item:hover{
-   -fx-padding: 3 3 3 3;
+.dropin-menu-item, .dropin-menu-item:hover {
+    -fx-padding: 3 3 3 3;
 }
 
 .dropin-menu-item .label:hover {
@@ -39,16 +147,6 @@
     -fx-border-color: -c-focus-border;
     -fx-border-width: 1px;
     -fx-border-radius: 3px;
-}
-
-.context-menu {
-    -fx-min-width: 160px;
-    -fx-background-color: -c-panel;
-    -fx-text-fill: -fx-font-1;
-}
-
-.menu-item:focused {
-    -fx-background-color: -fx-base-5;
 }
 
 .split-menu-button .arrow {

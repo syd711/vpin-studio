@@ -1,322 +1,268 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="300.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableFilterController">
+<!-- filter panel: see UI-STYLEGUIDE.md "Filter panel" -->
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="286.0" styleClass="sm-panel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableFilterController">
    <children>
-      <VBox>
+      <!-- header -->
+      <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
          <children>
-            <BorderPane>
-               <left>
-                  <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
-                     <children>
-                        <Hyperlink onAction="#onReset" text="%backglass.directb2s_admin_filter.reset_all">
-                           <HBox.margin>
-                              <Insets left="-5.0" top="-9.0" />
-                           </HBox.margin>
-                        </Hyperlink>
-                     </children>
-                     <BorderPane.margin>
-                        <Insets top="7.0" />
-                     </BorderPane.margin>   
-                  </HBox>
-               </left>
-               <right>
-                  <Button mnemonicParsing="false" onAction="#toggle" BorderPane.alignment="CENTER" styleClass="sm-button, sm-button-icon">
-                     <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2w-window-close" iconSize="12" />
-                     </graphic>
-                  </Button>
-               </right>
-               <VBox.margin>
-                  <Insets bottom="12.0" />
-               </VBox.margin>
-            </BorderPane>
+            <Label maxWidth="1.7976931348623157E308" styleClass="sm-caption" text="%common.filter" HBox.hgrow="ALWAYS" />
+            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onReset" styleClass="sm-button, sm-button-small" text="%backglass.directb2s_admin_filter.reset_all" />
+            <Button mnemonicParsing="false" onAction="#toggle" styleClass="sm-button, sm-button-small">
+               <graphic>
+                  <FontIcon iconLiteral="mdi2a-arrow-expand-left" iconSize="14" styleClass="c-icon-white" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
+               </tooltip>
+            </Button>
          </children>
-      </VBox>
-      <ScrollPane hbarPolicy="NEVER">
-         <content>
-            <VBox fx:id="titlePaneRoot" prefWidth="300.0" spacing="6.0">
-               <children>
+         <padding>
+            <Insets bottom="10.0" left="16.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
 
-                  <Label styleClass="default-title" text="%preferences.table_validators">
-                     <VBox.margin>
-                        <Insets top="3.0" />
-                     </VBox.margin>
-                  </Label>
-                  <CheckBox fx:id="missingAssetsCheckBox" layoutX="21.0" layoutY="143.0" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.missing_table_assets">
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                     <tooltip>
-                        <Tooltip text="%tables.tables_overview_filter.show_tables_that_are_missing_one_or_more" />
-                     </tooltip>
-                  </CheckBox>
-                  <HBox fx:id="configurationIssuesFilter" spacing="6.0">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox spacing="22.0">
+               <children>
+                  <!-- validation -->
+                  <VBox spacing="8.0">
                      <children>
-                        <Label styleClass="default-text" text="%tables.tables_overview_filter.validation_issue_type">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </Label>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" spacing="6.0">
-                     <children>
-                        <ComboBox fx:id="issueTypesCombo" prefWidth="200.0" />
-                        <Label>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                           </graphic>
+                        <Label styleClass="sm-caption" text="%preferences.table_validators" />
+                        <CheckBox fx:id="missingAssetsCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.missing_table_assets" wrapText="true">
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="%tables.tables_overview_filter.changing_this_filter_requires_a_full_validation_of" wrapText="true" />
+                              <Tooltip text="%tables.tables_overview_filter.show_tables_that_are_missing_one_or_more" />
                            </tooltip>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </Label>
+                        </CheckBox>
+                        <VBox spacing="6.0">
+                           <children>
+                              <HBox fx:id="configurationIssuesFilter" alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label styleClass="sm-small" text="%tables.tables_overview_filter.validation_issue_type" />
+                                    <Label>
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="14" styleClass="c-icon-muted" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="%tables.tables_overview_filter.changing_this_filter_requires_a_full_validation_of" wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <ComboBox fx:id="issueTypesCombo" maxWidth="1.7976931348623157E308" />
+                           </children>
+                        </VBox>
                      </children>
-                  </HBox>
-                  <VBox fx:id="tableAssetFilters" spacing="6.0">
+                  </VBox>
+
+                  <!-- table assets -->
+                  <VBox fx:id="tableAssetFilters" spacing="8.0">
                      <children>
-                        <Label styleClass="default-title" text="%tables.tables_overview_filter.table_asset_filters">
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <CheckBox fx:id="withBackglassCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.backglass_available">
+                        <Label styleClass="sm-caption" text="%tables.tables_overview_filter.table_asset_filters" />
+                        <CheckBox fx:id="withBackglassCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.backglass_available">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_a_backglass_configured" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withPupPackCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.pup_pack_available">
+                        <CheckBox fx:id="withPupPackCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.pup_pack_available">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_a_pup_pack_installed" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withIniCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.ini_file_available">
+                        <CheckBox fx:id="withIniCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.ini_file_available">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_a_vpx_ini_configuration" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withResCheckBox" layoutX="10.0" layoutY="176.0" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.res_file_available">
+                        <CheckBox fx:id="withResCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.res_file_available">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_a_res_resolution_file" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withPovCheckBox" layoutX="10.0" layoutY="138.0" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.pov_file_available">
+                        <CheckBox fx:id="withPovCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.pov_file_available">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_a_pov_point_of" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withAltColorCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.alt_color_available">
+                        <CheckBox fx:id="withAltColorCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.alt_color_available">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_alt_color_colorized_rom" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withAltSoundCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.alt_sound_available">
+                        <CheckBox fx:id="withAltSoundCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.alt_sound_available">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_alt_sound_support" />
                            </tooltip>
                         </CheckBox>
                      </children>
                   </VBox>
-                  <VBox fx:id="configurationFilters" spacing="6.0">
+
+                  <!-- configuration -->
+                  <VBox fx:id="configurationFilters" spacing="8.0">
                      <children>
-                        <Label styleClass="default-title" text="%tables.tables_overview_filter.configuration_filters">
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <CheckBox fx:id="noHighscoreSettingsCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.missing_highscore_settings">
+                        <Label styleClass="sm-caption" text="%tables.tables_overview_filter.configuration_filters" />
+                        <CheckBox fx:id="noHighscoreSettingsCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.missing_highscore_settings" wrapText="true">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_no_highscore_settings_configured" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="noVpsMappingTableCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.missing_vps_table_entry">
+                        <CheckBox fx:id="noVpsMappingTableCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.missing_vps_table_entry" wrapText="true">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_are_not_mapped_to_a_2" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="noVpsMappingVersionCheckBox" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.missing_vps_version_entry">
+                        <CheckBox fx:id="noVpsMappingVersionCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.missing_vps_version_entry" wrapText="true">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_are_not_mapped_to_a" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withNVOffsetCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.nvoffset_set">
+                        <CheckBox fx:id="withNVOffsetCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.nvoffset_set" wrapText="true">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_an_nvram_offset_configured" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withAliasCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.rom_alias_set">
+                        <CheckBox fx:id="withAliasCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.rom_alias_set" wrapText="true">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_a_rom_alias_configured" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="noHighscoreSupportCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.highscores_not_supported">
+                        <CheckBox fx:id="noHighscoreSupportCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.highscores_not_supported" wrapText="true">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_for_which_highscore_tracking_is_not" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="iScoredCompetitionCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.iscored_game">
+                        <CheckBox fx:id="iScoredCompetitionCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.iscored_game" wrapText="true">
                            <tooltip>
                               <Tooltip text="%tables.tables_overview_filter.show_tables_that_are_linked_to_an_iscored" />
                            </tooltip>
                         </CheckBox>
                      </children>
                   </VBox>
-                  <Label layoutX="10.0" layoutY="608.0" styleClass="default-title" text="%tables.tables_overview_filter.tags_filter">
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
-                  </Label>
-                  <VBox fx:id="tagsFilter" spacing="6.0" />
-                  <CheckBox fx:id="todoTagsCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.todo_tags">
-                     <tooltip>
-                        <Tooltip text="%tables.tables_overview_filter.todo_tags.tooltip" />
-                     </tooltip>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </CheckBox>
-                  <Label layoutX="21.0" layoutY="244.0" styleClass="default-title" text="%tables.tables_overview_filter.data_filters">
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
-                  </Label>
-                  <VBox fx:id="statusSettings">
+
+                  <!-- tags: TagField added by TableFilterController -->
+                  <VBox spacing="8.0">
                      <children>
-                        <Label text="%tables.tables_overview_filter.table_status" styleClass="c-text-white">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="6.0" />
-                           </VBox.margin>
-                        </Label>
-                        <ComboBox fx:id="statusCombo" prefHeight="30.0" />
+                        <Label styleClass="sm-caption" text="%tables.tables_overview_filter.tags_filter" />
+                        <VBox fx:id="tagsFilter" spacing="6.0" />
+                        <CheckBox fx:id="todoTagsCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.todo_tags" wrapText="true">
+                           <tooltip>
+                              <Tooltip text="%tables.tables_overview_filter.todo_tags.tooltip" />
+                           </tooltip>
+                        </CheckBox>
                      </children>
                   </VBox>
-                  <Label layoutX="10.0" layoutY="655.0" text="%tables.table_data_tab_comments.comments" styleClass="c-text-white">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </Label>
-                  <ComboBox fx:id="commentsCombo" layoutX="10.0" layoutY="681.0" prefHeight="30.0" />
-                  <VBox fx:id="metadataFilters" spacing="6.0">
+
+                  <!-- data -->
+                  <VBox spacing="8.0">
                      <children>
-                        <Label styleClass="default-title" text="%tables.tables_overview_filter.metadata_filters">
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label styleClass="default-text" text="%tables.tables_overview_filter.table_type" />
-                        <TextField fx:id="gameTypesField" promptText="%tables.tables_overview_filter.table_type_prompt">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin></TextField>
-                        <Label styleClass="default-text" text="%tables.tables_overview_filter.manufacturer" />
-                        <TextField fx:id="manufacturersField" promptText="%tables.tables_overview_filter.manufacturer_prompt">
-                           <font>
-                              <Font size="14.0" />
-                           </font></TextField>
-                        <CheckBox fx:id="excludeManufacturersCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.exclude_manufacturer" />
-                        <Label styleClass="default-text" text="%tables.tables_overview_filter.min_rating" />
-                        <ComboBox fx:id="minRatingCombo" prefHeight="30.0" />
-                        <Label styleClass="default-text" text="%tables.tables_overview_filter.year_range" />
-                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                        <Label styleClass="sm-caption" text="%tables.tables_overview_filter.data_filters" />
+                        <VBox fx:id="statusSettings" spacing="6.0">
                            <children>
-                              <TextField fx:id="yearFromField" prefWidth="90.0" promptText="%tables.tables_overview_filter.year_from">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font></TextField>
-                              <Label styleClass="default-text" text="–" />
-                              <TextField fx:id="yearToField" prefWidth="90.0" promptText="%tables.tables_overview_filter.year_to">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font></TextField>
+                              <Label styleClass="sm-small" text="%tables.tables_overview_filter.table_status" />
+                              <ComboBox fx:id="statusCombo" maxWidth="1.7976931348623157E308" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0">
+                           <children>
+                              <Label styleClass="sm-small" text="%tables.table_data_tab_comments.comments" />
+                              <ComboBox fx:id="commentsCombo" maxWidth="1.7976931348623157E308" />
+                           </children>
+                        </VBox>
+                        <HBox fx:id="notPlayedSettings" alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="notPlayedCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.not_played_yet">
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_never_been_launched" />
+                                 </tooltip>
+                              </CheckBox>
+                              <Label>
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="14" styleClass="c-icon-muted" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="%tables.tables_overview_filter.based_on_launches_from_pinup_popper" wrapText="true" />
+                                 </tooltip>
+                              </Label>
                            </children>
                         </HBox>
+                        <VBox fx:id="vpsFilters" spacing="8.0">
+                           <children>
+                              <CheckBox fx:id="vpsUpdatesCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.vps_updates_available" wrapText="true">
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_overview_filter.show_tables_for_which_a_vps_table_update" />
+                                 </tooltip>
+                              </CheckBox>
+                              <CheckBox fx:id="versionUpdatesCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.new_version_available" wrapText="true">
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_overview_filter.show_tables_for_which_a_new_table_version" />
+                                 </tooltip>
+                              </CheckBox>
+                              <CheckBox fx:id="notBackedUpCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.not_backed_up" wrapText="true">
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_not_been_backed_up" />
+                                 </tooltip>
+                              </CheckBox>
+                           </children>
+                        </VBox>
                      </children>
                   </VBox>
-                  <HBox fx:id="notPlayedSettings" alignment="CENTER_LEFT" spacing="6.0" styleClass="default-text">
+
+                  <!-- metadata -->
+                  <VBox fx:id="metadataFilters" spacing="8.0">
                      <children>
-                        <CheckBox fx:id="notPlayedCheckBox" mnemonicParsing="false" text="%tables.tables_overview_filter.not_played_yet">
-                           <tooltip>
-                              <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_never_been_launched" />
-                           </tooltip>
-                        </CheckBox>
-                        <Label>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip prefWidth="300.0" text="%tables.tables_overview_filter.based_on_launches_from_pinup_popper" wrapText="true" />
-                           </tooltip>
-                        </Label>
+                        <Label styleClass="sm-caption" text="%tables.tables_overview_filter.metadata_filters" />
+                        <VBox spacing="6.0">
+                           <children>
+                              <Label styleClass="sm-small" text="%tables.tables_overview_filter.table_type" />
+                              <TextField fx:id="gameTypesField" promptText="%tables.tables_overview_filter.table_type_prompt" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0">
+                           <children>
+                              <Label styleClass="sm-small" text="%tables.tables_overview_filter.manufacturer" />
+                              <TextField fx:id="manufacturersField" promptText="%tables.tables_overview_filter.manufacturer_prompt" />
+                              <CheckBox fx:id="excludeManufacturersCheckBox" mnemonicParsing="false" styleClass="sm-text" text="%tables.tables_overview_filter.exclude_manufacturer" wrapText="true" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0">
+                           <children>
+                              <Label styleClass="sm-small" text="%tables.tables_overview_filter.min_rating" />
+                              <ComboBox fx:id="minRatingCombo" maxWidth="1.7976931348623157E308" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0">
+                           <children>
+                              <Label styleClass="sm-small" text="%tables.tables_overview_filter.year_range" />
+                              <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                 <children>
+                                    <TextField fx:id="yearFromField" prefColumnCount="4" promptText="%tables.tables_overview_filter.year_from" HBox.hgrow="ALWAYS" />
+                                    <Label styleClass="sm-hint" text="–" />
+                                    <TextField fx:id="yearToField" prefColumnCount="4" promptText="%tables.tables_overview_filter.year_to" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
                      </children>
-                  </HBox>
-                  <VBox fx:id="vpsFilters" spacing="6.0">
-                     <children>
-                        <CheckBox fx:id="vpsUpdatesCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.vps_updates_available">
-                           <tooltip>
-                              <Tooltip text="%tables.tables_overview_filter.show_tables_for_which_a_vps_table_update" />
-                           </tooltip>
-                        </CheckBox>
-                        <CheckBox fx:id="versionUpdatesCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.new_version_available">
-                           <tooltip>
-                              <Tooltip text="%tables.tables_overview_filter.show_tables_for_which_a_new_table_version" />
-                           </tooltip>
-                        </CheckBox>
-                        <CheckBox fx:id="notBackedUpCheckbox" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.not_backed_up">
-                           <tooltip>
-                              <Tooltip text="%tables.tables_overview_filter.show_tables_that_have_not_been_backed_up" />
-                           </tooltip>
-                        </CheckBox>
-                     </children>
-                     <VBox.margin>
-                        <Insets bottom="6.0" />
-                     </VBox.margin>
                   </VBox>
                </children>
+               <padding>
+                  <Insets bottom="18.0" left="16.0" right="16.0" top="16.0" />
+               </padding>
             </VBox>
          </content>
       </ScrollPane>
    </children>
-   <styleClass>
-      <String fx:value="base-component" />
-      <String fx:value="filter-component" />
-   </styleClass>
-   <padding>
-      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-   </padding>
 </VBox>

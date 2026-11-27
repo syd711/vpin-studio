@@ -646,7 +646,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     copyTableVersionBtn.setDisable(true);
 
     tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
-    tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
+    tableVersionsCombo.setButtonCell(new VpsTableVersionCell(true));
 
     filterCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       this.tableVersionsCombo.valueProperty().removeListener(this);

@@ -23,6 +23,8 @@ import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -52,6 +54,9 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     implements Initializable, StudioFXController, StudioEventListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+  @FXML
+  private ToolBar toolbar;
 
   @FXML
   private ComboBox<VpsTableFormat> emulatorCombo;
@@ -491,5 +496,12 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       versionId = (gameByVpsTable != null) ? gameByVpsTable.getExtTableVersionId() : null;
       updates = (gameByVpsTable != null) ? gameByVpsTable.getVpsUpdates() : null;
     }
+  }
+
+  /**
+   * The first toolbar row, the TablesController appends the view actions (preferences, show details panel) to it.
+   */
+  public ObservableList<Node> getToolbarItems() {
+    return toolbar.getItems();
   }
 }

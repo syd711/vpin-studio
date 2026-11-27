@@ -358,7 +358,7 @@
       </ScrollPane>
     </center>
    <top>
-      <ToolBar BorderPane.alignment="CENTER">
+      <ToolBar BorderPane.alignment="CENTER" styleClass="floating-toolbar, floating-toolbar-transparent">
          <items>
             <Button fx:id="uploadVbsBtn" mnemonicParsing="false" onAction="#onVbsUpload" text="%backups.backup_upload.upload" styleClass="sm-button">
                <font>
@@ -368,7 +368,7 @@
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </Button>
-            <Separator layoutX="630.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator orientation="VERTICAL" />
             <SplitMenuButton fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%tables.tables_sidebar_scriptdata.edit_script" styleClass="sm-button">
               <items>
                 <MenuItem fx:id="editInternalBtn" mnemonicParsing="false" onAction="#onEditInternal" text="%tables.tables_sidebar_scriptdata.edit_script_internal_editor">
@@ -398,7 +398,7 @@
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                </graphic>
             </Label>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator orientation="VERTICAL" />
             <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onScan" text="%tables.tables_sidebar_highscores.scan" styleClass="sm-button, c-text-white">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#onScanAll" text="%tables.tables_overview.scan_all">
@@ -421,7 +421,7 @@
                   <Font size="14.0" />
                </font>
             </SplitMenuButton>
-            <Separator layoutX="120.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator orientation="VERTICAL" />
             <Button fx:id="vpSaveEditBtn" layoutX="136.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="sm-button, external-component, c-text-white" text="%tables.tables_sidebar_highscores.vpreg_stg">
                <font>
                   <Font size="14.0" />
