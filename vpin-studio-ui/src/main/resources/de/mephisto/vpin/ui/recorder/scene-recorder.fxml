@@ -49,6 +49,7 @@
                                     <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
                                  </tooltip>
                               </Button>
+                              <Separator orientation="VERTICAL" />
                               <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                                  <children>
                                     <TextField fx:id="searchTextField" minWidth="140.0" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" promptText="%cards.highscore_cards.search_table" />
@@ -59,7 +60,9 @@
                                     </Button>
                                  </children>
                               </StackPane>
+                              <Separator orientation="VERTICAL" />
                               <ComboBox fx:id="emulatorCombo" prefWidth="180.0" promptText="%recorder.recorder.all_vpx_tables" />
+                              <Separator orientation="VERTICAL" />
                               <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="170.0" />
                            </children>
                         </HBox>
@@ -78,7 +81,7 @@
                                     <Tooltip text="%recorder.recorder.auto_select_all_mandatory_and_missing_video_screens" />
                                  </tooltip>
                               </Button>
-                              <Separator orientation="VERTICAL" prefHeight="30.0" />
+                              <Separator orientation="VERTICAL" />
                               <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableEdit" styleClass="sm-button-icon">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2l-lead-pencil" iconSize="18" styleClass="c-icon-white" />
@@ -95,7 +98,7 @@
                                     <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
                                  </tooltip>
                               </Button>
-                              <Separator orientation="VERTICAL" prefHeight="30.0" />
+                              <Separator orientation="VERTICAL" />
                               <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" styleClass="sm-danger-button" text="%recorder.recorder.start">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2r-record" iconSize="18" styleClass="c-icon-error" />

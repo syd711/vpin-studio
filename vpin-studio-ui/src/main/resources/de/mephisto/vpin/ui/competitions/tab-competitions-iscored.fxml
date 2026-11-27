@@ -67,7 +67,7 @@
                         <Tooltip text="%competitions.competitions_iscored.reload_and_invalidate_game_room_caches" />
                      </tooltip>
                         </Button>
-                  <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" />
                   <StackPane alignment="CENTER_RIGHT">
                      <children>
                               <TextField fx:id="textfieldSearch" prefWidth="160.0" promptText="%competitions.competitions_iscored.subscription_search">
@@ -85,7 +85,7 @@
                         </Button>
                      </children>
                   </StackPane>
-                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Separator orientation="VERTICAL" />
                   <ComboBox fx:id="gameRoomsCombo" prefWidth="260.0" />
                   <Button fx:id="syncBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSync" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
@@ -120,7 +120,7 @@
                         <Tooltip text="%competitions.competitions_iscored.open_game_room_preferences" />
                      </tooltip>
                   </Button>
-                  <Separator fx:id="playBtnSeparator" layoutX="809.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator fx:id="playBtnSeparator" layoutX="809.0" layoutY="10.0" orientation="VERTICAL" />
                   <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                      <font>
                         <Font size="14.0" />
@@ -132,7 +132,7 @@
                         <Tooltip text="%competitions.competitions_iscored.kill_all_emulator_and_frontend_processes_ctrl_k" />
                      </tooltip>
                   </Button>
-                  <Separator layoutX="272.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="272.0" layoutY="10.0" orientation="VERTICAL" />
                         <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" styleClass="sm-button, sm-button-icon, c-text-white">
                             <font>
                                 <Font size="14.0" />
@@ -155,7 +155,7 @@
                         <Tooltip text="%competitions.competitions_iscored.delete_the_selected_competition_note_that_it_might" />
                      </tooltip>
                         </Button>
-                  <Separator layoutX="867.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="867.0" layoutY="10.0" orientation="VERTICAL" />
                   <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />
@@ -178,7 +178,7 @@
                         <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
                      </tooltip>
                   </Button>
-                  <Separator layoutX="946.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="946.0" layoutY="10.0" orientation="VERTICAL" />
                   <Button fx:id="eventLogBtn" layoutX="1004.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEventLog" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />

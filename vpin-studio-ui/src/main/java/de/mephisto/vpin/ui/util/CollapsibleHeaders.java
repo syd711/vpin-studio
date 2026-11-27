@@ -12,9 +12,9 @@ import javafx.scene.layout.Region;
 public class CollapsibleHeaders {
 
   /**
-   * title padding (8 + 8), chevron (~14 + 7), left bar / border (3 + 1) and some air
+   * title padding (12 + 12), chevron (10 + 12), border (1 + 1) and some air
    */
-  public static final double HEADER_INSET = 44;
+  public static final double HEADER_INSET = 52;
 
   public static void fill(TitledPane pane) {
     if (pane != null && pane.getGraphic() instanceof Region header) {

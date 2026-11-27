@@ -52,7 +52,7 @@
       </StackPane>
    </center>
    <top>
-      <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
+      <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent" BorderPane.alignment="CENTER">
          <items>
             <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
@@ -76,7 +76,7 @@
                   <Tooltip text="%vps.vps_tables.reload_all_vps_data" />
                </tooltip>
             </Button>
-            <Separator layoutX="229.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Separator layoutX="229.0" layoutY="10.0" orientation="VERTICAL" />
             <StackPane alignment="CENTER_RIGHT">
                <children>
                   <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%cards.highscore_cards.search_table">
@@ -94,7 +94,7 @@
                   </Button>
                </children>
             </StackPane>
-            <Separator layoutX="229.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Separator layoutX="229.0" layoutY="10.0" orientation="VERTICAL" />
 
             <ComboBox fx:id="emulatorCombo" prefWidth="150.0" />
             <Button fx:id="tableDataBtn" layoutX="245.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableEdit" styleClass="sm-button, sm-button-icon, c-text-white">
@@ -119,7 +119,7 @@
                   <Tooltip text="%cards.highscore_cards.open_table_in_table_overview" />
                </tooltip>
             </Button>
-            <Separator layoutX="333.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator layoutX="333.0" layoutY="10.0" orientation="VERTICAL" />
             <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="sm-button, link-component, c-text-white" text="%vps.vps_tables.open_table">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />

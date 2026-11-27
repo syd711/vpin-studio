@@ -38,6 +38,7 @@
 .floating-toolbar.floating-toolbar-transparent {
     -fx-background-color: transparent;
     -fx-padding: 0 0 12 0;
+    -fx-spacing: 8;
 }
 
 /* action bar on top of a tab (System Manager component tabs); its buttons get the sm-button look, see stylesheet-button.css */
@@ -47,18 +48,20 @@
     -fx-spacing: 8;
 }
 
-/* first action bar of a tab: same top / left inset as the floating-toolbar of the other tabs of the Tables section
-   (VPS, Statistics, Backups, …; modena's default tool-bar padding) */
+/* first action bar of a tab: same top / left inset as the floating-toolbar-transparent of the other tabs of the
+   Tables section (VPS, Statistics, Backups, …): flush with the tab content */
 .sm-actionbar.sm-actionbar-flush {
-    -fx-padding: 0.416667em 0.5em 0 0.5em;
+    -fx-padding: 0;
 }
 
 /* further action bar rows below an sm-actionbar-flush keep the same left inset */
 .sm-actionbar.sm-actionbar-inset {
-    -fx-padding: 12 0.5em 0 0.5em;
+    -fx-padding: 12 0 0 0;
 }
 
-.sm-actionbar .separator {
+/* the same item / separator spacing in every toolbar of a section (sm-actionbar and floating-toolbar-transparent):
+   8px between items, a separator adds 4px on each side; separators in FXML carry no prefWidth / prefHeight */
+.sm-actionbar .separator:vertical, .floating-toolbar-transparent .separator:vertical {
     -fx-padding: 0 4 0 4;
 }
 

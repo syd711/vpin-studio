@@ -238,19 +238,22 @@ configuration conflicts:
 ## 6. Tiles and layout building blocks
 
 ### Collapsible panels (`stylesheet-titledpane.css`)
-Every `Accordion` / `TitledPane` gets this look automatically, it was taken from the designer layer list:
-- **Collapsed** = a transparent row on the tile, hover `-c-row-hover`, `-c-subtle` chevron on the left, hand cursor.
-- **Expanded** = a borderless `-c-footer` card (radius 6) with only a 3px orange (`-c-warn`) bar on its left; the content
-  is transparent (scroll panes and `accordion-container` inside included), so the card color shows through.
+Every `Accordion` / `TitledPane` gets this look automatically:
+- **Collapsed** = a transparent row with a 1px `-c-panel-border` divider below, hover `-c-row-hover`, thin `-c-subtle`
+  chevron on the left (points right), hand cursor.
+- **Expanded** = a `-c-row-hover` card (1px `-c-selected` border, radius 8, 4px air above and below), chevron points
+  down, the header is separated from the content by a 1px `-c-selected` divider and its leading `c-icon-muted` icon
+  turns orange (`-c-warn`). The content is transparent (scroll panes and `accordion-container` inside included), so
+  the card color shows through.
 - **Header** = a Region in the `graphic`, never the plain `text` attribute (the text can not be made bold):
   `HBox` (spacing 10, `CENTER_LEFT`) with an 18px `c-icon-muted` icon + `Label` `sm-collapsible-title` (14px bold white),
   then an `HBox.hgrow` spacer and the actions right-aligned (`sm-button-icon` / the plain open-folder classes, check boxes).
   Call `CollapsibleHeaders.fill(accordion)` (or `fill(titledPane)`) in the controller so the header spans the pane width.
 - The `Accordion` gets an 8px padding inside its tile; the sidebar around it is an `sm-tile, sm-tile-bordered`. A fixed
-  content width grows the sidebar by 20px (8 + 8 padding, 3 + 1 bar/border), e.g. tables sidebar 620px for 600px panels.
+  content width grows the sidebar by 18px (8 + 8 padding, 1 + 1 border), e.g. tables sidebar 620px for 600px panels.
 - Collapsibles built in Java (`tables/vps/VpsSection`) use the same look: VBox `sm-collapsible` with the `:expanded`
-  pseudo class, header HBox `sm-collapsible-header` (padding `10 8`) + `sm-collapsible-title` + 16px `c-icon-subtle`
-  chevron. Nested in an expanded card, an expanded collapsible turns `-c-inset` to stay visible.
+  pseudo class, header HBox `sm-collapsible-header` (padding `11 12`) + `sm-collapsible-title` + 16px `c-icon-subtle`
+  chevron. Nested in an expanded card, an expanded collapsible turns `-c-footer` to stay visible.
 - Designer only (`designer-layers`): eye / lock header buttons, struck-through hidden layers, 12px `-c-subtle` field labels.
 
 ### Achievements view
@@ -312,8 +315,12 @@ Every `Accordion` / `TitledPane` gets this look automatically, it was taken from
   items without icons (`preference-button-selected`). The rules are scoped `.pref-nav .button.preference-button` so the
   global `.button` / `.scroll-pane` defaults (imported later) do not override them.
 - **Toolbars**: every `ToolBar` gets `styleClass="floating-toolbar"` (flat `#222222`, no border, radius 6; `floating-toolbar-inverted`
-  on a `#222222` background; add `floating-toolbar-transparent` for a toolbar without its own strip directly on a tile, e.g.
-  the Competitions tabs). Exceptions: the toolbars in the table sidebars (`tables/scene-tables-sidebar-*.fxml`) and `sm-actionbar`.
+  on a `#222222` background). Every toolbar that sits directly on a tile, in particular all toolbars of a `tile-tabs`
+  section (Tables, Competitions, Achievements, Designer), also gets `floating-toolbar-transparent`: no strip, flush with
+  the tab content, 12px gap below. `sm-actionbar-flush` / `-inset` rows use the same inset. Spacing is identical in all of
+  them: 8px between items, vertical `Separator`s get 4px on each side from the CSS and carry no `prefWidth` / `prefHeight`
+  in FXML; an `HBox` group inside a toolbar uses `spacing="8.0"`. Search field / combo groups are framed by separators
+  the same way as in the table overview (filter, reload | search | emulator | playlist). Exceptions: the toolbars in the table sidebars (`tables/scene-tables-sidebar-*.fxml`) and `sm-actionbar`.
 - **Action bar** (`sm-actionbar`): top bar of a component tab and of the table overview; any Button and SplitMenuButton
   inside gets the `sm-button` look automatically. Destructive buttons add `sm-danger-button`, the clear button of a
   search field keeps `ghost-icon-button`.

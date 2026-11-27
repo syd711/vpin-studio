@@ -36,7 +36,7 @@
             </TabPane>
 
             <!-- page level toolbar: moved below the tabs by HighscoreCardsController -->
-            <ToolBar fx:id="toolbar" styleClass="floating-toolbar">
+            <ToolBar fx:id="toolbar" styleClass="floating-toolbar, floating-toolbar-transparent">
                <items>
                   <HBox fx:id="modeBox" alignment="CENTER_LEFT" styleClass="sm-segmented">
                      <children>
@@ -55,7 +55,7 @@
                         </ToggleButton>
                      </children>
                   </HBox>
-                  <Separator orientation="VERTICAL" prefWidth="12.0" />
+                  <Separator orientation="VERTICAL" />
                   <Label styleClass="c-text-white" text="%cards.template_editor.template" />
                   <ComboBox fx:id="templateCombo" prefWidth="220.0" />
                   <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" styleClass="sm-button, sm-button-icon">
@@ -98,7 +98,7 @@
                         <Tooltip text="%cards.template_editor.delete_template" />
                      </tooltip>
                   </Button>
-                  <Separator orientation="VERTICAL" prefWidth="12.0" />
+                  <Separator orientation="VERTICAL" />
                   <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" styleClass="sm-button, sm-button-icon">
                      <graphic>
                         <FontIcon iconLiteral="mdi2e-eye-outline" iconSize="18" styleClass="c-icon-white" />
@@ -115,7 +115,7 @@
                         <Tooltip text="%cards.template_editor.open_frontend_system_folder_for_the_target_folder" />
                      </tooltip>
                   </Button>
-                  <Separator orientation="VERTICAL" prefWidth="12.0" />
+                  <Separator orientation="VERTICAL" />
                   <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerate" styleClass="sm-button" text="%cards.designer.generate_this_card">
                      <graphic>
                         <FontIcon iconLiteral="mdi2i-image-outline" iconSize="18" styleClass="c-icon-white" />
@@ -130,9 +130,9 @@
                         <Tooltip text="%cards.template_editor.writes_the_given_image_for_the_selected_screen" />
                      </tooltip>
                   </Button>
-                  <HBox fx:id="mediaPlayerControl" alignment="CENTER_LEFT" spacing="6.0">
+                  <HBox fx:id="mediaPlayerControl" alignment="CENTER_LEFT" spacing="8.0">
                      <children>
-                        <Separator orientation="VERTICAL" prefWidth="12.0" />
+                        <Separator orientation="VERTICAL" />
                         <Button mnemonicParsing="false" onAction="#onStart" styleClass="sm-button, sm-button-icon">
                            <graphic>
                               <FontIcon iconLiteral="mdi2p-play" iconSize="18" styleClass="c-icon-white" />

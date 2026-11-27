@@ -46,7 +46,7 @@
                                 <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                         </Button>
-                  <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" />
                   <StackPane alignment="CENTER_RIGHT">
                      <children>
                               <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="200.0" promptText="%competitions.competitions_discord.competition_search">
@@ -64,7 +64,7 @@
                         </Button>
                      </children>
                   </StackPane>
-                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Separator orientation="VERTICAL" />
                         <Button layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="%competitions.competitions_discord.add" styleClass="sm-button, c-text-white">
                             <font>
                                 <Font size="14.0" />
@@ -89,7 +89,7 @@
                                 <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-forwardburger" iconSize="18" />
                             </graphic>
                         </Button>
-                  <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" />
                         <Button fx:id="finishBtn" layoutX="610.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFinish" text="%competitions.competitions_discord.finish" styleClass="sm-button, c-text-white">
                             <font>
                                 <Font size="14.0" />
@@ -98,7 +98,7 @@
                                 <FontIcon styleClass="c-icon-white" iconLiteral="bi-stop" iconSize="18" />
                             </graphic>
                         </Button>
-                        <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" />
                         <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="sm-danger-button, c-text-danger">
                             <font>
                                 <Font size="14.0" />

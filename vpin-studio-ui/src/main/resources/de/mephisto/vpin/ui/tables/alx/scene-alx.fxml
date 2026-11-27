@@ -97,9 +97,6 @@
                      </VBox>
                      <VBox fx:id="tileList" minWidth="0.0" prefWidth="200.0" spacing="14.0" HBox.hgrow="ALWAYS" />
                      </children>
-                     <padding>
-                        <Insets top="12.0" />
-                     </padding>
                   </HBox>
                </content>
             </ScrollPane>
@@ -107,7 +104,7 @@
       </StackPane>
    </center>
    <top>
-      <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
+      <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent" BorderPane.alignment="CENTER">
         <items>
             <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
@@ -120,9 +117,9 @@
                   <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
                </tooltip>
             </Button>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+            <Separator orientation="VERTICAL" />
             <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="%recorder.recorder.all_vpx_tables" />
-            <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+            <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" />
             <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                <font>
                   <Font size="14.0" />

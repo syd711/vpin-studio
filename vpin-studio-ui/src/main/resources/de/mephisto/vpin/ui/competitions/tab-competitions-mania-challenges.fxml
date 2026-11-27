@@ -54,7 +54,7 @@
                                 <Tooltip text="%competitions.competitions_weekly.reload_and_invalidate_caches" />
                             </tooltip>
                         </Button>
-                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Separator orientation="VERTICAL" />
                         <StackPane alignment="CENTER_RIGHT">
                             <children>
                                 <TextField fx:id="textfieldSearch" prefWidth="180.0" promptText="%competitions.competitions_weekly.challenge_search">
@@ -72,7 +72,7 @@
                                 </Button>
                             </children>
                         </StackPane>
-                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Separator orientation="VERTICAL" />
                         <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" styleClass="sm-button, sm-button-icon, c-text-white">
                             <font>
                                 <Font size="14.0" />
@@ -95,7 +95,7 @@
                                 <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
                             </tooltip>
                         </Button>
-                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Separator orientation="VERTICAL" />
                         <Button fx:id="eventLogBtn" mnemonicParsing="false" onAction="#onEventLog" styleClass="sm-button, sm-button-icon, c-text-white">
                             <font>
                                 <Font size="14.0" />
@@ -107,7 +107,7 @@
                                 <Tooltip text="%competitions.competitions_iscored.open_event_log" />
                             </tooltip>
                         </Button>
-                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Separator orientation="VERTICAL" />
                         <MenuButton fx:id="participationBtn" mnemonicParsing="false" text="%competitions.competitions_mania.participation" styleClass="sm-button, c-text-white">
                             <font>
                                 <Font size="14.0" />
@@ -125,7 +125,7 @@
                                 <MenuItem fx:id="optInServerItem" mnemonicParsing="false" onAction="#onOptInServer" />
                             </items>
                         </MenuButton>
-                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Separator orientation="VERTICAL" />
                         <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                             <font>
                                 <Font size="14.0" />

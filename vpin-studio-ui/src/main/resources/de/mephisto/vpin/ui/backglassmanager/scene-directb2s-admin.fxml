@@ -47,6 +47,7 @@
                                     <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
                                  </tooltip>
                               </Button>
+                              <Separator orientation="VERTICAL" />
                               <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                                  <children>
                                     <TextField fx:id="searchTextField" minWidth="140.0" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" promptText="%backglass.directb2s_admin.search_backglass" />
@@ -57,6 +58,7 @@
                                     </Button>
                                  </children>
                               </StackPane>
+                              <Separator orientation="VERTICAL" />
                               <ComboBox fx:id="emulatorCombo" prefWidth="180.0" />
                               <Button fx:id="emulatorBtn" mnemonicParsing="false" onAction="#onEmulatorManager" styleClass="sm-button-icon">
                                  <graphic>
@@ -66,6 +68,7 @@
                                     <Tooltip text="%backglass.directb2s_admin.open_emulator_manager" />
                                  </tooltip>
                               </Button>
+                              <Separator orientation="VERTICAL" />
                               <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="170.0" />
                            </children>
                         </HBox>
@@ -87,7 +90,7 @@
                                     <Tooltip text="%backglass.directb2s_admin.rename_the_backglass_including_versions" />
                                  </tooltip>
                               </Button>
-                              <Separator orientation="VERTICAL" prefHeight="30.0" />
+                              <Separator orientation="VERTICAL" />
                               <SplitMenuButton fx:id="resBtn" mnemonicParsing="false" onAction="#onResEdit" text="%backglass.directb2s_admin.res_editor">
                                  <items>
                                     <MenuItem mnemonicParsing="false" onAction="#onResBulkEdit" text="%backglass.directb2s_admin.res_bulk_edit">

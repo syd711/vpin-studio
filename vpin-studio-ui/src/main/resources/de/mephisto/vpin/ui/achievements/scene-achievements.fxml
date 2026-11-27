@@ -19,7 +19,7 @@
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.AchievementsController">
    <fx:define>
       <!-- shared by all tabs, moved into the top of the selected tab by the controller -->
-      <ToolBar styleClass="floating-toolbar" fx:id="toolbar" prefHeight="40.0">
+      <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent" fx:id="toolbar" prefHeight="40.0">
          <items>
             <Button mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon, c-text-white">
                <graphic>
@@ -32,14 +32,14 @@
                   <Tooltip text="%achievements.reload" />
                </tooltip>
             </Button>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator orientation="VERTICAL" />
             <Label text="%achievements.player" styleClass="c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
             <ComboBox fx:id="playerCombo" prefWidth="240.0" />
-            <Separator fx:id="syncSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator fx:id="syncSeparator" orientation="VERTICAL" />
             <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSync" text="%achievements.sync" styleClass="sm-button, c-text-white">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-sync" iconSize="18" />
@@ -48,7 +48,7 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Separator fx:id="tableSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator fx:id="tableSeparator" orientation="VERTICAL" />
             <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="sm-button, sm-button-icon, c-text-white">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-edit" iconSize="18" />
@@ -88,7 +88,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator orientation="VERTICAL" />
             <Button mnemonicParsing="false" onAction="#onSettings" styleClass="sm-button, sm-button-icon, c-text-white">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />

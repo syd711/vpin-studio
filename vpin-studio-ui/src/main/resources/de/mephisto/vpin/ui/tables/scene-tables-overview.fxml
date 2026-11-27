@@ -229,7 +229,7 @@
                         <Tooltip text="%tables.tables_overview.execute_a_full_reload_of_all_tables_from" />
                      </tooltip>
                   </Button>
-                  <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                  <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" />
                   <StackPane alignment="CENTER_RIGHT">
                      <children>
                         <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="180.0" promptText="%cards.highscore_cards.search_table">
@@ -247,7 +247,7 @@
                         </Button>
                      </children>
                   </StackPane>
-                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                  <Separator orientation="VERTICAL" />
                   <ComboBox fx:id="emulatorCombo" prefWidth="190.0" promptText="%recorder.recorder.all_vpx_tables" />
                   <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" styleClass="sm-button, sm-button-icon, c-text-white">
                      <graphic>
@@ -271,7 +271,7 @@
                         <Tooltip text="%tables.tables_overview.reload_selected_emulator" />
                      </tooltip>
                   </Button>
-                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                  <Separator orientation="VERTICAL" />
       
                   <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="180.0" promptText="%tables.tables_overview.select_playlist" />
                   <Button fx:id="playlistManagerBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" styleClass="sm-button, sm-button-icon, c-text-white">
@@ -286,7 +286,7 @@
                      </tooltip>
                   </Button>
       
-                  <Separator fx:id="assetManagerSeparator" layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                  <Separator fx:id="assetManagerSeparator" layoutX="277.0" layoutY="10.0" orientation="VERTICAL" />
                   <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" styleClass="sm-button, sm-button-icon, c-text-white">
                      <graphic>
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-format-list-bulleted-type" iconSize="18" />
@@ -338,7 +338,7 @@
                         <Tooltip text="%components.doftester.dof_tester.edit_table_data_ctrl_o" />
                      </tooltip>
                   </Button>
-                  <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                  <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" />
                   <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" styleClass="sm-danger-button">
                      <font>
                            <Font size="14.0" />
@@ -352,7 +352,7 @@
                   </Button>
                   <HBox fx:id="importUploadButtonGroup" alignment="CENTER_LEFT" spacing="8.0">
                      <children>
-                        <Separator fx:id="importSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                        <Separator fx:id="importSeparator" orientation="VERTICAL" />
                         <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onBackup" styleClass="sm-button, sm-button-icon, c-text-white">
                            <font>
                               <Font size="14.0" />
@@ -401,7 +401,7 @@
                   </HBox>
                   <HBox fx:id="validationButtonGroup" alignment="CENTER_LEFT" spacing="8.0">
                      <children>
-                        <Separator fx:id="mappingSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                        <Separator fx:id="mappingSeparator" orientation="VERTICAL" />
                         <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan" styleClass="sm-button, sm-button-icon">
                            <items>
                               <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="%tables.tables_overview.scan_all">
