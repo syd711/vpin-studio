@@ -10,12 +10,25 @@ public class NavigationView {
   private Pane navigationButton;
   private String fxml;
   private StudioFXController controller;
+  private NavigationItem host;
 
   public NavigationView(NavigationItem item, Class controllerClass, Pane navigationButton, String fxml) {
     this.item = item;
     this.controllerClass = controllerClass;
     this.navigationButton = navigationButton;
     this.fxml = fxml;
+  }
+
+  /**
+   * A view that is a page of the host view, it shows the host's root and uses its controller.
+   */
+  public NavigationView(NavigationItem item, Pane navigationButton, NavigationItem host) {
+    this(item, null, navigationButton, null);
+    this.host = host;
+  }
+
+  public NavigationItem getHost() {
+    return host;
   }
 
   public NavigationItem getItem() {

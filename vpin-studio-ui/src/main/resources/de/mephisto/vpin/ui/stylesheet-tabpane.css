@@ -162,6 +162,15 @@
     -fx-padding: 14 16 14 16;
 }
 
+/* tile-tabs-headless: the pages are selected through the navigation (Tables), the tile shows its own header row */
+.tab-pane.tile-tabs-headless > .tab-header-area {
+    visibility: hidden;
+    -fx-min-height: 0;
+    -fx-pref-height: 0;
+    -fx-max-height: 0;
+    -fx-padding: 0;
+}
+
 /* tabs without pages (Designer): the tile lays out the content below the header itself */
 .tab-pane.primary-tabs.tile-tabs-bare > .tab-content-area {
     -fx-padding: 0;

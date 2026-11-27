@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -33,62 +34,99 @@
                </children>
             </HBox>
 
-            <VBox fx:id="itemList" spacing="2.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <Label styleClass="nav-section-caption" text="%navigation.section.library" />
-                  <HBox fx:id="tablesBtn" alignment="CENTER_LEFT" onMousePressed="#onTablesClick" spacing="12.0" styleClass="nav-item">
+            <!-- scrolls on small window heights -->
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox fx:id="itemList" spacing="2.0">
                      <children>
-                        <FontIcon iconLiteral="mdi2f-format-list-bulleted" iconSize="18" />
-                        <Label text="%navigation.tables" />
-                     </children>
-                  </HBox>
-                  <HBox fx:id="playersBtn" alignment="CENTER_LEFT" onMousePressed="#onPlayersClick" spacing="12.0" styleClass="nav-item">
-                     <children>
-                        <FontIcon iconLiteral="mdi2a-account-multiple-outline" iconSize="18" />
-                        <Label text="%navigation.players" />
-                     </children>
-                  </HBox>
+                        <Label styleClass="nav-section-caption" text="%navigation.section.library" />
+                        <HBox fx:id="tablesBtn" alignment="CENTER_LEFT" onMousePressed="#onTablesClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2f-format-list-bulleted" iconSize="18" />
+                              <Label text="%navigation.tables" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="backglassesBtn" alignment="CENTER_LEFT" onMousePressed="#onBackglassesClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2i-image-frame" iconSize="18" />
+                              <Label text="%tables.tables.backglasses" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="vpsTablesBtn" alignment="CENTER_LEFT" onMousePressed="#onVpsTablesClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
+                              <Label text="%tables.tables.vps_tables" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="statisticsBtn" alignment="CENTER_LEFT" onMousePressed="#onStatisticsClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2c-chart-box-outline" iconSize="18" />
+                              <Label text="%tables.tables.table_statistics" />
+                           </children>
+                        </HBox>
 
-                  <Label styleClass="nav-section-caption" text="%navigation.section.compete" />
-                  <HBox fx:id="dashboardBtn" alignment="CENTER_LEFT" onMousePressed="#onDashboardClick" spacing="12.0" styleClass="nav-item">
-                     <children>
-                        <FontIcon iconLiteral="mdi2s-star-outline" iconSize="18" />
-                        <Label text="%navigation.achievements" />
-                     </children>
-                  </HBox>
-                  <HBox fx:id="competitionsBtn" alignment="CENTER_LEFT" onMousePressed="#onCompetitionsClick" spacing="12.0" styleClass="nav-item">
-                     <children>
-                        <FontIcon iconLiteral="mdi2t-trophy-outline" iconSize="18" />
-                        <Label text="%navigation.competitions" />
-                     </children>
-                  </HBox>
+                        <Label styleClass="nav-section-caption" text="%navigation.section.compete" />
+                        <HBox fx:id="playersBtn" alignment="CENTER_LEFT" onMousePressed="#onPlayersClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2a-account-multiple-outline" iconSize="18" />
+                              <Label text="%navigation.players" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="dashboardBtn" alignment="CENTER_LEFT" onMousePressed="#onDashboardClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2s-star-outline" iconSize="18" />
+                              <Label text="%navigation.achievements" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="competitionsBtn" alignment="CENTER_LEFT" onMousePressed="#onCompetitionsClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2t-trophy-outline" iconSize="18" />
+                              <Label text="%navigation.competitions" />
+                           </children>
+                        </HBox>
 
-                  <Label styleClass="nav-section-caption" text="%navigation.section.studio" />
-                  <HBox fx:id="cardsBtn" alignment="CENTER_LEFT" onMousePressed="#onHighscoreCardsClick" spacing="12.0" styleClass="nav-item">
-                     <children>
-                        <FontIcon iconLiteral="mdi2p-palette-outline" iconSize="18" />
-                        <Label text="%navigation.designer" />
+                        <Label fx:id="studioCaption" styleClass="nav-section-caption" text="%navigation.section.studio" />
+                        <HBox fx:id="cardsBtn" alignment="CENTER_LEFT" onMousePressed="#onHighscoreCardsClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2p-palette-outline" iconSize="18" />
+                              <Label text="%navigation.designer" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="recorderBtn" alignment="CENTER_LEFT" onMousePressed="#onRecorderClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2v-video-outline" iconSize="18" />
+                              <Label text="%navigation.media_recorder" />
+                           </children>
+                        </HBox>
+
+                        <Label styleClass="nav-section-caption" text="%navigation.section.system" />
+                        <HBox fx:id="backupsBtn" alignment="CENTER_LEFT" onMousePressed="#onBackupsClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2b-backup-restore" iconSize="18" />
+                              <Label text="%tables.tables.table_backups" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="vpxMobileBtn" alignment="CENTER_LEFT" onMousePressed="#onVpxMobileClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2c-cellphone-link" iconSize="18" />
+                              <Label text="%tables.tables.vpx_mobile" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="systemManagerBtn" alignment="CENTER_LEFT" onMousePressed="#onSystemClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon fx:id="systemManagerIcon" iconLiteral="mdi2r-remote-desktop" iconSize="18" />
+                              <Label text="%navigation.system_manager" />
+                              <Pane HBox.hgrow="ALWAYS" />
+                              <Label fx:id="updateBadge" styleClass="nav-badge" visible="false" managed="false" />
+                           </children>
+                        </HBox>
                      </children>
-                  </HBox>
-                  <HBox fx:id="systemManagerBtn" alignment="CENTER_LEFT" onMousePressed="#onSystemClick" spacing="12.0" styleClass="nav-item">
-                     <children>
-                        <FontIcon fx:id="systemManagerIcon" iconLiteral="mdi2r-remote-desktop" iconSize="18" />
-                        <Label text="%navigation.system_manager" />
-                        <Pane HBox.hgrow="ALWAYS" />
-                        <Label fx:id="updateBadge" styleClass="nav-badge" visible="false" managed="false" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
+                  </VBox>
+               </content>
+            </ScrollPane>
 
             <VBox fx:id="footer" spacing="2.0" styleClass="nav-footer">
                <children>
-                  <HBox fx:id="settingsBtn" alignment="CENTER_LEFT" onMousePressed="#onSettingsClick" spacing="12.0" styleClass="nav-item">
-                     <children>
-                        <FontIcon iconLiteral="mdi2c-cog-outline" iconSize="18" />
-                        <Label text="%navigation.settings" />
-                     </children>
-                  </HBox>
                   <HBox fx:id="collapseBtn" alignment="CENTER_LEFT" onMousePressed="#onCollapseClick" spacing="12.0" styleClass="nav-item">
                      <children>
                         <FontIcon fx:id="collapseIcon" iconLiteral="mdi2c-chevron-double-left" iconSize="18" />

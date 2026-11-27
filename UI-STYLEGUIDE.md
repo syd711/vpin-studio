@@ -118,6 +118,7 @@ and 30px height, so always set the class. `sm-button` on a MenuButton / SplitMen
 |-------|------|-----|
 | `sm-button` | `#333333` fill, `#444444` border, white 14px, padding `5 12` | Default action, also every button in an `sm-actionbar` (styled automatically) |
 | `sm-button, sm-button-icon` | same, square padding `5 7` | Icon-only actions (refresh, copy) next to inputs |
+| `sm-collapsible-button` | default button look, 10px font, default padding (no fixed height) | Icon actions in a collapsible header, optionally with `folder-component` / `external-component` / `link-component` |
 | `sm-button, sm-button-small` | same look, 12px, padding `3 9` | Secondary inline actions next to small text / pills, e.g. "Set as installed", "Reset version", "Ignore version" |
 | `sm-accent-button` | orange fill `#DD9646`, dark text `#1A1305`, bold, padding `5 14` | The **one** primary action of a panel (install, save) — at most one per panel, usually in the `sm-footer` |
 | `submit-button` | same as `sm-accent-button` | Primary button of a dialog footer (OK, Save, Save & close); also the commons alert / confirmation dialogs |
@@ -242,17 +243,19 @@ Every `Accordion` / `TitledPane` gets this look automatically:
 - **Collapsed** = a transparent row with a 1px `-c-panel-border` divider below, hover `-c-row-hover`, thin `-c-subtle`
   chevron on the left (points right), hand cursor.
 - **Expanded** = a `-c-row-hover` card (1px `-c-selected` border, radius 8, 4px air above and below), chevron points
-  down, the header is separated from the content by a 1px `-c-selected` divider and its leading `c-icon-muted` icon
-  turns orange (`-c-warn`). The content is transparent (scroll panes and `accordion-container` inside included), so
+  down, the header flows into the content without a divider and its leading `c-icon-muted` icon turns orange
+  (`-c-warn`). The content is transparent (scroll panes and `accordion-container` inside included), so
   the card color shows through.
 - **Header** = a Region in the `graphic`, never the plain `text` attribute (the text can not be made bold):
   `HBox` (spacing 10, `CENTER_LEFT`) with an 18px `c-icon-muted` icon + `Label` `sm-collapsible-title` (14px bold white),
-  then an `HBox.hgrow` spacer and the actions right-aligned (`sm-button-icon` / the plain open-folder classes, check boxes).
+  then an `HBox.hgrow` spacer and the actions right-aligned (check boxes, icon buttons with `sm-collapsible-button`,
+  10px font and default padding, optionally combined with `folder-component` / `external-component` / `link-component`).
+  Header padding `6 12`.
   Call `CollapsibleHeaders.fill(accordion)` (or `fill(titledPane)`) in the controller so the header spans the pane width.
 - The `Accordion` gets an 8px padding inside its tile; the sidebar around it is an `sm-tile, sm-tile-bordered`. A fixed
   content width grows the sidebar by 18px (8 + 8 padding, 1 + 1 border), e.g. tables sidebar 620px for 600px panels.
 - Collapsibles built in Java (`tables/vps/VpsSection`) use the same look: VBox `sm-collapsible` with the `:expanded`
-  pseudo class, header HBox `sm-collapsible-header` (padding `11 12`) + `sm-collapsible-title` + 16px `c-icon-subtle`
+  pseudo class, header HBox `sm-collapsible-header` (padding `6 12`) + `sm-collapsible-title` + 16px `c-icon-subtle`
   chevron. Nested in an expanded card, an expanded collapsible turns `-c-footer` to stay visible.
 - Designer only (`designer-layers`): eye / lock header buttons, struck-through hidden layers, 12px `-c-subtle` field labels.
 
@@ -298,18 +301,21 @@ Every `Accordion` / `TitledPane` gets this look automatically:
 - **Inspector** (Screens): `sm-panel` VBox, spacing 16, sections with `sm-caption` headings.
 - **Tabs** (`stylesheet-tabpane.css`): every TabPane in the Studio gets `styleClass="primary-tabs"` — underlined tabs,
   14px bold `#BDBDBD` labels, white when selected/hovered, 2px orange underline.
-  Section tab panes (Tables, Competitions, Achievements, Designer) sit in a `sm-tile, sm-tile-bordered` wrapper (1px
+  Section tab panes (Competitions, Achievements, Designer) sit in a `sm-tile, sm-tile-bordered` wrapper (1px
   `-c-panel-border` hairline) and get `primary-tabs, tile-tabs`: text-only tabs (no icons), header padding `8 16 0 16`,
   a full-width `-c-panel-border` divider and `14 16 14 16` page padding. Tabs without pages (Designer) add
   `tile-tabs-bare` and the wrapper lays out the content itself. `sm-tile`s inside the wrapper are drawn as panels
   (`-c-panel` + hairline) so cards stay visible on the tile background; tiles on an `sm-panel` keep the tile look.
+  The Tables view selects its pages through the navigation: its TabPane adds `tile-tabs-headless` (no tab header) and
+  the tile starts with a `sm-divider` header row (`sm-title` page name + settings / sidebar icon buttons).
   The only exception is the System Manager's root TabPane, which uses `parent-tabs`: flat folder tabs on a header strip
   one step lighter than the content, 5px top radius, the selected tab takes the content color (`#222222` page inside a
   subpanel) so it merges with the page. Strip/content colors come from `-sm-tab-strip` / `-sm-tab-content`.
 - **Navigation sidebar** (`scene-navigation.fxml`, `nav-*` classes): 230px `#222222` panel (64px when collapsed,
   persisted in `LocalUISettings`), header with 40px round avatar + `sm-title` + `sm-small` system name,
   12px bold `#9A9A9A` section captions, items = 18px icon (`#BDBDBD`) + 14px label, `#333333` hover, selected =
-  `#3D2B17` fill with orange icon and bold label; count badge in warn colors; Settings / Collapse pinned at the bottom.
+  `#3D2B17` fill with orange icon and bold label; count badge in warn colors; the item list scrolls on small window
+  heights, Collapse is pinned at the bottom (the preferences are opened from the toolbar).
   The preference navigations (`scene-preferences.fxml`, `mania/scene-mania-preferences.fxml`) use the same look:
   `pref-nav` ScrollPane panel (280px, like the sidebar but **without border**), `preference-section` captions, `preference-button`
   items without icons (`preference-button-selected`). The rules are scoped `.pref-nav .button.preference-button` so the

@@ -104,9 +104,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private Button stopBtn;
 
   @FXML
-  private Button assetDeleteBtn;
-  @FXML
-  private Button assetViewBtn;
+  private Button dataManagerBtn;
   @FXML
   private Button assetManagerBtn;
 
@@ -179,8 +177,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private Pane nagBar;
 
-  @FXML
-  private BorderPane mediaPane;
 
 
   /**
@@ -220,63 +216,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
 
   @FXML
-  private void onAssetDelete(ActionEvent e) {
+  private void onDataManager() {
     if (gameRepresentation.isPresent()) {
-      GameRepresentation game = gameRepresentation.get();
-
-      Stage stage = (Stage) ((Labeled) e.getSource()).getScene().getWindow();
-      FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(this.gameRepresentation.get().getId());
-      FrontendMediaItemRepresentation defaultMediaItem = null;
-      VPinScreen screen = VPinScreen.Wheel;
-      if (getDesignMode().equals(DesignMode.wheel)) {
-        defaultMediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
-      }
-      else if (getDesignMode().equals(DesignMode.highscoreCard)) {
-        CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-        String popperScreen = cardSettings.getPopperScreen();
-        screen = StringUtils.isNotEmpty(popperScreen) ? VPinScreen.valueOfScreen(popperScreen) : null;
-        if (screen != null) {
-          defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
-        }
-      }
-
-      if (defaultMediaItem != null) {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("msg.delete", defaultMediaItem.getName()), Messages.get("dialog.the_selected_media_will_be_deleted"), null, Messages.get("common.delete"));
-        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-
-          client.getGameMediaService().deleteMedia(game.getId(), false, screen, defaultMediaItem.getName());
-
-          Platform.runLater(() -> {
-            EventManager.getInstance().notifyTableChange(game.getId(), null);
-            Platform.runLater(() -> {
-              refreshDefaultAssetPreview();
-              refreshPreview(gameRepresentation);
-            });
-          });
-        }
-      }
-    }
-  }
-
-  @FXML
-  private void onAssetPreview() {
-    if (gameRepresentation.isPresent()) {
-      FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(this.gameRepresentation.get().getId());
-      if (frontendMedia != null) {
-        if (getDesignMode().equals(DesignMode.wheel)) {
-          FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
-          TableDialogs.openMediaDialog(stage, defaultMediaItem);
-        }
-        else if (getDesignMode().equals(DesignMode.highscoreCard)) {
-          CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-          String popperScreen = cardSettings.getPopperScreen();
-          VPinScreen screen = StringUtils.isNotEmpty(popperScreen) ? VPinScreen.valueOfScreen(popperScreen) : null;
-          if (screen != null) {
-            FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
-            TableDialogs.openMediaDialog(stage, defaultMediaItem);
-          }
-        }
-      }
+      TableDialogs.openTableDataDialog(null, gameRepresentation.get());
     }
   }
 
@@ -561,58 +503,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       templateBeanBinder.setPaused(false);
 
       cardPreview.setTemplate(cardTemplate);
-      refreshDefaultAssetPreview();
       refreshPreview(this.gameRepresentation);
     }
     catch (Exception e) {
       LOG.error("Failed to select {}: {}", cardTemplate, e.getMessage(), e);
-    }
-  }
-
-  private void refreshDefaultAssetPreview() {
-    assetDeleteBtn.setDisable(true);
-    assetViewBtn.setDisable(true);
-    assetManagerBtn.setDisable(this.gameRepresentation.isEmpty());
-
-    WidgetFactory.disposeMediaPane(mediaPane);
-
-    if (this.gameRepresentation.isPresent()) {
-      GameRepresentation game = this.gameRepresentation.get();
-
-//      client.getImageCache().clearWheelCache();
-      client.getFrontendService().clearCache(game.getId());
-
-      JFXFuture.supplyAsync(() -> {
-        FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(this.gameRepresentation.get().getId());
-        if (frontendMedia != null) {
-          FrontendMediaItemRepresentation defaultMediaItem = null;
-          if (getDesignMode().equals(DesignMode.wheel)) {
-            return frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
-          }
-          else if (getDesignMode().equals(DesignMode.highscoreCard)) {
-            CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-            String popperScreen = cardSettings.getPopperScreen();
-            VPinScreen screen = StringUtils.isNotEmpty(popperScreen) ? VPinScreen.valueOfScreen(popperScreen) : null;
-            if (screen != null) {
-              return frontendMedia.getDefaultMediaItem(screen);
-            }
-          }
-        }
-        return null;
-      }).thenAcceptLater((defaultMediaItem) -> {
-        if (defaultMediaItem == null) {
-          Label label = new Label(Messages.get("dialog.no_media_found"));
-          label.setStyle("-fx-font-size: 14px;-fx-text-fill: " + ThemeColors.BORDER + ";");
-          label.setUserData(null);
-          mediaPane.setCenter(label);
-        }
-        else {
-          assetDeleteBtn.setDisable(false);
-          assetViewBtn.setDisable(false);
-          AssetMediaPlayer sidebarPlayer = WidgetFactory.createAssetMediaPlayer(client, defaultMediaItem, false, false);
-          mediaPane.setCenter(sidebarPlayer);
-        }
-      });
     }
   }
 
@@ -1307,6 +1201,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   public void selectTable(Optional<GameRepresentation> gameRepresentation) {
     this.gameRepresentation = gameRepresentation;
+    dataManagerBtn.setDisable(gameRepresentation.isEmpty());
+    assetManagerBtn.setDisable(gameRepresentation.isEmpty());
     this.refreshBreadCrumb();
     if (this.gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();

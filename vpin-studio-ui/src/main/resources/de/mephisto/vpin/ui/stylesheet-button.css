@@ -468,6 +468,13 @@
     -fx-background-color: -c-link-base-hover;
 }
 
+/* small icon button in a collapsible header (stylesheet-titledpane.css), size of the original sidebar buttons
+   (10px font, default padding), combinable with folder-/external-/link-component for the color */
+.button.sm-collapsible-button {
+    -fx-font-size: 10px;
+    -fx-padding: 0.333333em 0.666667em 0.333333em 0.666667em;
+}
+
 /* secondary inline actions (e.g. "Set as installed"), same look, fits next to 12px text and pills */
 .sm-button-small {
     -fx-font-size: 12px;

@@ -116,6 +116,23 @@
                      </tooltip>
                   </Button>
                   <Separator orientation="VERTICAL" />
+                  <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onDataManager" styleClass="sm-button, sm-button-icon">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2l-lead-pencil" iconSize="18" styleClass="c-icon-white" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%dialog.table_data_manager" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onAssetManager" styleClass="sm-button, sm-button-icon">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2m-movie-edit-outline" iconSize="18" styleClass="c-icon-white" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%cards.template_editor.asset_manager" />
+                     </tooltip>
+                  </Button>
+                  <Separator orientation="VERTICAL" />
                   <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerate" styleClass="sm-button" text="%cards.designer.generate_this_card">
                      <graphic>
                         <FontIcon iconLiteral="mdi2i-image-outline" iconSize="18" styleClass="c-icon-white" />
@@ -214,42 +231,6 @@
                   <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                </padding>
             </Accordion>
-
-            <!-- media currently stored for the target screen -->
-            <VBox fx:id="previewPane" spacing="8.0" styleClass="sm-footer">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="6.0">
-                     <children>
-                        <Label styleClass="sm-caption" text="%cards.designer.current_media" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
-                        <Button fx:id="assetViewBtn" mnemonicParsing="false" onAction="#onAssetPreview" styleClass="sm-button, sm-button-icon">
-                           <graphic>
-                              <FontIcon iconLiteral="mdi2e-eye-outline" iconSize="16" styleClass="c-icon-white" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="%cards.template_editor.display_the_image_of_the_card_as_it" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onAssetManager" styleClass="sm-button, sm-button-icon">
-                           <graphic>
-                              <FontIcon iconLiteral="mdi2m-movie-edit-outline" iconSize="16" styleClass="c-icon-white" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="%cards.template_editor.asset_manager" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="assetDeleteBtn" mnemonicParsing="false" onAction="#onAssetDelete" styleClass="sm-danger-button, sm-button-icon">
-                           <graphic>
-                              <FontIcon iconLiteral="mdi2d-delete-outline" iconSize="16" styleClass="c-icon-error" />
-                           </graphic>
-                        </Button>
-                     </children>
-                  </HBox>
-                  <BorderPane fx:id="mediaPane" maxHeight="150.0" minHeight="150.0" prefHeight="150.0" styleClass="sm-inset" />
-               </children>
-               <padding>
-                  <Insets bottom="12.0" left="16.0" right="16.0" top="12.0" />
-               </padding>
-            </VBox>
          </children>
       </VBox>
    </children>

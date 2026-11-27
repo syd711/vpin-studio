@@ -23,177 +23,192 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.recorder.RecorderController">
    <center>
-      <SplitPane fx:id="splitPane" dividerPositions="0.6" styleClass="sm-split">
-         <items>
-            <!-- table list -->
-            <VBox spacing="10.0">
-               <children>
-                  <!-- toolbar rows: no extra spacing between them, like the table overview -->
-                  <VBox>
+      <BorderPane styleClass="sm-tile, sm-tile-bordered" BorderPane.alignment="CENTER">
+         <center>
+            <SplitPane fx:id="splitPane" dividerPositions="0.6" styleClass="sm-split">
+               <items>
+                  <!-- table list -->
+                  <VBox spacing="10.0">
                      <children>
-                        <HBox alignment="CENTER_LEFT" styleClass="sm-actionbar, sm-actionbar-flush">
+                        <!-- toolbar rows: no extra spacing between them, like the table overview -->
+                        <VBox>
                            <children>
-                              <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="sm-button-icon">
-                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2f-filter-menu-outline" iconSize="18" styleClass="c-icon-white" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
-                                 </tooltip>
-                              </Button>
-                              <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button-icon">
-                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2r-reload" iconSize="18" styleClass="c-icon-white" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
-                                 </tooltip>
-                              </Button>
-                              <Separator orientation="VERTICAL" />
-                              <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                              <HBox alignment="CENTER_LEFT" styleClass="sm-actionbar, sm-actionbar-flush">
                                  <children>
-                                    <TextField fx:id="searchTextField" minWidth="140.0" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" promptText="%cards.highscore_cards.search_table" />
-                                    <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" visible="false">
+                                    <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="sm-button-icon">
                                        <graphic>
-                                          <FontIcon iconLiteral="mdi2c-close-thick" iconSize="18" styleClass="c-icon-muted" />
+                                          <FontIcon iconLiteral="mdi2f-filter-menu-outline" iconSize="18" styleClass="c-icon-white" />
                                        </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
+                                       </tooltip>
                                     </Button>
+                                    <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2r-reload" iconSize="18" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
+                                       </tooltip>
+                                    </Button>
+                                    <Separator orientation="VERTICAL" />
+                                    <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <TextField fx:id="searchTextField" minWidth="140.0" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" promptText="%cards.highscore_cards.search_table" />
+                                          <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" visible="false">
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2c-close-thick" iconSize="18" styleClass="c-icon-muted" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </StackPane>
+                                    <Separator orientation="VERTICAL" />
+                                    <ComboBox fx:id="emulatorCombo" prefWidth="180.0" promptText="%recorder.recorder.all_vpx_tables" />
+                                    <Separator orientation="VERTICAL" />
+                                    <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="170.0" />
+                                 </children>
+                              </HBox>
+                              <HBox fx:id="actionBar" alignment="CENTER_LEFT" styleClass="sm-actionbar, sm-actionbar-inset">
+                                 <children>
+                                    <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="%components.components.screens">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2m-monitor-edit" iconSize="18" styleClass="c-icon-white" />
+                                       </graphic>
+                                    </MenuButton>
+                                    <Button fx:id="autoSelectBtn" mnemonicParsing="false" onAction="#onAutoSelect" styleClass="sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2a-auto-fix" iconSize="18" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%recorder.recorder.auto_select_all_mandatory_and_missing_video_screens" />
+                                       </tooltip>
+                                    </Button>
+                                    <Separator orientation="VERTICAL" />
+                                    <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableEdit" styleClass="sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2l-lead-pencil" iconSize="18" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2t-table-edit" iconSize="18" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
+                                       </tooltip>
+                                    </Button>
+                                    <Separator orientation="VERTICAL" />
+                                    <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" styleClass="sm-danger-button" text="%recorder.recorder.start">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2r-record" iconSize="18" styleClass="c-icon-error" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%recorder.recorder.start_recording_of_this_screen" />
+                                       </tooltip>
+                                    </Button>
+                                    <!-- the play button is inserted here by the controller -->
+                                    <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="sm-danger-button, sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2s-stop" iconSize="18" styleClass="c-icon-error" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%competitions.competitions_iscored.kill_all_emulator_and_frontend_processes_ctrl_k" />
+                                       </tooltip>
+                                    </Button>
+                                    <Pane HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="labelCount" styleClass="sm-hint" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+
+                        <StackPane fx:id="loaderStack" VBox.vgrow="ALWAYS">
+                           <children>
+                              <StackPane fx:id="tableStack">
+                                 <children>
+                                    <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked">
+                                       <columns>
+                                          <TableColumn fx:id="columnSelection" maxWidth="44.0" minWidth="44.0" prefWidth="44.0" sortable="false" style="-fx-alignment: CENTER;">
+                                             <graphic>
+                                                <CheckBox fx:id="selectAllCheckbox" mnemonicParsing="false" />
+                                             </graphic>
+                                          </TableColumn>
+                                          <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="%cards.highscore_cards.display_name" />
+                                          <TableColumn fx:id="columnDateModified" minWidth="10.0" prefWidth="140.0" style="-fx-alignment: CENTER;" text="%playlistmanager.playlist_table.last_update" />
+                                       </columns>
+                                    </TableView>
                                  </children>
                               </StackPane>
-                              <Separator orientation="VERTICAL" />
-                              <ComboBox fx:id="emulatorCombo" prefWidth="180.0" promptText="%recorder.recorder.all_vpx_tables" />
-                              <Separator orientation="VERTICAL" />
-                              <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="170.0" />
-                           </children>
-                        </HBox>
-                        <HBox fx:id="actionBar" alignment="CENTER_LEFT" styleClass="sm-actionbar, sm-actionbar-inset">
-                           <children>
-                              <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="%components.components.screens">
-                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2m-monitor-edit" iconSize="18" styleClass="c-icon-white" />
-                                 </graphic>
-                              </MenuButton>
-                              <Button fx:id="autoSelectBtn" mnemonicParsing="false" onAction="#onAutoSelect" styleClass="sm-button-icon">
-                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2a-auto-fix" iconSize="18" styleClass="c-icon-white" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="%recorder.recorder.auto_select_all_mandatory_and_missing_video_screens" />
-                                 </tooltip>
-                              </Button>
-                              <Separator orientation="VERTICAL" />
-                              <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableEdit" styleClass="sm-button-icon">
-                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2l-lead-pencil" iconSize="18" styleClass="c-icon-white" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
-                                 </tooltip>
-                              </Button>
-                              <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="sm-button-icon">
-                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2t-table-edit" iconSize="18" styleClass="c-icon-white" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
-                                 </tooltip>
-                              </Button>
-                              <Separator orientation="VERTICAL" />
-                              <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" styleClass="sm-danger-button" text="%recorder.recorder.start">
-                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2r-record" iconSize="18" styleClass="c-icon-error" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="%recorder.recorder.start_recording_of_this_screen" />
-                                 </tooltip>
-                              </Button>
-                              <!-- the play button is inserted here by the controller -->
-                              <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="sm-danger-button, sm-button-icon">
-                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2s-stop" iconSize="18" styleClass="c-icon-error" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="%competitions.competitions_iscored.kill_all_emulator_and_frontend_processes_ctrl_k" />
-                                 </tooltip>
-                              </Button>
-                              <Pane HBox.hgrow="ALWAYS" />
-                              <Label fx:id="labelCount" styleClass="sm-hint" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-
-                  <StackPane fx:id="loaderStack" VBox.vgrow="ALWAYS">
-                     <children>
-                        <StackPane fx:id="tableStack">
-                           <children>
-                              <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked">
-                                 <columns>
-                                    <TableColumn fx:id="columnSelection" maxWidth="44.0" minWidth="44.0" prefWidth="44.0" sortable="false" style="-fx-alignment: CENTER;">
-                                       <graphic>
-                                          <CheckBox fx:id="selectAllCheckbox" mnemonicParsing="false" />
-                                       </graphic>
-                                    </TableColumn>
-                                    <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="%cards.highscore_cards.display_name" />
-                                    <TableColumn fx:id="columnDateModified" minWidth="10.0" prefWidth="140.0" style="-fx-alignment: CENTER;" text="%playlistmanager.playlist_table.last_update" />
-                                 </columns>
-                              </TableView>
                            </children>
                         </StackPane>
                      </children>
-                  </StackPane>
-               </children>
-            </VBox>
+                  </VBox>
 
-            <!-- recording settings of the enabled screens -->
-            <VBox minWidth="460.0" styleClass="sm-panel">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
+                  <!-- recording settings of the enabled screens -->
+                  <VBox minWidth="460.0" styleClass="sm-panel">
                      <children>
-                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
                            <children>
-                              <Label styleClass="sm-caption" text="%recorder.panel.caption" />
-                              <Label styleClass="sm-hint" text="%recorder.panel.hint" wrapText="true" />
-                           </children>
-                        </VBox>
-                        <HBox alignment="CENTER_RIGHT" minWidth="-Infinity" spacing="8.0">
-                           <children>
-                              <Label styleClass="sm-small" text="%recorder.panel.preview_refresh" />
-                              <Spinner fx:id="refreshInterval" prefWidth="80.0" />
-                              <Label styleClass="sm-small" text="%monitor.cab_monitor.seconds" />
-                           </children>
-                        </HBox>
-                     </children>
-                     <padding>
-                        <Insets bottom="14.0" left="18.0" right="18.0" top="16.0" />
-                     </padding>
-                  </HBox>
-
-                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll" VBox.vgrow="ALWAYS">
-                     <content>
-                        <VBox spacing="14.0">
-                           <children>
-                              <!-- shown when no screen is enabled in the screens menu -->
-                              <HBox fx:id="noScreensInfo" alignment="CENTER_LEFT" spacing="10.0" styleClass="sm-inset">
+                              <VBox spacing="4.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <FontIcon iconLiteral="mdi2m-monitor-off" iconSize="18" styleClass="c-icon-muted" />
-                                    <Label styleClass="sm-text" text="%recorder.panel.no_screens" wrapText="true" />
+                                    <Label styleClass="sm-caption" text="%recorder.panel.caption" />
+                                    <Label styleClass="sm-hint" text="%recorder.panel.hint" wrapText="true" />
                                  </children>
-                                 <padding>
-                                    <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
-                                 </padding>
+                              </VBox>
+                              <HBox alignment="CENTER_RIGHT" minWidth="-Infinity" spacing="8.0">
+                                 <children>
+                                    <Label styleClass="sm-small" text="%recorder.panel.preview_refresh" />
+                                    <Spinner fx:id="refreshInterval" prefWidth="80.0" />
+                                    <Label styleClass="sm-small" text="%monitor.cab_monitor.seconds" />
+                                    <Button mnemonicParsing="false" onAction="#onSettings" styleClass="sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2c-cog" iconSize="18" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%components.doftester.dof_toys.open_settings" />
+                                       </tooltip>
+                                    </Button>
+                                 </children>
                               </HBox>
-                              <VBox fx:id="recordingOptions" spacing="14.0" />
                            </children>
                            <padding>
-                              <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
+                              <Insets bottom="14.0" left="18.0" right="18.0" top="16.0" />
                            </padding>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-               </children>
-            </VBox>
-         </items>
-      </SplitPane>
+                        </HBox>
+
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll" VBox.vgrow="ALWAYS">
+                           <content>
+                              <VBox spacing="14.0">
+                                 <children>
+                                    <!-- shown when no screen is enabled in the screens menu -->
+                                    <HBox fx:id="noScreensInfo" alignment="CENTER_LEFT" spacing="10.0" styleClass="sm-inset">
+                                       <children>
+                                          <FontIcon iconLiteral="mdi2m-monitor-off" iconSize="18" styleClass="c-icon-muted" />
+                                          <Label styleClass="sm-text" text="%recorder.panel.no_screens" wrapText="true" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <VBox fx:id="recordingOptions" spacing="14.0" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
+               </items>
+            </SplitPane>
+         </center>
+      </BorderPane>
    </center>
+   <padding>
+      <Insets bottom="12.0" right="12.0" />
+   </padding>
 </BorderPane>

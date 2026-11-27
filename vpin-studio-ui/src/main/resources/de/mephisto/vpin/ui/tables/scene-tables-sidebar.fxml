@@ -27,7 +27,7 @@
                         <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true" styleClass="c-text-white" text="%backglass.res_generator.preview" />
                         <HBox fx:id="frontendTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onPrefsScreenValidators" styleClass="sm-button, sm-button-icon">
+                              <Button mnemonicParsing="false" onAction="#onPrefsScreenValidators" styleClass="sm-collapsible-button">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2c-cog" styleClass="c-icon-white" />
                                  </graphic>
@@ -50,7 +50,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button fx:id="tablesBtn" mnemonicParsing="false" onAction="#onTables" styleClass="folder-component">
+                              <Button fx:id="tablesBtn" mnemonicParsing="false" onAction="#onTables" styleClass="sm-collapsible-button, folder-component">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
                                  </graphic>
@@ -84,7 +84,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button fx:id="directb2sBtn" mnemonicParsing="false" onAction="#onDirectB2S" styleClass="folder-component">
+                              <Button fx:id="directb2sBtn" mnemonicParsing="false" onAction="#onDirectB2S" styleClass="sm-collapsible-button, folder-component">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
                                  </graphic>
@@ -92,7 +92,7 @@
                                     <Tooltip text="%tables.tables_sidebar.directb2s_folder" />
                                  </tooltip>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onPrefsBackglass" styleClass="sm-button, sm-button-icon">
+                              <Button mnemonicParsing="false" onAction="#onPrefsBackglass" styleClass="sm-collapsible-button">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2c-cog" styleClass="c-icon-white" />
                                  </graphic>
@@ -115,7 +115,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button fx:id="dmdBtn" mnemonicParsing="false" onAction="#onDMD" styleClass="folder-component">
+                              <Button fx:id="dmdBtn" mnemonicParsing="false" onAction="#onDMD" styleClass="sm-collapsible-button, folder-component">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
                                  </graphic>
@@ -138,7 +138,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button fx:id="pupBackBtn" mnemonicParsing="false" onAction="#onPupPack" styleClass="folder-component">
+                              <Button fx:id="pupBackBtn" mnemonicParsing="false" onAction="#onPupPack" styleClass="sm-collapsible-button, folder-component">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
                                  </graphic>
@@ -161,7 +161,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button fx:id="altSoundExplorerBtn" mnemonicParsing="false" onAction="#onAltSound" styleClass="folder-component">
+                              <Button fx:id="altSoundExplorerBtn" mnemonicParsing="false" onAction="#onAltSound" styleClass="sm-collapsible-button, folder-component">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
                                  </graphic>
@@ -184,7 +184,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button fx:id="altColorExplorerBtn" mnemonicParsing="false" onAction="#onAltColor" styleClass="folder-component">
+                              <Button fx:id="altColorExplorerBtn" mnemonicParsing="false" onAction="#onAltColor" styleClass="sm-collapsible-button, folder-component">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
                                  </graphic>
@@ -207,7 +207,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button fx:id="povBtn" mnemonicParsing="false" onAction="#onPov" styleClass="folder-component">
+                              <Button fx:id="povBtn" mnemonicParsing="false" onAction="#onPov" styleClass="sm-collapsible-button, folder-component">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
                                  </graphic>
@@ -230,7 +230,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button fx:id="nvramExplorerBtn" mnemonicParsing="false" onAction="#onHighscores" styleClass="folder-component">
+                              <Button fx:id="nvramExplorerBtn" mnemonicParsing="false" onAction="#onHighscores" styleClass="sm-collapsible-button, folder-component">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
                                  </graphic>
@@ -238,7 +238,7 @@
                                     <Tooltip text="%tables.tables_sidebar.open_highscore_file_or_folder" />
                                  </tooltip>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onPrefsHighscore" styleClass="sm-button, sm-button-icon">
+                              <Button mnemonicParsing="false" onAction="#onPrefsHighscore" styleClass="sm-collapsible-button">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2c-cog" styleClass="c-icon-white" />
                                  </graphic>
@@ -261,7 +261,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onPrefsMame" styleClass="sm-button, sm-button-icon">
+                              <Button mnemonicParsing="false" onAction="#onPrefsMame" styleClass="sm-collapsible-button">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2c-cog" styleClass="c-icon-white" />
                                  </graphic>
@@ -284,7 +284,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onVpsBtn" styleClass="link-component">
+                              <Button mnemonicParsing="false" onAction="#onVpsBtn" styleClass="sm-collapsible-button, link-component">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2l-link" styleClass="c-icon-white" />
                                  </graphic>
@@ -292,7 +292,7 @@
                                     <Tooltip text="%tables.table_asset_manager_embedded.https_virtual_pinball_spreadsheet_web_app" />
                                  </tooltip>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onVpsPrefs" styleClass="sm-button, sm-button-icon">
+                              <Button mnemonicParsing="false" onAction="#onVpsPrefs" styleClass="sm-collapsible-button">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2c-cog" styleClass="c-icon-white" />
                                  </graphic>
@@ -315,7 +315,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                              <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScript" styleClass="external-component">
+                              <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScript" styleClass="sm-collapsible-button, external-component">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2o-open-in-new" styleClass="c-icon-white" />
                                  </graphic>
@@ -323,7 +323,7 @@
                                     <Tooltip text="%pref.pause_menu.open_script_in_visual_pinball_x" />
                                  </tooltip>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#onScriptEdit" styleClass="sm-button, sm-button-icon">
+                              <Button mnemonicParsing="false" onAction="#onScriptEdit" styleClass="sm-collapsible-button">
                                  <graphic>
                                     <FontIcon iconLiteral="mdi2f-file-document-edit-outline" styleClass="c-icon-white" />
                                  </graphic>

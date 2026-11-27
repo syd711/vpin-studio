@@ -7,13 +7,11 @@ import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.cards.panels.TemplateEditorController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
@@ -27,16 +25,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 import javafx.geometry.Pos;
-import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +42,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 
@@ -59,15 +55,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnBaseTemplate;
-
-  @FXML
-  private Button tableEditBtn;
-
-  @FXML
-  private Button assetManagerBtn;
-
-  @FXML
-  private Button maniaBtn;
 
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
@@ -90,12 +77,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   public HighscoreCardsController() {
   }
 
-  @FXML
-  private void onMediaEdit() {
-    DesignMode designMode = templateEditorController.getDesignMode();
-    onAssetManager(designMode, getSelection());
-  }
-
   public static void onAssetManager(@NonNull DesignMode designMode, @Nullable GameRepresentation game) {
     if (game == null) {
       return;
@@ -108,23 +89,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       TableDialogs.openTableAssetsDialog(null, game, screen);
   }
 
-  @FXML
-  private void onTableEdit() {
-    GameRepresentation selection = getSelection();
-    if (selection != null) {
-      NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(selection.getId()));
-    }
-  }
-
-  @FXML
-  private void onManiaTable() {
-    GameRepresentation selection = getSelection();
-    if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
-      Studio.browse(ManiaUrlFactory.createTableUrl(selection.getExtTableId(), selection.getExtTableVersionId()));
-    }
-  }
-
-  @FXML
   private void onHighscoreSettings() {
     PreferencesController.open("highscore_cards");
   }
@@ -202,7 +166,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   public void refreshView(GameRepresentation game) {
     templateEditorPane.setVisible(game != null);
-    maniaBtn.setDisable(tableView.getSelectionModel().getSelectedItems().size() != 1 || game == null || StringUtils.isEmpty(game.getExtTableId()));
 
     List<String> breadcrumb = new ArrayList<>(Arrays.asList(Messages.get("navigation.designer"), Messages.get("cards.template_editor.highscore_cards")));
     if (game != null) {
@@ -234,15 +197,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     super.initialize(Messages.get("dialog.noun_table"), Messages.get("dialog.noun_tables"), new HighscoreCardsColumnSorter(this));
     super.loadFilterPanel("scene-highscore-cards-filter.fxml");
 
-    maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
-    maniaBtn.setVisible(Features.MANIA_ENABLED);
-
-    Image imageMania = new Image(Studio.class.getResourceAsStream("mania.png"));
-    ImageView iconMania = new ImageView(imageMania);
-    iconMania.setFitWidth(18);
-    iconMania.setFitHeight(18);
-    maniaBtn.setGraphic(iconMania);
-
     NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.designer"), Messages.get("cards.template_editor.highscore_cards")));
 
     try {
@@ -257,7 +211,20 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       TabPane designerTabs = templateEditorController.getTabPane();
       ToolBar designerToolbar = templateEditorController.getToolbar();
       ((Pane) designerTabs.getParent()).getChildren().removeAll(designerTabs, designerToolbar);
-      VBox pageHeader = new VBox(14, designerTabs, designerToolbar);
+      // the preferences button sits in the tab header, like in the Tables tab bar
+      Button settingsBtn = new Button();
+      settingsBtn.getStyleClass().addAll("sm-button", "sm-button-icon");
+      FontIcon settingsIcon = new FontIcon("mdi2c-cog");
+      settingsIcon.setIconSize(18);
+      settingsIcon.getStyleClass().add("c-icon-white");
+      settingsBtn.setGraphic(settingsIcon);
+      settingsBtn.setTooltip(new Tooltip(Messages.get("cards.highscore_cards.open_highscore_card_settings")));
+      settingsBtn.setOnAction(e -> onHighscoreSettings());
+      StackPane tabHeader = new StackPane(designerTabs, settingsBtn);
+      StackPane.setAlignment(settingsBtn, Pos.TOP_RIGHT);
+      StackPane.setMargin(settingsBtn, new Insets(10, 14, 0, 0));
+
+      VBox pageHeader = new VBox(14, tabHeader, designerToolbar);
       VBox.setMargin(designerToolbar, new Insets(0, 16, 0, 16));
       designerTile.setTop(pageHeader);
     }
@@ -304,9 +271,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      assetManagerBtn.setDisable(tableView.getSelectionModel().getSelectedItems().size() != 1);
-      tableEditBtn.setDisable(tableView.getSelectionModel().getSelectedItems().size() != 1);
-      maniaBtn.setDisable(tableView.getSelectionModel().getSelectedItems().size() != 1);
       refreshView(newSelection);
     });
 

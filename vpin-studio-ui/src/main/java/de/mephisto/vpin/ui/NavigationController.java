@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.achievements.AchievementsController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.ui.components.ComponentsController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.players.PlayersController;
+import de.mephisto.vpin.ui.recorder.RecorderController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -29,6 +31,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -81,6 +84,24 @@ public class NavigationController implements Initializable, StudioEventListener,
   private Pane tablesBtn;
 
   @FXML
+  private Pane backglassesBtn;
+
+  @FXML
+  private Pane vpsTablesBtn;
+
+  @FXML
+  private Pane statisticsBtn;
+
+  @FXML
+  private Pane backupsBtn;
+
+  @FXML
+  private Pane vpxMobileBtn;
+
+  @FXML
+  private Label studioCaption;
+
+  @FXML
   private Pane dashboardBtn;
 
   @FXML
@@ -94,6 +115,9 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @FXML
   private Pane cardsBtn;
+
+  @FXML
+  private Pane recorderBtn;
 
   @FXML
   private Pane collapseBtn;
@@ -161,8 +185,38 @@ public class NavigationController implements Initializable, StudioEventListener,
   }
 
   @FXML
+  private void onRecorderClick() {
+    navigateTo(NavigationItem.MediaRecorder);
+  }
+
+  @FXML
   private void onTablesClick() {
     navigateTo(NavigationItem.Tables);
+  }
+
+  @FXML
+  private void onBackglassesClick() {
+    navigateTo(NavigationItem.Backglasses);
+  }
+
+  @FXML
+  private void onVpsTablesClick() {
+    navigateTo(NavigationItem.VpsTables);
+  }
+
+  @FXML
+  private void onStatisticsClick() {
+    navigateTo(NavigationItem.TableStatistics);
+  }
+
+  @FXML
+  private void onBackupsClick() {
+    navigateTo(NavigationItem.TableBackups);
+  }
+
+  @FXML
+  private void onVpxMobileClick() {
+    navigateTo(NavigationItem.VpxMobile);
   }
 
   @FXML
@@ -178,11 +232,6 @@ public class NavigationController implements Initializable, StudioEventListener,
   @FXML
   private void onSystemClick() {
     navigateTo(NavigationItem.SystemManager);
-  }
-
-  @FXML
-  private void onSettingsClick() {
-    PreferencesController.open();
   }
 
   @FXML
@@ -263,15 +312,28 @@ public class NavigationController implements Initializable, StudioEventListener,
   }
 
   public static StudioFXController getActiveNavigationController() {
-    return activeNavigation.getController();
+    return getContentView(activeNavigation).getController();
+  }
+
+  /**
+   * The view that holds root and controller: the host for the pages of the tables view, the view itself otherwise.
+   */
+  private static NavigationView getContentView(NavigationView view) {
+    if (view != null && view.getHost() != null) {
+      return navigationItemMap.get(view.getHost());
+    }
+    return view;
   }
 
   public static void navigateTo(NavigationItem item, NavigationOptions options) {
     NavigationView navigationView = navigationItemMap.get(item);
+    NavigationView contentView = getContentView(navigationView);
     if (activeNavigation != null) {
       activeNavigation.getNavigationButton().getStyleClass().remove(SELECTED_CLASS);
-      if (activeNavigation.getController() != null) {
-        activeNavigation.getController().onViewDeactivated();
+      // switching between the pages of the tables view is handled by the tables controller
+      NavigationView previousContentView = getContentView(activeNavigation);
+      if (previousContentView != contentView && previousContentView.getController() != null) {
+        previousContentView.getController().onViewDeactivated();
       }
     }
 
@@ -286,27 +348,68 @@ public class NavigationController implements Initializable, StudioEventListener,
       if (lookup instanceof BorderPane) {
         BorderPane main = (BorderPane) lookup;
 
-        if (activeNavigation.getController() != null) {
-          Parent root = activeNavigation.getRoot();
-          main.setCenter(root);
-          activeNavigation.getController().onViewActivated(options);
-        }
-        else {
+        if (contentView.getController() == null) {
           try {
-            FXMLLoader loader = new FXMLLoader(activeNavigation.getControllerClass().getResource(activeNavigation.getFxml()));
+            FXMLLoader loader = new FXMLLoader(contentView.getControllerClass().getResource(contentView.getFxml()));
             loader.setResources(Messages.getBundle());
             Parent root = loader.load();
             StudioFXController controller = loader.<StudioFXController>getController();
-            activeNavigation.setController(controller);
-            activeNavigation.setRoot(root);
-            main.setCenter(root);
-            activeNavigation.getController().onViewActivated(options);
+            contentView.setController(controller);
+            contentView.setRoot(root);
+            // the tables controller registers itself as the active navigation while loading
+            activeNavigation = navigationView;
           }
           catch (IOException e) {
             LOG.info("Failed to load main view: {}", e.getMessage(), e);
+            return;
           }
         }
+
+        if (main.getCenter() != contentView.getRoot()) {
+          main.setCenter(contentView.getRoot());
+        }
+
+        StudioFXController controller = contentView.getController();
+        if (controller instanceof TablesController) {
+          ((TablesController) controller).showPage(item, options);
+        }
+        else {
+          controller.onViewActivated(options);
+        }
       }
+    }
+  }
+
+  /**
+   * F2 - F8 open the pages of the tables view and the media recorder.
+   */
+  public static void handleShortcut(KeyEvent ke) {
+    if (ke.isShiftDown() || ke.isControlDown() || ke.isAltDown()) {
+      return;
+    }
+
+    NavigationItem item = switch (ke.getCode()) {
+      case F2 -> NavigationItem.Tables;
+      case F3 -> NavigationItem.Backglasses;
+      case F4 -> NavigationItem.VpsTables;
+      case F5 -> NavigationItem.TableStatistics;
+      case F6 -> NavigationItem.TableBackups;
+      case F7 -> NavigationItem.VpxMobile;
+      case F8 -> NavigationItem.MediaRecorder;
+      default -> null;
+    };
+    if (item == null) {
+      return;
+    }
+    // F3 toggles the sidebar of the competitions view
+    if (item == NavigationItem.Backglasses && getActiveNavigation() == NavigationItem.Competitions) {
+      return;
+    }
+
+    NavigationView view = navigationItemMap.get(item);
+    if (view != null && view.getNavigationButton().isVisible()) {
+      navigateTo(item);
+      ke.consume();
     }
   }
 
@@ -384,7 +487,15 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.HIGHSCORE_CARD_SETTINGS.equals(key)) {
+    if (PreferenceNames.VPXZ_SETTINGS.equalsIgnoreCase(key)) {
+      Platform.runLater(() -> {
+        refreshVpxMobileVisibility();
+        if (!vpxMobileBtn.isVisible() && getActiveNavigation() == NavigationItem.VpxMobile) {
+          navigateTo(NavigationItem.Tables);
+        }
+      });
+    }
+    else if (PreferenceNames.HIGHSCORE_CARD_SETTINGS.equals(key)) {
       highscoreCardsNavigationView.setController(null);
 
       if (activeNavigation != null && activeNavigation.getItem().equals(NavigationItem.HighscoreCards)) {
@@ -393,9 +504,16 @@ public class NavigationController implements Initializable, StudioEventListener,
     }
   }
 
+  private void refreshVpxMobileVisibility() {
+    VPXZSettings vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+    vpxMobileBtn.setVisible(Features.VPXZ_ENABLED && vpxzSettings.isEnabled());
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    cardsBtn.managedProperty().bindBidirectional(cardsBtn.visibleProperty());
+    for (Node node : List.of(cardsBtn, recorderBtn, studioCaption, statisticsBtn, backupsBtn, vpxMobileBtn)) {
+      node.managedProperty().bindBidirectional(node.visibleProperty());
+    }
 
     avatarView.setClip(new Circle(20, 20, 20));
     staticAvatarView = this.avatarView;
@@ -408,6 +526,11 @@ public class NavigationController implements Initializable, StudioEventListener,
     client.getPreferenceService().addListener(this);
 
     cardsBtn.setVisible(Features.MEDIA_ENABLED);
+    recorderBtn.setVisible(Features.RECORDER && !client.getRecorderService().getRecordingScreens().isEmpty());
+    studioCaption.setVisible(cardsBtn.isVisible() || recorderBtn.isVisible());
+    statisticsBtn.setVisible(Features.STATISTICS_ENABLED);
+    backupsBtn.setVisible(Features.BACKUPS_ENABLED);
+    refreshVpxMobileVisibility();
 
     for (Node node : getEntries()) {
       if (node instanceof Label) {
@@ -424,6 +547,11 @@ public class NavigationController implements Initializable, StudioEventListener,
     }
 
     navigationItemMap.put(NavigationItem.Tables, new NavigationView(NavigationItem.Tables, TablesController.class, tablesBtn, "scene-tables.fxml"));
+    navigationItemMap.put(NavigationItem.Backglasses, new NavigationView(NavigationItem.Backglasses, backglassesBtn, NavigationItem.Tables));
+    navigationItemMap.put(NavigationItem.VpsTables, new NavigationView(NavigationItem.VpsTables, vpsTablesBtn, NavigationItem.Tables));
+    navigationItemMap.put(NavigationItem.TableStatistics, new NavigationView(NavigationItem.TableStatistics, statisticsBtn, NavigationItem.Tables));
+    navigationItemMap.put(NavigationItem.TableBackups, new NavigationView(NavigationItem.TableBackups, backupsBtn, NavigationItem.Tables));
+    navigationItemMap.put(NavigationItem.VpxMobile, new NavigationView(NavigationItem.VpxMobile, vpxMobileBtn, NavigationItem.Tables));
     navigationItemMap.put(NavigationItem.Achievements, new NavigationView(NavigationItem.Achievements, AchievementsController.class, dashboardBtn, "scene-achievements.fxml"));
     navigationItemMap.put(NavigationItem.Players, new NavigationView(NavigationItem.Players, PlayersController.class, playersBtn, "scene-players.fxml"));
 
@@ -431,6 +559,8 @@ public class NavigationController implements Initializable, StudioEventListener,
 
     this.highscoreCardsNavigationView = new NavigationView(NavigationItem.HighscoreCards, HighscoreCardsController.class, cardsBtn, "scene-highscore-cards.fxml");
     navigationItemMap.put(NavigationItem.HighscoreCards, highscoreCardsNavigationView);
+
+    navigationItemMap.put(NavigationItem.MediaRecorder, new NavigationView(NavigationItem.MediaRecorder, RecorderController.class, recorderBtn, "scene-recorder.fxml"));
 
     navigationItemMap.put(NavigationItem.SystemManager, new NavigationView(NavigationItem.SystemManager, ComponentsController.class, systemManagerBtn, "scene-components.fxml"));
 

@@ -1940,7 +1940,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   /**
-   * The stack always contains the tab pane and the overlay buttons, editors are added as BorderPane on top of them.
+   * The stack always contains the VBox with the page header and the tab pane, editors are added as BorderPane on top of it.
    */
   private boolean isEditorOpen(StackPane editorRootStack) {
     return editorRootStack.getChildren().stream().anyMatch(node -> node instanceof BorderPane);

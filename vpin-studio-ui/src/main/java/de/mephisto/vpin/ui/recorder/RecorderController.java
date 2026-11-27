@@ -191,6 +191,11 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   }
 
   @FXML
+  private void onSettings() {
+    PreferencesController.open("validators_screens");
+  }
+
+  @FXML
   public void onStop() {
     Dialogs.killFrontend();
   }
@@ -418,6 +423,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize(Messages.get("dialog.noun_table"), Messages.get("dialog.noun_tables"), new RecorderColumnSorter(this));
+    // the table overview is the initial view and always loaded, its dialogs are reused here
+    setRootController(TablesController.INSTANCE);
     recordingOptions.setFillWidth(true);
     noScreensInfo.managedProperty().bind(noScreensInfo.visibleProperty());
 
@@ -770,16 +777,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     }
   }
 
-  public void setRootController(TablesController tablesController) {
-    this.tablesController = tablesController;
-  }
-
   @Override
   public void tableChanged(int id, @Nullable String rom, @Nullable String gameName) {
-    if (!active) {
-      return;
-    }
-
     GameRepresentation refreshedGame = client.getGameService().getGame(id);
     if (refreshedGame != null) {
       GameRepresentationModel model = getModel(refreshedGame);

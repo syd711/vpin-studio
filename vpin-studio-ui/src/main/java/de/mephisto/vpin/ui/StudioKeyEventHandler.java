@@ -91,6 +91,10 @@ public class StudioKeyEventHandler implements EventHandler<KeyEvent> {
     }
 
     if (!ke.isConsumed()) {
+      NavigationController.handleShortcut(ke);
+    }
+
+    if (!ke.isConsumed()) {
       StudioFXController controller = NavigationController.getActiveNavigationController();
       if (controller != null) {
         controller.onKeyEvent(ke);

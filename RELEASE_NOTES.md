@@ -31,16 +31,23 @@ A huge shoutout to @Solters for building the original tool and helping with this
 ### AI Assistants (MCP)
 
 The VPin Studio Server can now offer an **MCP (Model Context Protocol)** endpoint, so AI assistants like Claude can
-answer questions about your cabinet, e.g. "Which tables have no ROM?" or "Which tables have updates on VPS?".
+answer questions about your cabinet, e.g. "Which tables have no ROM?", "Which tables use the PUP pack X?",
+"Why are my scores not submitted to iScored?" or "How do I set up an offline competition?".
 
 - **Preferences**: Enable the endpoint in the new "AI Assistants (MCP)" page of the preferences. It is disabled by
   default. The page shows the endpoint URL and the command to add the cabinet to Claude Code:
   `claude mcp add --transport http vpin-studio http://<cabinet>:8089/mcp`
-- **Tools**: List emulators, search tables (by name or ROM, only with issues, disabled or with VPS updates), table
-  details including validation issues, backglass versions, the highscores of a table and the latest highscores of
-  the cabinet.
+- **Tables**: Search tables by name, ROM, emulator, tag, PUP pack, backglass / PUP pack / ALT sound / ALT color,
+  missing frontend media, validation issue, disabled state or VPS updates. Table details, highscores and all assets
+  of a table (table files, ROM, NVRAM, backglass versions, PUP pack, ALT sound, ALT color, DMD, music and the frontend
+  media of every screen).
+- **Competitions**: All competition types (offline, iScored, World of Virtual Pinball, VPin Mania challenges) with
+  their scores, plus an iScored check that shows per game room whether it accepts score entries and which games are
+  linked with which tables.
+- **Documentation**: The assistant searches the VPin Studio wiki to answer "how do I…" questions and links the pages.
 - **Read-only mode**: On by default, the assistant can then only look up data. When switched off, it can also
-  enable or disable tables, update ratings, tags and notes, launch tables and delete tables or backglasses. The
+  enable or disable tables, update ratings, tags and notes, launch tables, delete tables or backglasses, create,
+  finish and delete offline competitions, add or remove iScored game rooms and synchronize competitions. The
   assistant is told to ask for confirmation before deleting anything.
 - Like the REST API, the endpoint has no password, so everyone in your network can use it while it is enabled.
 

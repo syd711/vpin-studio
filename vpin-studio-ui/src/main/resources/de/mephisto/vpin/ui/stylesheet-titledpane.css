@@ -1,9 +1,10 @@
 /**
  * Accordion & Titled Pane = the common collapsible panel.
  * Collapsed: a transparent row with a 1px -c-panel-border divider below, hover = -c-row-hover, chevron on the left.
- * Expanded: a -c-row-hover card (1px -c-selected border, radius 8, 4px air above and below), the header is
- * separated from the content by a divider and its muted icon turns orange. Header = optional 18px muted icon +
- * bold sm-collapsible-title label (+ actions right aligned). Accordions get an 8px padding inside their tile.
+ * Expanded: a -c-row-hover card (1px -c-selected border, radius 8, 4px air above and below), the header flows into
+ * the content without a divider and its muted icon turns orange. Header = optional 18px muted icon + bold
+ * sm-collapsible-title label (+ sm-collapsible-button actions right aligned). Accordions get an 8px padding inside
+ * their tile.
  */
 
 .accordion {
@@ -39,8 +40,8 @@
     -fx-background-insets: 0;
     -fx-background-radius: 0;
     -fx-border-color: transparent;
-    -fx-border-width: 0 0 1 0;
-    -fx-padding: 11 12 11 12;
+    -fx-border-width: 0;
+    -fx-padding: 6 12 6 12;
     -fx-cursor: hand;
 }
 
@@ -52,7 +53,6 @@
 .titled-pane:expanded > .title,
 .accordion > .titled-pane:expanded > .title {
     -fx-background-radius: 8 8 0 0;
-    -fx-border-color: transparent transparent -c-selected transparent;
 }
 
 .titled-pane:expanded > .title:hover,
@@ -123,9 +123,7 @@
 }
 
 .sm-collapsible-header {
-    -fx-padding: 11 12 11 12;
-    -fx-border-color: transparent;
-    -fx-border-width: 0 0 1 0;
+    -fx-padding: 6 12 6 12;
     -fx-cursor: hand;
 }
 
@@ -135,7 +133,6 @@
 
 .sm-collapsible:expanded > .sm-collapsible-header {
     -fx-background-radius: 8 8 0 0;
-    -fx-border-color: transparent transparent -c-selected transparent;
 }
 
 .sm-collapsible:expanded > .sm-collapsible-header:hover {
@@ -155,51 +152,6 @@
     -fx-background-color: transparent;
     -fx-background: transparent;
     -fx-border-color: transparent;
-}
-
-/* bold header label of a collapsible (a Label in the TitledPane graphic) */
-.sm-collapsible-title {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: -c-white;
-}
-
-/* the same look for collapsibles built in Java (e.g. tables/vps/VpsSection): a VBox "sm-collapsible" with the
-   pseudo class :expanded, an HBox "sm-collapsible-header" (icon, sm-collapsible-title, …, 16px subtle chevron) */
-.sm-collapsible {
-    -fx-background-color: transparent;
-    -fx-background-radius: 6;
-    -fx-border-color: transparent;
-    -fx-border-width: 1 1 1 3;
-    -fx-border-radius: 6;
-}
-
-.sm-collapsible:expanded {
-    -fx-background-color: -c-footer;
-    -fx-border-color: transparent transparent transparent -c-warn;
-}
-
-.sm-collapsible-header {
-    -fx-background-radius: 6;
-    -fx-padding: 10 8 10 8;
-    -fx-cursor: hand;
-}
-
-.sm-collapsible-header:hover {
-    -fx-background-color: -c-row-hover;
-}
-
-.sm-collapsible:expanded > .sm-collapsible-header:hover {
-    -fx-background-color: transparent;
-}
-
-/* nested in an expanded card, an expanded collapsible goes one step darker to stay visible */
-.titled-pane:expanded > .content .sm-collapsible:expanded {
-    -fx-background-color: -c-inset;
-}
-
-.accordion-container {
-    -fx-background-color: -c-control;
 }
 
 /* designer layer list (cards/panels/template-editor.fxml): headers = icon + name + eye / lock buttons

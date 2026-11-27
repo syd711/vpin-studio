@@ -20,7 +20,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
-import de.mephisto.vpin.ui.recorder.RecorderController;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
@@ -36,15 +35,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,9 +68,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private static final int TAB_BACKGLASS = 1;
   private static final int TAB_VPS = 2;
   private static final int TAB_STATISTICS = 3;
-  private static final int TAB_RECORDER = 4;
-  private static final int TAB_BACKUPS = 5;
-  private static final int TAB_VPXZ = 6;
+  private static final int TAB_BACKUPS = 4;
+  private static final int TAB_VPXZ = 5;
 
   private TableOverviewController tableOverviewController;
   private BackglassManagerController backglassManagerController;
@@ -111,9 +110,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private Tab vpsTablesTab;
 
   @FXML
-  private Tab recorderTab;
-
-  @FXML
   private Tab vpxMobileTab;
 
   @FXML
@@ -129,9 +125,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private VpsTablesSidebarController vpsTablesSidebarController; //fxml magic! Not unused
 
   @FXML
-  private RecorderController recorderController; //fxml magic! Not unused
-
-  @FXML
   private TablesAssetViewSidebarController assetViewSideBarController; //fxml magic! Not unused
 
   @FXML
@@ -143,8 +136,41 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @FXML
   private Button tableSettingsBtn;
 
+  @FXML
+  private Label pageTitle;
+
   private Node sidePanelRoot;
   private boolean sidebarVisible = true;
+
+  /**
+   * The tabs are the pages of this view, they are selected through the navigation.
+   */
+  public void showPage(NavigationItem item, @Nullable NavigationOptions options) {
+    Tab tab = options != null ? tablesTab : getTab(item);
+    if (tabPane.getTabs().contains(tab) && tabPane.getSelectionModel().getSelectedItem() != tab) {
+      // the selection listener activates the page
+      tabPane.getSelectionModel().select(tab);
+    }
+    else {
+      int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+      refreshTabSelection(selectedIndex, selectedIndex);
+    }
+
+    if (options != null) {
+      tableOverviewController.selectGameInModel(options.getGameId());
+    }
+  }
+
+  private Tab getTab(NavigationItem item) {
+    return switch (item) {
+      case Backglasses -> backglassManagerTab;
+      case VpsTables -> vpsTablesTab;
+      case TableStatistics -> tablesStatisticsTab;
+      case TableBackups -> tableBackupsTab;
+      case VpxMobile -> vpxMobileTab;
+      default -> tablesTab;
+    };
+  }
 
   @Override
   public void onViewActivated(NavigationOptions options) {
@@ -182,10 +208,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       case TAB_VPXZ: {
         PreferencesController.open("vpxz");
-        break;
-      }
-      case TAB_RECORDER: {
-        PreferencesController.open("validators_screens");
         break;
       }
       default: {
@@ -305,24 +327,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
       LOG.error("failed to load VPS table tab: " + e.getMessage(), e);
     }
 
-    if (Features.RECORDER && !client.getRecorderService().getRecordingScreens().isEmpty()) {
-      try {
-        FXMLLoader loader = new FXMLLoader(RecorderController.class.getResource("scene-recorder.fxml"));
-        loader.setResources(Messages.getBundle());
-        Parent repositoryRoot = loader.load();
-        recorderController = loader.getController();
-        recorderController.setRootController(this);
-        recorderTab.setContent(repositoryRoot);
-      }
-      catch (IOException e) {
-        LOG.error("failed to load VPS table tab: " + e.getMessage(), e);
-      }
-    }
-    else {
-      tabPane.getTabs().remove(recorderTab);
-    }
-
-
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldValue, newValue) -> {
       refreshTabSelection(oldValue, newValue);
     });
@@ -394,7 +398,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
     int selectedTab = getSelectedTab(newValue.intValue());
+    Tab selectedTabItem = tabPane.getSelectionModel().getSelectedItem();
     Platform.runLater(() -> {
+      if (selectedTabItem != null) {
+        pageTitle.setText(selectedTabItem.getText().trim());
+      }
       tableOverviewController.setVisible(selectedTab == TAB_TABLE);
       backupsSideBarController.setVisible(selectedTab == TAB_BACKUPS);
       vpxzSidebarController.setVisible(selectedTab == TAB_VPXZ);
@@ -430,16 +438,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
-      else if (selectedTab == TAB_RECORDER) {
-        recorderController.onViewActivated(null);
-        root.setRight(null);
-        toggleSidebarBtn.setDisable(true);
-      }
-
-      // the media recorder has no sidebar: hide the toggle and move the settings button into its place
-      boolean showSidebarToggle = selectedTab != TAB_RECORDER;
-      toggleSidebarBtn.setVisible(showSidebarToggle);
-      StackPane.setMargin(tableSettingsBtn, new Insets(10, showSidebarToggle ? 54 : 14, 0, 0));
     });
   }
 
@@ -471,9 +469,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (tabPane.getTabs().contains(vpxMobileTab) && cnt++ == index) {
       return TAB_VPXZ;
     }
-    if (tabPane.getTabs().contains(recorderTab) && cnt++ == index) {
-      return TAB_RECORDER;
-    }
     // should not happen
     return -1;
   }
@@ -503,12 +498,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   public void switchToBackglassManagerTab(GameRepresentation game) {
-    tabPane.getSelectionModel().select(backglassManagerTab);
+    NavigationController.navigateTo(NavigationItem.Backglasses);
     backglassManagerController.selectGame(game);
   }
 
   public void switchToBackupsTab(BackupDescriptorRepresentation backup) {
-    tabPane.getSelectionModel().select(tableBackupsTab);
+    NavigationController.navigateTo(NavigationItem.TableBackups);
     backupsController.selectBackup(backup);
   }
 
@@ -589,22 +584,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
           .thenAcceptLater(game -> {
             if (game != null) {
               this.tableOverviewController.reloadItem(game);
-              if (recorderController != null) {
-                this.recorderController.reloadItem(game);
-              }
             }
             else {
               Optional<GameRepresentationModel> first = this.tableOverviewController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
               if (first.isPresent()) {
                 this.tableOverviewController.getTableView().getItems().remove(first.get());
                 this.tableOverviewController.getTableView().refresh();
-              }
-              if (recorderController != null) {
-                first = this.recorderController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
-                if (first.isPresent()) {
-                  this.recorderController.getTableView().getItems().remove(first.get());
-                  this.recorderController.getTableView().refresh();
-                }
               }
             }
           });
@@ -658,34 +643,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void onKeyEvent(KeyEvent ke) {
-    if (!ke.isShiftDown() && !ke.isControlDown() && !ke.isAltDown()) {
-      if (ke.getCode() == KeyCode.F2) {
-        tabPane.getSelectionModel().select(tablesTab);
-      }
-      else if (ke.getCode() == KeyCode.F3) {
-        tabPane.getSelectionModel().select(backglassManagerTab);
-      }
-      else if (ke.getCode() == KeyCode.F4) {
-        tabPane.getSelectionModel().select(vpsTablesTab);
-      }
-      else if (ke.getCode() == KeyCode.F5) {
-        tabPane.getSelectionModel().select(tablesStatisticsTab);
-      }
-      else if (ke.getCode() == KeyCode.F6) {
-        tabPane.getSelectionModel().select(tableBackupsTab);
-      }
-      else if (ke.getCode() == KeyCode.F7) {
-        tabPane.getSelectionModel().select(vpxMobileTab);
-      }
-      else if (ke.getCode() == KeyCode.F8 && Features.RECORDER) {
-        tabPane.getSelectionModel().select(recorderTab);
-      }
-    }
-
-    if (ke.isConsumed()) {
-      return;
-    }
-
+    // F2 - F8 are navigation shortcuts, see NavigationController.handleShortcut
     int selectedTab = getSelectedTab();
     StudioFXController activeController = getController(selectedTab);
     if (activeController != null) {
@@ -709,7 +667,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
       case TAB_STATISTICS -> alxController;
       case TAB_BACKUPS -> backupsController;
       case TAB_VPXZ -> vpxzController;
-      case TAB_RECORDER -> recorderController;
       default -> null;
     };
   }
@@ -719,7 +676,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (PreferenceNames.VPXZ_SETTINGS.equalsIgnoreCase(key)) {
       VPXZSettings vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
       if (vpxzSettings.isEnabled()) {
-        tabPane.getTabs().add(5, vpxMobileTab);
+        // always the last page
+        if (!tabPane.getTabs().contains(vpxMobileTab)) {
+          tabPane.getTabs().add(vpxMobileTab);
+        }
       }
       else {
         tabPane.getTabs().remove(vpxMobileTab);
