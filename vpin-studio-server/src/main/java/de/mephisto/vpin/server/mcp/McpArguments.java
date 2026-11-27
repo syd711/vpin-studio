@@ -54,6 +54,10 @@ public class McpArguments {
     return getBoolean(name, false);
   }
 
+  public Boolean getBooleanOrNull(String name) {
+    return values.get(name) != null ? getBoolean(name, false) : null;
+  }
+
   public boolean getBoolean(String name, boolean defaultValue) {
     Object value = values.get(name);
     if (value instanceof Boolean b) {

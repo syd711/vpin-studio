@@ -32,7 +32,7 @@ import static de.mephisto.vpin.server.mcp.McpTableTools.schema;
  * that a change made by the AI behaves exactly like the same change made in the Studio.
  */
 @Service
-public class McpManagementTools {
+public class McpManagementTools implements McpToolProvider {
   private final static Logger LOG = LoggerFactory.getLogger(McpManagementTools.class);
 
   @Autowired
@@ -55,6 +55,7 @@ public class McpManagementTools {
   @Autowired
   private DirectB2SResource directB2SResource;
 
+  @Override
   public List<McpTool> getTools() {
     List<McpTool> tools = new ArrayList<>();
     Map<String, Object> idOnly = schema(Map.of("id", prop("integer", "The table id, see search_tables.")), List.of("id"));

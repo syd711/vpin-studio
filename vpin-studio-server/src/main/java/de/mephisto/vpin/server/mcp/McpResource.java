@@ -41,7 +41,9 @@ public class McpResource {
 
   private static final String INSTRUCTIONS = "This server manages the virtual pinball cabinet of the user, running VPin Studio. "
       + "Tables are identified by numeric ids: look them up with search_tables before calling the other tools. "
-      + "Validation issues are reported by name, e.g. NO_ROM or NO_DIRECTB2S_OR_PUPPACK.";
+      + "Validation issues are reported by name, e.g. NO_ROM or NO_DIRECTB2S_OR_PUPPACK. "
+      + "For questions on how to use or set up VPin Studio, use search_help: it searches the user documentation at "
+      + WikiHelpIndex.WIKI_URL + ". Answer from the documentation and include the links instead of guessing.";
   private static final String INSTRUCTIONS_READ_ONLY = " The server is in read-only mode: the tools can not change anything on the cabinet. "
       + "The user can allow changes in the VPin Studio preferences (AI Assistants).";
   private static final String INSTRUCTIONS_WRITE = " Changes are allowed. Deleting tables or backglasses cannot be undone: "
@@ -56,10 +58,7 @@ public class McpResource {
   private SystemService systemService;
 
   @Autowired
-  private McpTableTools tableTools;
-
-  @Autowired
-  private McpManagementTools managementTools;
+  private List<McpToolProvider> toolProviders;
 
   @PostMapping
   public ResponseEntity<String> post(@RequestHeader HttpHeaders headers, @RequestBody(required = false) byte[] body) {
@@ -186,10 +185,17 @@ public class McpResource {
    * All tools of the server, the write tools only when the read-only mode is off.
    */
   private List<McpTool> getTools(McpSettings settings) {
-    List<McpTool> tools = new ArrayList<>(tableTools.getTools());
-    tools.addAll(managementTools.getTools());
+    List<McpTool> tools = getAllTools();
     if (settings.isReadOnly()) {
       tools.removeIf(t -> !t.readOnly());
+    }
+    return tools;
+  }
+
+  private List<McpTool> getAllTools() {
+    List<McpTool> tools = new ArrayList<>();
+    for (McpToolProvider provider : toolProviders) {
+      tools.addAll(provider.getTools());
     }
     return tools;
   }
@@ -217,7 +223,7 @@ public class McpResource {
 
   private Map<String, Object> callTool(Object id, Map<String, Object> params, McpSettings settings) {
     Object name = params.get("name");
-    if (settings.isReadOnly() && managementTools.getTools().stream().anyMatch(t -> !t.readOnly() && t.name().equals(name))) {
+    if (settings.isReadOnly() && getAllTools().stream().anyMatch(t -> !t.readOnly() && t.name().equals(name))) {
       //the client still knows the tool from before the mode was changed
       return result(id, toolResult("The VPin Studio MCP server is in read-only mode. The user can allow changes in the "
           + "VPin Studio preferences (AI Assistants).", true));

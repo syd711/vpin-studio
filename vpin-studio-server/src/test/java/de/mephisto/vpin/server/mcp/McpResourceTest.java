@@ -15,6 +15,7 @@ import org.mockito.quality.Strictness;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ class McpResourceTest {
 
   @BeforeEach
   void setUp() {
+    ReflectionTestUtils.setField(resource, "toolProviders", List.of(tableTools, managementTools));
     settings.setEnabled(true);
     when(preferencesService.getJsonPreference(PreferenceNames.MCP_SETTINGS, McpSettings.class)).thenReturn(settings);
     when(systemService.getVersion()).thenReturn("1.0.0");

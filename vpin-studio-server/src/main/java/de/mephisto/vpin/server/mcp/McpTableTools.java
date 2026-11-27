@@ -1,20 +1,33 @@
 package de.mephisto.vpin.server.mcp;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.altcolor.AltColorService;
+import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.music.MusicService;
+import de.mephisto.vpin.server.puppack.PupPack;
+import de.mephisto.vpin.server.puppack.PupPacksService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -22,10 +35,13 @@ import java.util.stream.Collectors;
  * so the AI only receives the fields that are meaningful for it (no internal file handles or caches).
  */
 @Service
-public class McpTableTools {
+public class McpTableTools implements McpToolProvider {
+  private final static Logger LOG = LoggerFactory.getLogger(McpTableTools.class);
 
   private static final int DEFAULT_LIMIT = 50;
   private static final int MAX_LIMIT = 500;
+
+  private static final int MAX_FILES = 100;
 
   private static final Map<Integer, String> VALIDATION_NAMES = readValidationNames();
 
@@ -35,6 +51,25 @@ public class McpTableTools {
   @Autowired
   private EmulatorService emulatorService;
 
+  @Autowired
+  private FrontendService frontendService;
+
+  @Autowired
+  private FolderLookupService folderLookupService;
+
+  @Autowired
+  private MusicService musicService;
+
+  @Autowired
+  private PupPacksService pupPacksService;
+
+  @Autowired
+  private AltSoundService altSoundService;
+
+  @Autowired
+  private AltColorService altColorService;
+
+  @Override
   public List<McpTool> getTools() {
     List<McpTool> tools = new ArrayList<>();
 
@@ -44,23 +79,24 @@ public class McpTableTools {
         schema(Map.of(), List.of()), args -> listEmulators()));
 
     tools.add(McpTool.read("search_tables", "Search tables",
-        "Searches the installed tables of the cabinet. Without a query all tables are returned (up to the limit). "
-            + "The query matches the table name, display name, ROM name and file name (case-insensitive). "
+        "Searches the installed tables of the cabinet. Without any filter all tables are returned (up to the limit). "
+            + "The query matches the table name, display name, ROM name and file name (case-insensitive); the other "
+            + "filters narrow the result down, e.g. by PUP pack, tag, missing frontend media or validation issue. "
             + "Each result contains the table id needed by the other tools.",
-        schema(Map.of(
-                "query", prop("string", "Text to search for, e.g. \"Medieval\" or a ROM name like \"mm_109c\"."),
-                "emulatorId", prop("integer", "Only return tables of this emulator, see list_emulators."),
-                "onlyWithIssues", prop("boolean", "Only return tables that have a validation issue."),
-                "onlyDisabled", prop("boolean", "Only return tables that are disabled in the frontend."),
-                "onlyUpdateAvailable", prop("boolean", "Only return tables for which a newer version is listed on the Virtual Pinball Spreadsheet (VPS)."),
-                "limit", prop("integer", "Maximum number of results, default " + DEFAULT_LIMIT + ", maximum " + MAX_LIMIT + ".")),
-            List.of()), this::searchTables));
+        schema(searchProperties(), List.of()), this::searchTables));
 
     tools.add(McpTool.read("get_table", "Get table details",
         "Returns all details of a table: files, ROM, highscore configuration, media packs, VPS link, play count, "
             + "rating, tags, notes and the list of current validation issues.",
         schema(Map.of("id", prop("integer", "The table id, see search_tables.")), List.of("id")),
         this::getTable));
+
+    tools.add(McpTool.read("get_table_assets", "Get table assets",
+        "Returns all assets used by a table and whether they exist: table file, POV/INI/RES/VBS files, ROM, NVRAM, "
+            + "backglass, PUP pack, ALT sound, ALT color, DMD, music files (found and missing) and the frontend media "
+            + "of every screen (wheel, playfield, backglass, ...).",
+        schema(Map.of("id", prop("integer", "The table id, see search_tables.")), List.of("id")),
+        this::getTableAssets));
 
     tools.add(McpTool.read("get_table_highscores", "Get table highscores",
         "Returns the current highscore list of a table.",
@@ -99,12 +135,30 @@ public class McpTableTools {
     boolean onlyUpdateAvailable = args.getBoolean("onlyUpdateAvailable", false);
     int limit = Math.max(1, Math.min(MAX_LIMIT, args.getInt("limit", DEFAULT_LIMIT)));
 
+    String tag = StringUtils.trimToNull(args.getString("tag"));
+    String pupPack = StringUtils.trimToNull(args.getString("pupPack"));
+    Integer issueCode = parseIssue(args.getString("issue"));
+    VPinScreen missingMedia = parseScreen(args.getString("missingMedia"));
+
+    List<Predicate<Game>> filters = new ArrayList<>();
+    filters.add(g -> emulatorId == null || g.getEmulatorId() == emulatorId);
+    filters.add(g -> query == null || matches(g, query));
+    filters.add(g -> !onlyWithIssues || hasIssue(g));
+    filters.add(g -> !onlyDisabled || g.isDisabled());
+    filters.add(g -> !onlyUpdateAvailable || g.isUpdateAvailable());
+    filters.add(g -> tag == null || (g.getTags() != null && g.getTags().stream().anyMatch(tag::equalsIgnoreCase)));
+    filters.add(g -> pupPack == null || StringUtils.containsIgnoreCase(g.getPupPackName(), pupPack));
+    filters.add(g -> issueCode == null || getIssueCodes(g).contains(issueCode));
+    addFlagFilter(filters, args.getBooleanOrNull("hasBackglass"), g -> g.getDirectB2SPath() != null);
+    addFlagFilter(filters, args.getBooleanOrNull("hasPupPack"), g -> StringUtils.isNotEmpty(g.getPupPackName()));
+    addFlagFilter(filters, args.getBooleanOrNull("hasAltSound"), Game::isAltSoundAvailable);
+    addFlagFilter(filters, args.getBooleanOrNull("hasAltColor"), g -> g.getAltColorType() != null);
+    //the media check reads the file system, so it runs last on the remaining tables
+    filters.add(g -> missingMedia == null || frontendService.getMediaFiles(g, missingMedia).isEmpty());
+
+    Predicate<Game> filter = filters.stream().reduce(g -> true, Predicate::and);
     List<Game> matches = gameService.getGames().stream()
-        .filter(g -> emulatorId == null || g.getEmulatorId() == emulatorId)
-        .filter(g -> query == null || matches(g, query))
-        .filter(g -> !onlyWithIssues || hasIssue(g))
-        .filter(g -> !onlyDisabled || g.isDisabled())
-        .filter(g -> !onlyUpdateAvailable || g.isUpdateAvailable())
+        .filter(filter)
         .sorted(Comparator.comparing(g -> StringUtils.defaultString(g.getGameDisplayName()), String.CASE_INSENSITIVE_ORDER))
         .toList();
 
@@ -161,7 +215,189 @@ public class McpTableTools {
     return summary != null ? summary.getScores().stream().map(s -> toScore(s, true)).toList() : List.of();
   }
 
+  private Object getTableAssets(McpArguments args) {
+    Game game = requireGame(args.requireInt("id"));
+    Map<String, Object> a = new LinkedHashMap<>();
+    a.put("tableId", game.getId());
+    a.put("tableName", game.getGameDisplayName());
+    a.put("tableFile", file(game.getGameFile()));
+
+    Map<String, Object> files = new LinkedHashMap<>();
+    files.put("pov", safe(() -> file(game.getPOVFile())));
+    files.put("ini", safe(() -> file(game.getIniFile())));
+    files.put("vrIni", safe(() -> file(game.getVRIniFile())));
+    files.put("res", safe(() -> file(game.getResFile())));
+    files.put("vbs", safe(() -> file(game.getVBSFile())));
+    a.put("tableFiles", files);
+
+    Map<String, Object> rom = new LinkedHashMap<>();
+    rom.put("name", StringUtils.trimToNull(game.getRom()));
+    rom.put("alias", StringUtils.trimToNull(game.getRomAlias()));
+    if (StringUtils.isNotEmpty(game.getRom())) {
+      rom.put("romFile", safe(() -> file(folderLookupService.getRomFile(game))));
+      rom.put("nvram", safe(() -> file(folderLookupService.getNvRamFile(game))));
+      rom.put("cfg", safe(() -> file(folderLookupService.getCfgFile(game))));
+    }
+    a.put("rom", rom);
+
+    Map<String, Object> backglass = new LinkedHashMap<>();
+    backglass.put("file", safe(() -> file(game.getDirectB2SFile())));
+    backglass.put("versions", game.getDirectB2SVersions());
+    a.put("backglass", backglass);
+
+    a.put("pupPack", safe(() -> {
+      PupPack pack = pupPacksService.getPupPackCached(game);
+      if (pack == null) {
+        return null;
+      }
+      Map<String, Object> p = new LinkedHashMap<>();
+      p.put("name", pack.getName());
+      p.put("folder", pack.getPupPackFolder() != null ? pack.getPupPackFolder().getAbsolutePath() : null);
+      p.put("disabled", game.isPupPackDisabled());
+      p.put("selectedOption", pack.getSelectedOption());
+      if (pack.getMissingResources() != null && !pack.getMissingResources().isEmpty()) {
+        p.put("missingResources", pack.getMissingResources());
+      }
+      return p;
+    }));
+
+    a.put("altSound", safe(() -> {
+      if (!altSoundService.isAltSoundAvailable(game)) {
+        return null;
+      }
+      File folder = altSoundService.getAltSoundFolder(game);
+      return file(folder);
+    }));
+
+    a.put("altColor", safe(() -> {
+      if (game.getAltColorType() == null) {
+        return null;
+      }
+      Map<String, Object> c = new LinkedHashMap<>();
+      c.put("type", game.getAltColorType().name());
+      c.put("folders", altColorService.getAltColorFolders(game).stream().filter(File::exists).map(File::getAbsolutePath).toList());
+      return c;
+    }));
+
+    if (game.getDMDType() != null || game.getDMDProjectFolder() != null) {
+      Map<String, Object> dmd = new LinkedHashMap<>();
+      dmd.put("type", game.getDMDType() != null ? game.getDMDType().name() : null);
+      dmd.put("folder", game.getDMDProjectFolder());
+      a.put("dmd", dmd);
+    }
+
+    a.put("music", safe(() -> {
+      if (StringUtils.isEmpty(game.getAssets())) {
+        return null;
+      }
+      Map<String, Object> m = new LinkedHashMap<>();
+      File folder = folderLookupService.getGameMusicFolder(game);
+      m.put("folder", folder != null ? folder.getAbsolutePath() : null);
+      m.put("scriptReferences", Arrays.stream(game.getAssets().split("\\|")).filter(StringUtils::isNotBlank).toList());
+      List<File> found = musicService.getMp3Files(game);
+      m.put("foundCount", found.size());
+      m.put("found", found.stream().limit(MAX_FILES).map(File::getAbsolutePath).toList());
+      m.put("missing", musicService.getMissingMp3Files(game));
+      return m;
+    }));
+
+    a.put("frontendMedia", safe(() -> {
+      Map<String, Object> media = new LinkedHashMap<>();
+      for (VPinScreen screen : frontendService.getFrontend().getSupportedScreens()) {
+        media.put(screen.name(), frontendService.getMediaFiles(game, screen).stream().map(File::getName).toList());
+      }
+      return media;
+    }));
+    return a;
+  }
+
   //-------------------------------- helpers ----------------------------------------------------------
+
+  private static Map<String, Object> searchProperties() {
+    Map<String, Object> p = new LinkedHashMap<>();
+    p.put("query", prop("string", "Text to search for, e.g. \"Medieval\" or a ROM name like \"mm_109c\"."));
+    p.put("emulatorId", prop("integer", "Only return tables of this emulator, see list_emulators."));
+    p.put("onlyWithIssues", prop("boolean", "Only return tables that have a validation issue."));
+    p.put("issue", prop("string", "Only return tables with this validation issue, e.g. NO_ROM, NO_DIRECTB2S_OR_PUPPACK or NO_WHEEL_IMAGE."));
+    p.put("onlyDisabled", prop("boolean", "Only return tables that are disabled in the frontend."));
+    p.put("onlyUpdateAvailable", prop("boolean", "Only return tables for which a newer version is listed on the Virtual Pinball Spreadsheet (VPS)."));
+    p.put("tag", prop("string", "Only return tables with this tag."));
+    p.put("pupPack", prop("string", "Only return tables using a PUP pack whose name contains this text."));
+    p.put("hasBackglass", prop("boolean", "true: only tables with a backglass file, false: only tables without one."));
+    p.put("hasPupPack", prop("boolean", "true: only tables with a PUP pack, false: only tables without one."));
+    p.put("hasAltSound", prop("boolean", "true: only tables with an ALT sound, false: only tables without one."));
+    p.put("hasAltColor", prop("boolean", "true: only tables with ALT color files, false: only tables without them."));
+    Map<String, Object> screen = prop("string", "Only return tables without frontend media for this screen.");
+    screen.put("enum", Arrays.stream(VPinScreen.values()).map(Enum::name).toList());
+    p.put("missingMedia", screen);
+    p.put("limit", prop("integer", "Maximum number of results, default " + DEFAULT_LIMIT + ", maximum " + MAX_LIMIT + "."));
+    return p;
+  }
+
+  private static void addFlagFilter(List<Predicate<Game>> filters, Boolean expected, Predicate<Game> flag) {
+    if (expected != null) {
+      filters.add(g -> flag.test(g) == expected);
+    }
+  }
+
+  private static List<Integer> getIssueCodes(Game game) {
+    if (game.getIssueTypes() != null && !game.getIssueTypes().isEmpty()) {
+      return game.getIssueTypes();
+    }
+    return hasIssue(game) ? List.of(game.getValidationState().getCode()) : List.of();
+  }
+
+  static Integer parseIssue(String issue) {
+    String name = StringUtils.trimToNull(issue);
+    if (name == null) {
+      return null;
+    }
+    String normalized = name.toUpperCase(Locale.ROOT).replaceFirst("^CODE_", "");
+    for (Map.Entry<Integer, String> entry : VALIDATION_NAMES.entrySet()) {
+      if (entry.getValue().equals(normalized)) {
+        return entry.getKey();
+      }
+    }
+    throw new McpToolException("Unknown validation issue \"" + issue + "\". Known issues: " + new TreeSet<>(VALIDATION_NAMES.values()));
+  }
+
+  private VPinScreen parseScreen(String value) {
+    String name = StringUtils.trimToNull(value);
+    if (name == null) {
+      return null;
+    }
+    for (VPinScreen screen : frontendService.getFrontend().getSupportedScreens()) {
+      if (screen.name().equalsIgnoreCase(name) || screen.getSegment().equalsIgnoreCase(name)) {
+        return screen;
+      }
+    }
+    throw new McpToolException("Unknown or unsupported screen \"" + value + "\". The frontend supports: "
+        + frontendService.getFrontend().getSupportedScreens());
+  }
+
+  private static Map<String, Object> file(File file) {
+    if (file == null) {
+      return null;
+    }
+    Map<String, Object> f = new LinkedHashMap<>();
+    f.put("path", file.getAbsolutePath());
+    f.put("exists", file.exists());
+    return f;
+  }
+
+  /**
+   * One asset that can not be resolved must not fail the whole tool.
+   */
+  private static Object safe(Supplier<Object> supplier) {
+    try {
+      return supplier.get();
+    }
+    catch (Exception e) {
+      LOG.warn("MCP asset lookup failed: {}", e.getMessage());
+      return Map.of("error", String.valueOf(e.getMessage()));
+    }
+  }
+
 
   private Game requireGame(int id) {
     Game game = gameService.getGame(id);
@@ -201,7 +437,8 @@ public class McpTableTools {
     t.put("vpsTableId", game.getExtTableId());
     t.put("updateAvailable", game.isUpdateAvailable());
     t.put("missingAssets", game.isHasMissingAssets());
-    t.put("issue", hasIssue(game) ? toValidation(game.getValidationState()) : null);
+    List<String> issues = getIssueCodes(game).stream().map(c -> VALIDATION_NAMES.getOrDefault(c, String.valueOf(c))).toList();
+    t.put("issues", issues.isEmpty() ? null : issues);
     return t;
   }
 
