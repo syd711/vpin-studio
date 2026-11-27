@@ -12,7 +12,10 @@ import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.VRSettings;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.components.emulators.dialogs.EmulatorDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -41,6 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -49,10 +53,10 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.*;
 
 /**
- * Emulators tab of the System Manager: emulator list on the left, the settings of the selected emulator in the
+ * Emulators view of the library: emulator list on the left, the settings of the selected emulator in the
  * middle and its launch and exit scripts on the right.
  */
-public class EmulatorsController implements Initializable, PreferenceChangeListener, StudioEventListener {
+public class EmulatorsController implements Initializable, StudioFXController, PreferenceChangeListener, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorsController.class);
 
   private final static String COLOR_OK = ThemeColors.OK;
@@ -623,11 +627,13 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
   //------------------------------------------- view lifecycle
 
-  public void onViewActivated() {
+  @Override
+  public void onViewActivated(@Nullable NavigationOptions options) {
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.section.library"), Messages.get("components.components.emulators")));
     client.getPreferenceService().notifyPreferenceChange(PreferenceNames.VR_SETTINGS, null);
-  }
-
-  public void onViewDeactivated() {
+    if (options != null && options.getModel() instanceof GameEmulatorRepresentation emulator) {
+      setSelection(Optional.of(emulator));
+    }
   }
 
   private IEmulatorScriptPanel loadScriptPanel(String fxml, Tab tab) {

@@ -15,6 +15,9 @@ import de.mephisto.vpin.ui.achievements.AchievementsController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.components.ComponentsController;
+import de.mephisto.vpin.ui.components.doftester.DOFTesterController;
+import de.mephisto.vpin.ui.components.emulators.EmulatorsController;
+import de.mephisto.vpin.ui.components.screens.ScreensController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.players.PlayersController;
@@ -84,6 +87,9 @@ public class NavigationController implements Initializable, StudioEventListener,
   private Pane tablesBtn;
 
   @FXML
+  private Pane emulatorsBtn;
+
+  @FXML
   private Pane backglassesBtn;
 
   @FXML
@@ -111,7 +117,13 @@ public class NavigationController implements Initializable, StudioEventListener,
   private Pane competitionsBtn;
 
   @FXML
-  private Pane systemManagerBtn;
+  private Pane screensBtn;
+
+  @FXML
+  private Pane dofTesterBtn;
+
+  @FXML
+  private Pane updatesBtn;
 
   @FXML
   private Pane cardsBtn;
@@ -126,7 +138,7 @@ public class NavigationController implements Initializable, StudioEventListener,
   private FontIcon collapseIcon;
 
   @FXML
-  private FontIcon systemManagerIcon;
+  private FontIcon updatesIcon;
 
   @FXML
   private Label updateBadge;
@@ -195,6 +207,11 @@ public class NavigationController implements Initializable, StudioEventListener,
   }
 
   @FXML
+  private void onEmulatorsClick() {
+    navigateTo(NavigationItem.Emulators);
+  }
+
+  @FXML
   private void onBackglassesClick() {
     navigateTo(NavigationItem.Backglasses);
   }
@@ -230,8 +247,18 @@ public class NavigationController implements Initializable, StudioEventListener,
   }
 
   @FXML
-  private void onSystemClick() {
-    navigateTo(NavigationItem.SystemManager);
+  private void onScreensClick() {
+    navigateTo(NavigationItem.Screens);
+  }
+
+  @FXML
+  private void onDofTesterClick() {
+    navigateTo(NavigationItem.DofTester);
+  }
+
+  @FXML
+  private void onUpdatesClick() {
+    navigateTo(NavigationItem.Updates);
   }
 
   @FXML
@@ -301,9 +328,9 @@ public class NavigationController implements Initializable, StudioEventListener,
     updateBadge.setManaged(showBadge);
 
     // no room for the badge in the collapsed mode, the icon turns orange instead
-    systemManagerIcon.getStyleClass().remove("nav-icon-update");
+    updatesIcon.getStyleClass().remove("nav-icon-update");
     if (updateCount > 0 && collapsed) {
-      systemManagerIcon.getStyleClass().add("nav-icon-update");
+      updatesIcon.getStyleClass().add("nav-icon-update");
     }
   }
 
@@ -511,7 +538,7 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    for (Node node : List.of(cardsBtn, recorderBtn, studioCaption, statisticsBtn, backupsBtn, vpxMobileBtn)) {
+    for (Node node : List.of(emulatorsBtn, cardsBtn, recorderBtn, studioCaption, statisticsBtn, backupsBtn, vpxMobileBtn, screensBtn, dofTesterBtn)) {
       node.managedProperty().bindBidirectional(node.visibleProperty());
     }
 
@@ -530,6 +557,9 @@ public class NavigationController implements Initializable, StudioEventListener,
     studioCaption.setVisible(cardsBtn.isVisible() || recorderBtn.isVisible());
     statisticsBtn.setVisible(Features.STATISTICS_ENABLED);
     backupsBtn.setVisible(Features.BACKUPS_ENABLED);
+    emulatorsBtn.setVisible(Features.EMULATORS_ENABLED);
+    screensBtn.setVisible(Features.SCREEN_MANAGER_ENABLED && !Features.IS_STANDALONE);
+    dofTesterBtn.setVisible(Features.DOF_TESTER_ENABLED || LocalUISettings.getBoolean("doftester.enabled"));
     refreshVpxMobileVisibility();
 
     for (Node node : getEntries()) {
@@ -547,6 +577,7 @@ public class NavigationController implements Initializable, StudioEventListener,
     }
 
     navigationItemMap.put(NavigationItem.Tables, new NavigationView(NavigationItem.Tables, TablesController.class, tablesBtn, "scene-tables.fxml"));
+    navigationItemMap.put(NavigationItem.Emulators, new NavigationView(NavigationItem.Emulators, EmulatorsController.class, emulatorsBtn, "tab-emulators.fxml"));
     navigationItemMap.put(NavigationItem.Backglasses, new NavigationView(NavigationItem.Backglasses, backglassesBtn, NavigationItem.Tables));
     navigationItemMap.put(NavigationItem.VpsTables, new NavigationView(NavigationItem.VpsTables, vpsTablesBtn, NavigationItem.Tables));
     navigationItemMap.put(NavigationItem.TableStatistics, new NavigationView(NavigationItem.TableStatistics, statisticsBtn, NavigationItem.Tables));
@@ -562,7 +593,9 @@ public class NavigationController implements Initializable, StudioEventListener,
 
     navigationItemMap.put(NavigationItem.MediaRecorder, new NavigationView(NavigationItem.MediaRecorder, RecorderController.class, recorderBtn, "scene-recorder.fxml"));
 
-    navigationItemMap.put(NavigationItem.SystemManager, new NavigationView(NavigationItem.SystemManager, ComponentsController.class, systemManagerBtn, "scene-components.fxml"));
+    navigationItemMap.put(NavigationItem.Screens, new NavigationView(NavigationItem.Screens, ScreensController.class, screensBtn, "tab-screens.fxml"));
+    navigationItemMap.put(NavigationItem.DofTester, new NavigationView(NavigationItem.DofTester, DOFTesterController.class, dofTesterBtn, "tab-dof-tester.fxml"));
+    navigationItemMap.put(NavigationItem.Updates, new NavigationView(NavigationItem.Updates, ComponentsController.class, updatesBtn, "scene-components.fxml"));
 
     setCollapsed(LocalUISettings.getBoolean(COLLAPSED_KEY));
     loadUpdateCount();

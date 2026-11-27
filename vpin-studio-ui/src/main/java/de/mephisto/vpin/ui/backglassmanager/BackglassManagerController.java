@@ -152,7 +152,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void onEmulatorManager() {
     GameEmulatorRepresentation emu = emulatorCombo.getSelectionModel().getSelectedItem();
     if (emu != null && emu.getId() != TableOverviewController.ALL_VPX_ID) {
-      NavigationController.navigateTo(NavigationItem.SystemManager, new NavigationOptions(emulatorCombo.getSelectionModel().getSelectedItem()));
+      NavigationController.navigateTo(NavigationItem.Emulators, new NavigationOptions(emulatorCombo.getSelectionModel().getSelectedItem()));
     }
   }
 

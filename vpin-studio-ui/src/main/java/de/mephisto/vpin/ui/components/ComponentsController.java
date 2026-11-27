@@ -1,21 +1,14 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentInstallation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.components.doftester.DOFTesterController;
-import de.mephisto.vpin.ui.components.emulators.EmulatorsController;
-import de.mephisto.vpin.ui.components.screens.ScreensController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import javafx.fxml.FXML;
@@ -32,9 +25,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.*;
@@ -42,10 +35,6 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ComponentsController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentsController.class);
-  public static final int TAB_UPDATES = 0;
-  public static final int TAB_EMULATORS = 1;
-  public static final int TAB_SCREENS = 2;
-  public static final int TAB_DOF_TESTER = 3;
 
   @FXML
   private Parent root;
@@ -69,9 +58,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
   private Tab serumTab;
 
   @FXML
-  private Tab dofTesterTab;
-
-  @FXML
   private Tab doflinxTab;
 
   @FXML
@@ -84,85 +70,27 @@ public class ComponentsController implements Initializable, StudioFXController, 
   private TabPane tabPane;
 
   @FXML
-  private TabPane rootTabPane;
-
-  @FXML
-  private Tab screensTab;
-
-  @FXML
-  private Tab emulatorsTab;
-
-  @FXML
   private Label loaderLabel;
 
   @FXML
   private VBox componentLoader;
 
   private boolean initialized = false;
-  private EmulatorsController emulatorsController;
 
   // Add a public no-args constructor
   public ComponentsController() {
   }
 
 
-  private void updateForTabSelection(int index) {
-    if (index == 0) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.updates")));
+  private void updateBreadCrumb() {
+    List<String> crumbs = new ArrayList<>();
+    crumbs.add(Messages.get("components.components.updates"));
+    Tab selected = tabPane.getSelectionModel().getSelectedItem();
+    if (selected != null && selected != overviewTab) {
+      crumbs.add(selected.getText());
     }
-    else if (index == 1) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.visual_pinball")));
-    }
-    else if (index == 2) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.vpin_mame")));
-    }
-    else if (index == 3) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.b2s_server")));
-    }
-    else if (index == 4) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.freezy")));
-    }
-    else if (index == 5) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.flexdmd")));
-    }
-    else if (index == 6) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.doflinx")));
-    }
-    else if (index == 7) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.dof")));
-    }
+    NavigationController.setBreadCrumb(crumbs);
   }
-
-  private void refreshView(Number t1) {
-    if (t1.intValue() == TAB_UPDATES) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.updates")));
-      if (emulatorsController != null) {
-        emulatorsController.onViewDeactivated();
-      }
-    }
-    else if (t1.intValue() == TAB_EMULATORS) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.emulators")));
-      if (emulatorsController != null) {
-        emulatorsController.onViewActivated();
-      }
-    }
-    else if (t1.intValue() == TAB_SCREENS) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.screens")));
-      if (emulatorsController != null) {
-        emulatorsController.onViewDeactivated();
-      }
-    }
-    else if (t1.intValue() == TAB_DOF_TESTER) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.dof_tester")));
-      if (emulatorsController != null) {
-        emulatorsController.onViewDeactivated();
-      }
-    }
-    else {
-      throw new UnsupportedOperationException("Invalid tab id");
-    }
-  }
-
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -173,9 +101,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
     tabPane.setVisible(false);
 
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-
-    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.updates")));
     try {
       FXMLLoader loader = new FXMLLoader(TabOverviewController.class.getResource("tab-overview.fxml"));
       loader.setResources(Messages.getBundle());
@@ -195,61 +120,8 @@ public class ComponentsController implements Initializable, StudioFXController, 
     loadTab(doflinxTab, "tab-doflinx.fxml");
     loadTab(dofTab, "tab-dof.fxml");
 
-    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      updateForTabSelection(t1.intValue());
-    });
-
-    updateForTabSelection(0);
-
-    if (Features.SCREEN_MANAGER_ENABLED && !Features.IS_STANDALONE) {
-      try {
-        FXMLLoader loader = new FXMLLoader(ScreensController.class.getResource("tab-screens.fxml"));
-        loader.setResources(Messages.getBundle());
-        Parent builtInRoot = loader.load();
-        screensTab.setContent(builtInRoot);
-      }
-      catch (IOException e) {
-        LOG.error("Failed to load tab: " + e.getMessage(), e);
-      }
-    }
-    else {
-      rootTabPane.getTabs().remove(screensTab);
-    }
-
-    if (Features.DOF_TESTER_ENABLED || LocalUISettings.getBoolean("doftester.enabled")) {
-      try {
-        FXMLLoader loader = new FXMLLoader(DOFTesterController.class.getResource("tab-dof-tester.fxml"));
-        loader.setResources(Messages.getBundle());
-        Parent builtInRoot = loader.load();
-        dofTesterTab.setContent(builtInRoot);
-      }
-      catch (IOException e) {
-        LOG.error("Failed to load tab: " + e.getMessage(), e);
-      }
-    }
-    else {
-      rootTabPane.getTabs().remove(dofTesterTab);
-    }
-
-    if (Features.EMULATORS_ENABLED) {
-      try {
-        FXMLLoader loader = new FXMLLoader(EmulatorsController.class.getResource("tab-emulators.fxml"));
-        loader.setResources(Messages.getBundle());
-        Parent builtInRoot = loader.load();
-        emulatorsController = loader.getController();
-        emulatorsTab.setContent(builtInRoot);
-      }
-      catch (IOException e) {
-        LOG.error("Failed to load tab: " + e.getMessage(), e);
-      }
-    }
-    else {
-      rootTabPane.getTabs().remove(emulatorsTab);
-    }
-
-    rootTabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      refreshView(t1);
-    });
+    tabPane.getSelectionModel().selectedItemProperty().addListener((observableValue, oldTab, newTab) -> updateBreadCrumb());
+    updateBreadCrumb();
 
     preferencesChanged(PreferenceNames.DOFLINX_SETTINGS, null);
   }
@@ -267,15 +139,8 @@ public class ComponentsController implements Initializable, StudioFXController, 
   }
 
   @Override
-  public void onViewDeactivated() {
-    if (emulatorsController != null) {
-      emulatorsController.onViewDeactivated();
-    }
-  }
-
-  @Override
   public void onViewActivated(NavigationOptions options) {
-    updateForTabSelection(tabPane.getSelectionModel().getSelectedIndex());
+    updateBreadCrumb();
 
     if (!initialized) {
       tabPane.setVisible(false);
@@ -307,19 +172,10 @@ public class ComponentsController implements Initializable, StudioFXController, 
       initialized = true;
     }
 
-    if (options != null) {
-      if (options.getModel() instanceof GameEmulatorRepresentation) {
-        rootTabPane.getSelectionModel().select(TAB_EMULATORS);
-        if (emulatorsController != null) {
-          emulatorsController.setSelection(Optional.of((GameEmulatorRepresentation) options.getModel()));
-        }
-      }
-      else if (options.getModel() instanceof ComponentType componentType) {
-        rootTabPane.getSelectionModel().select(TAB_UPDATES);
-        Tab tab = getComponentTab(componentType);
-        if (tab != null && tabPane.getTabs().contains(tab)) {
-          tabPane.getSelectionModel().select(tab);
-        }
+    if (options != null && options.getModel() instanceof ComponentType componentType) {
+      Tab tab = getComponentTab(componentType);
+      if (tab != null && tabPane.getTabs().contains(tab)) {
+        tabPane.getSelectionModel().select(tab);
       }
     }
   }

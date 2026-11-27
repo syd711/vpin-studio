@@ -46,6 +46,12 @@
                               <Label text="%navigation.tables" />
                            </children>
                         </HBox>
+                        <HBox fx:id="emulatorsBtn" alignment="CENTER_LEFT" onMousePressed="#onEmulatorsClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2c-controller" iconSize="18" />
+                              <Label text="%components.components.emulators" />
+                           </children>
+                        </HBox>
                         <HBox fx:id="backglassesBtn" alignment="CENTER_LEFT" onMousePressed="#onBackglassesClick" spacing="12.0" styleClass="nav-item">
                            <children>
                               <FontIcon iconLiteral="mdi2i-image-frame" iconSize="18" />
@@ -112,10 +118,22 @@
                               <Label text="%tables.tables.vpx_mobile" />
                            </children>
                         </HBox>
-                        <HBox fx:id="systemManagerBtn" alignment="CENTER_LEFT" onMousePressed="#onSystemClick" spacing="12.0" styleClass="nav-item">
+                        <HBox fx:id="screensBtn" alignment="CENTER_LEFT" onMousePressed="#onScreensClick" spacing="12.0" styleClass="nav-item">
                            <children>
-                              <FontIcon fx:id="systemManagerIcon" iconLiteral="mdi2r-remote-desktop" iconSize="18" />
-                              <Label text="%navigation.system_manager" />
+                              <FontIcon iconLiteral="mdi2m-monitor" iconSize="18" />
+                              <Label text="%components.components.screens" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="dofTesterBtn" alignment="CENTER_LEFT" onMousePressed="#onDofTesterClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon iconLiteral="mdi2t-test-tube" iconSize="18" />
+                              <Label text="%components.components.dof_tester" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="updatesBtn" alignment="CENTER_LEFT" onMousePressed="#onUpdatesClick" spacing="12.0" styleClass="nav-item">
+                           <children>
+                              <FontIcon fx:id="updatesIcon" iconLiteral="mdi2u-update" iconSize="18" />
+                              <Label text="%components.components.updates" />
                               <Pane HBox.hgrow="ALWAYS" />
                               <Label fx:id="updateBadge" styleClass="nav-badge" visible="false" managed="false" />
                            </children>

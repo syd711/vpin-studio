@@ -28,6 +28,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.StudioFXController;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -36,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -48,10 +52,10 @@ import java.util.Set;
 import static de.mephisto.vpin.ui.Studio.client;
 
 /**
- * System Manager / Screens: list of all configured screens, a map of the monitor layout and an inspector
+ * System / Screens: list of all configured screens, a map of the monitor layout and an inspector
  * for the selected screen or monitor.
  */
-public class ScreensController implements Initializable {
+public class ScreensController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(ScreensController.class);
 
   private static final double ZOOM_MIN = 0.5;
@@ -182,6 +186,11 @@ public class ScreensController implements Initializable {
         renderMap();
       });
     }
+  }
+
+  @Override
+  public void onViewActivated(@Nullable NavigationOptions options) {
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.section.system"), Messages.get("components.components.screens")));
   }
 
   @Override

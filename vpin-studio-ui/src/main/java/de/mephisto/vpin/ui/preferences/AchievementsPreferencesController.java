@@ -87,7 +87,7 @@ public class AchievementsPreferencesController implements Initializable {
     if (PreferencesController.instance != null) {
       PreferencesController.instance.closePreferences();
     }
-    NavigationController.navigateTo(NavigationItem.SystemManager, new NavigationOptions(ComponentType.vpinball));
+    NavigationController.navigateTo(NavigationItem.Updates, new NavigationOptions(ComponentType.vpinball));
   }
 
   @FXML

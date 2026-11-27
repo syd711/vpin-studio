@@ -19,7 +19,7 @@
 <!-- Emulators tab: emulator list, settings of the selected emulator, its launch and exit scripts. -->
 <BorderPane fx:id="emulatorRoot" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.emulators.EmulatorsController">
    <padding>
-      <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+      <Insets bottom="12.0" right="12.0" />
    </padding>
    <center>
       <HBox spacing="14.0" BorderPane.alignment="CENTER">

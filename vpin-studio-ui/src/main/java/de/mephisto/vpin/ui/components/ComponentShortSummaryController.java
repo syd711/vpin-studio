@@ -89,7 +89,7 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
   @FXML
   private void onManage() {
     if (component != null) {
-      NavigationController.navigateTo(NavigationItem.SystemManager, new NavigationOptions(component.getType()));
+      NavigationController.navigateTo(NavigationItem.Updates, new NavigationOptions(component.getType()));
     }
   }
 

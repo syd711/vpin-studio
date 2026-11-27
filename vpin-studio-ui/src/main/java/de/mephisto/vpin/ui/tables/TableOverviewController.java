@@ -383,7 +383,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private void onEmulatorManager() {
     GameEmulatorRepresentation emu = emulatorCombo.getSelectionModel().getSelectedItem();
     if (emu != null) {
-      NavigationController.navigateTo(NavigationItem.SystemManager, new NavigationOptions(emulatorCombo.getSelectionModel().getSelectedItem()));
+      NavigationController.navigateTo(NavigationItem.Emulators, new NavigationOptions(emulatorCombo.getSelectionModel().getSelectedItem()));
     }
   }
 
